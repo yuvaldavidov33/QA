@@ -75,12 +75,12 @@ with sync_playwright() as p:
 enc.stdin.close()
 enc.wait()
 
-sfx_vol = 0.55
+sfx_vol = 0.35  # client: SFX a bit quieter
 subprocess.run(
     ["ffmpeg", "-v", "error", "-y", "-i", str(silent), "-i", str(VOICE), "-i", str(REEL / "music.wav"), "-i", str(REEL / "sfx.wav"),
      "-filter_complex",
      f"[1:a]aresample=48000,aformat=channel_layouts=stereo[v];[3:a]volume={sfx_vol}[s];"
-     "[v][2:a][s]amix=inputs=3:duration=first:normalize=0,volume=2.6dB,alimiter=limit=0.95[a]",
+     "[v][2:a][s]amix=inputs=3:duration=first:normalize=0,volume=2.6dB,alimiter=limit=0.89[a]",
      "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest",
      "-movflags", "+faststart", str(OUT)], check=True)
 silent.unlink()

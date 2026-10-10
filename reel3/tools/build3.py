@@ -60,9 +60,7 @@ ZOOM = [
     ("snap", t("לאימונים"), 1.30, 0.2),
     ("back", after("לאימונים"), 1.00, t("אם") - after("לאימונים") + 0.25),
     ("push", t("אם") + 0.25, 1.12, t("עכשיו") - t("אם") - 0.25),
-    # "עכשיו": the second snap.
-    ("snap", t("עכשיו"), 1.30, 0.2),
-    ("back", t("סיבה"), 1.00, t("אימוני") - t("סיבה")),
+    ("back", t("עכשיו") - 0.3, 1.00, t("אימוני") - t("עכשיו") + 0.3),
     ("push", t("אימוני"), 1.10, t("בקבוצות") - t("אימוני")),
     # (8.6-12.45 the motion-graphics page covers the video)
     ("set", t("אישית") + 0.42, 1.00, 0),
@@ -151,7 +149,7 @@ def letters(word_list, cls):
 TB_A, TB_B = letters(["לכבוד", "החזרה"], "la"), letters(["לשגרה"], "lb")
 # Person cutouts (RGBA PNGs from tools/cutout.py) cover the text while it is on screen.
 CUT_A, CUT_B = int(sys.argv[5]), int(sys.argv[6])
-CUT_RANGES = f"1-72,{CUT_A}-{CUT_B}"  # opening hook + "לכבוד החזרה לשגרה"
+CUT_RANGES = f"{CUT_A}-{CUT_B}"  # "לכבוד החזרה לשגרה"
 
 html = f"""<!doctype html>
 <html lang="he" data-resolution="portrait">
@@ -172,15 +170,11 @@ html = f"""<!doctype html>
       #behind .top {{ font-weight: 800; font-size: 76px; line-height: 1; margin-inline-end: 6px; }}
       #behind .big {{ font-weight: 900; font-size: 174px; line-height: .9; letter-spacing: -2px; }}
       #behind span {{ display: inline-block; }}
-      /* Opening (client): "החגים נגמרו" right, "חוזרים לשגרה" left, low behind the trainer so he covers them as he moves, each phrase enters whole. */
-      .hb {{ position: absolute; direction: rtl; font-family: "Heebo", sans-serif; color: rgba(255,255,255,.93);
-             text-shadow: 0 6px 28px rgba(0,0,0,.35); white-space: nowrap; }}
-      .hb .top {{ font-weight: 800; font-size: 70px; line-height: 1; }}
-      .hb .big {{ font-weight: 900; font-size: 150px; line-height: .9; letter-spacing: -2px; }}
-      .hb .big.royal {{ color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.4), 0 6px 28px rgba(0,0,0,.4); }}
-      #hookR .big {{ font-size: 138px; }}
-      #hookL {{ right: 36px; top: 610px; text-align: right; transform-origin: 100% 50%; }}
-      #hookR {{ left: 80px; top: 640px; text-align: left; transform-origin: 0% 50%; }}
+      /* Opening (client, fix 14): plain text on top of the video, centered, each phrase enters whole. */
+      #hook {{ top: 1010px; bottom: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }}
+      #hook .hl {{ font-family: "Heebo", sans-serif; font-weight: 900; font-size: 112px; line-height: 1.05; color: #fff; white-space: nowrap;
+                   text-shadow: 0 6px 26px rgba(0,0,0,.6), 0 0 2px rgba(0,0,0,.9); }}
+      #hook .royal {{ color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.4), 0 6px 26px rgba(0,0,0,.6); }}
       #cutout {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
 
@@ -314,20 +308,19 @@ html = f"""<!doctype html>
             <div class="top">{TB_A}</div>
             <div class="big">{TB_B}</div>
           </div>
-          <div id="hookL" class="hb clip" data-start="0" data-duration="{round(t("וזה") + 0.2, 2)}" data-track-index="1">
-            <div class="top">החגים</div><div class="big">נגמרו</div>
-          </div>
-          <div id="hookR" class="hb clip" data-start="0" data-duration="{round(t("וזה") + 0.2, 2)}" data-track-index="1">
-            <div class="top">חוזרים</div><div class="big royal">לשגרה</div>
-          </div>
           <div id="pop" class="clip" data-start="{TIMES["mg_word"]}" data-duration="{round(TIMES["mg_in"] + 0.35 - TIMES["mg_word"], 2)}" data-track-index="1">{POP}</div>
           <img id="cutout" class="clip" alt="" data-cut-ranges="{CUT_RANGES}" data-start="0" data-duration="{DURATION}" data-track-index="1" />
         </div>
       </div>
 
       <audio id="music" src="music.wav" data-start="0" data-duration="{DURATION}" data-track-index="6" data-volume="1"></audio>
-      <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="0.55"></audio>
+      <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="0.35"></audio>
 
+
+      <div class="ov clip" id="hook" data-start="0" data-duration="{round(t("וזה") + 0.2, 2)}" data-track-index="2">
+        <div class="hl" id="hookL">החגים נגמרו</div>
+        <div class="hl" id="hookR">חוזרים <span class="royal">לשגרה</span></div>
+      </div>
 
       <div class="ov clip" id="g1" data-start="{TIMES["g1_in"]}" data-duration="{round(TIMES["g1_out"] - TIMES["g1_in"], 2)}" data-track-index="3">
         <div class="card" id="g1a"><span class="badge x">✕</span><span>״אתחיל מחר…״</span><i class="strike"></i></div>
@@ -410,18 +403,14 @@ html = f"""<!doctype html>
         cur = scale;
       }}
 
-      // Opening: each phrase comes in whole (no word-by-word), from blur with tracking closing in; both stay,
-      // then whip out to their own side together before "וזה הזמן".
-      const phraseIn = (sel, at, dx) => {{
-        tl.fromTo(sel, {{ opacity: 0, x: dx, scale: 1.18, filter: "blur(16px)" }},
-          {{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "power3.out", immediateRender: false }}, at);
-        tl.fromTo(`${{sel}} .big`, {{ letterSpacing: "22px" }}, {{ letterSpacing: "-2px", duration: 0.5, ease: "power3.out", immediateRender: false }}, at);
-      }};
-      phraseIn("#hookL", Math.max(0, HOOK_T[0] - 0.1), 60);
-      phraseIn("#hookR", HOOK_T[2] - 0.06, -60);
-      tl.fromTo("#hookR .big", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.4, ease: spring, transformOrigin: "0% 50%", immediateRender: false }}, HOOK_T[3]);
-      tl.to("#hookL", {{ x: 320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }}, {round(t("וזה") - 0.2, 2)});
-      tl.to("#hookR", {{ x: -320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }}, {round(t("וזה") - 0.2, 2)});
+      // Opening: each phrase comes in whole from a soft blur and rises into place; both leave together before "וזה הזמן".
+      const phraseIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, y: 34, scale: 0.94, filter: "blur(12px)" }},
+        {{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }}, at);
+      phraseIn("#hookL", Math.max(0, HOOK_T[0] - 0.1));
+      phraseIn("#hookR", HOOK_T[2] - 0.06);
+      tl.fromTo("#hookR .royal", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.4, ease: spring, immediateRender: false }}, HOOK_T[3]);
+      tl.set("#hookR .royal", {{ display: "inline-block" }}, 0);
+      tl.to(["#hookL", "#hookR"], {{ opacity: 0, y: -24, filter: "blur(12px)", duration: 0.2, ease: "power2.in" }}, {round(t("וזה") - 0.18, 2)});
 
       // Captions pop in.
       CAPS.forEach((at, i) => {{
@@ -442,12 +431,15 @@ html = f"""<!doctype html>
         {{ opacity: 1, scale: 1, duration: 0.4, ease: spring, immediateRender: false }}, at);
 
       // G1: "I'll start tomorrow" gets struck out, then "now!" checks in.
-      cardIn("#g1a", T.g1_in);
+      // "אתחיל מחר" / "עכשיו!" (fix 14: client found the 3D entrance jumpy): a smooth glide-and-fade instead.
+      const smoothIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, y: 70, scale: 0.97, filter: "blur(6px)" }},
+        {{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "sine.out", immediateRender: false }}, at);
+      smoothIn("#g1a", T.g1_in);
       tl.fromTo("#g1a .strike", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.25, ease: "power2.out", immediateRender: false }}, T.g1_strike);
       tl.to("#g1a", {{ opacity: 0.55, duration: 0.3 }}, T.g1_strike + 0.3);
-      cardIn("#g1b", T.g1_b);
-      tl.fromTo("#g1b .badge", {{ scale: 0.4 }}, {{ scale: 1, duration: 0.4, ease: spring, immediateRender: false }}, T.g1_b + 0.3);
-      cardOut("#g1 .card", T.g1_out - 0.35);
+      smoothIn("#g1b", T.g1_b);
+      tl.fromTo("#g1b .badge", {{ scale: 0.6 }}, {{ scale: 1, duration: 0.5, ease: "back.out(1.6)", immediateRender: false }}, T.g1_b + 0.3);
+      tl.to("#g1 .card", {{ opacity: 0, y: 50, filter: "blur(6px)", duration: 0.4, ease: "sine.in", stagger: 0.05 }}, T.g1_out - 0.4);
 
       // Motion-graphics sequence (client reference) on "אימוני כוח בקבוצות קטנות עד 6 ... תכנית אישית".
       // A) "אימוני כוח" pops letter by letter on the video, tracking closing in.

@@ -33,6 +33,10 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   "החגים / נגמרו" right, "חוזרים / לשגרה" left (royal
   blue), each phrase enters whole (no word-by-word), both whip out before "וזה הזמן"; cutouts now cover frames
   1-72 as well (`data-cut-ranges`). Opening push softened to 1.07. ₪ on the star page is white.
+- Fix 14 (client): opening back to plain centered text (each phrase enters whole); the "אתחיל מחר / עכשיו!" cards
+  glide in smoothly (no 3D tilt) and the snap zoom on "עכשיו" is gone; SFX volume 0.55 → 0.35; new upbeat music
+  `tools/music2.py` (126 BPM four-on-the-floor, offbeat pumping bass, short stabs, rolls + risers into 9.3/12.9/15.9/18.65):
+  `python3 tools/music2.py voice48.wav music.wav 22.3 9.3,12.9,15.9,18.65`.
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
