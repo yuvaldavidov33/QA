@@ -171,6 +171,8 @@ html = f"""<!doctype html>
         </div>
       </div>
 
+      <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="1"></audio>
+
       <div class="ov clip" id="hook" data-start="0" data-duration="{round(t("תקשיבו") + 0.1, 2)}" data-track-index="1">
 {hook_html}
       </div>
@@ -254,35 +256,48 @@ html = f"""<!doctype html>
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
       tl.set(["#g1a", "#g1b", "#people", "#c1", "#c2", "#q1", "#q2", "#q3", "#pill", "#here", "#arrow", "#people .num"], {{ opacity: 0 }}, 0);
+      const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
+      const CARD_TO = {{ opacity: 1, y: 0, rotationX: 8, rotation: -3, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
+      const cardIn = (sel, at) => tl.fromTo(sel, CARD_FROM, {{ ...CARD_TO, duration: 0.6, ease: "power3.out", immediateRender: false }}, at);
+      const cardOut = (sel, at) => tl.to(sel, {{ opacity: 0, y: 260, rotationX: 40, rotation: -6, scale: 0.92, filter: "blur(12px)",
+        transformPerspective: 900, duration: 0.35, stagger: 0.04, ease: "power2.in" }}, at);
+      // Background softens while a card is up, as in the reference.
+      const bgSoft = (from, to) => {{
+        tl.fromTo("#cam", {{ filter: "blur(0px) brightness(1)" }}, {{ filter: "blur(6px) brightness(0.82)", duration: 0.35, ease: "power2.out", immediateRender: false }}, from);
+        tl.to("#cam", {{ filter: "blur(0px) brightness(1)", duration: 0.4, ease: "power2.inOut" }}, to);
+      }};
       const popIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, scale: 0.7, y: -30 }},
         {{ opacity: 1, scale: 1, y: 0, duration: 0.35, ease: spring, immediateRender: false }}, at);
-      popIn("#g1a", T.g1_in);
+      cardIn("#g1a", T.g1_in);
       tl.fromTo("#g1a .strike", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.25, ease: "power2.out", immediateRender: false }}, T.g1_in + 0.25);
-      popIn("#g1b", T.g1_b);
+      cardIn("#g1b", T.g1_b);
       tl.fromTo("#g1b .strike", {{ scaleX: 0 }}, {{ scaleX: 1, duration: 0.25, ease: "power2.out", immediateRender: false }}, T.g1_b + 0.25);
-      tl.to("#g1 .card", {{ opacity: 0, y: -40, duration: 0.2, stagger: 0.05, ease: "power2.in" }}, T.g1_out - 0.25);
+      cardOut("#g1 .card", T.g1_out - 0.35);
+      bgSoft(T.g1_in, T.g1_out - 0.3);
 
       // G2: six people light up, then the two promises check in.
-      popIn("#people", T.g2_in);
+      cardIn("#people", T.g2_in);
       tl.fromTo("#people .person", {{ fill: "rgba(255,255,255,0.28)", scale: 1 }},
         {{ fill: "#39e46b", scale: 1.12, duration: 0.18, stagger: 0.07, ease: "power2.out", immediateRender: false }}, T.g2_lit);
       tl.fromTo("#people .num", {{ opacity: 0, scale: 0.4 }}, {{ opacity: 1, scale: 1, duration: 0.4, ease: spring, immediateRender: false }}, T.g2_lit + 0.42);
-      popIn("#c1", T.g2_c1);
-      popIn("#c2", T.g2_c2);
-      tl.to("#g2 > *", {{ opacity: 0, y: -40, duration: 0.2, stagger: 0.05, ease: "power2.in" }}, T.g2_out - 0.25);
+      cardIn("#c1", T.g2_c1);
+      cardIn("#c2", T.g2_c2);
+      cardOut(["#people", "#c1", "#c2"], T.g2_out - 0.35);
+      bgSoft(T.g2_in, T.g2_out - 0.3);
 
       // G3: the three questions appear, then all turn into checks.
-      popIn("#q1", T.g3_a); popIn("#q2", T.g3_b); popIn("#q3", T.g3_c);
+      cardIn("#q1", T.g3_a); cardIn("#q2", T.g3_b); cardIn("#q3", T.g3_c);
       ["#q1", "#q2", "#q3"].forEach((q, i) => {{
         const at = T.g3_check + i * 0.12;
         tl.to(`${{q}} .q`, {{ opacity: 0, rotation: 90, duration: 0.18 }}, at);
         tl.fromTo(`${{q}} .ok`, {{ opacity: 0, scale: 0.4 }}, {{ opacity: 1, scale: 1, duration: 0.35, ease: spring, immediateRender: false }}, at + 0.05);
         tl.to(q, {{ borderColor: "#39e46b", duration: 0.2 }}, at + 0.05);
       }});
-      tl.to("#g3 .card", {{ opacity: 0, y: -40, duration: 0.2, stagger: 0.05, ease: "power2.in" }}, T.g3_out - 0.25);
+      cardOut("#g3 .card", T.g3_out - 0.35);
+      bgSoft(T.g3_a, T.g3_out - 0.3);
 
       // G4: call to action with a bouncing arrow.
-      tl.fromTo("#pill", {{ opacity: 0, scale: 0.6, y: 40 }}, {{ opacity: 1, scale: 1, y: 0, duration: 0.4, ease: spring, immediateRender: false }}, T.g4_in);
+      cardIn("#pill", T.g4_in);
       tl.fromTo("#here", {{ opacity: 0, y: 20 }}, {{ opacity: 1, y: 0, duration: 0.25, ease: "back.out(2)", immediateRender: false }}, T.g4_here);
       tl.fromTo("#arrow", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.2, immediateRender: false }}, T.g4_here + 0.15);
       tl.fromTo("#arrow", {{ y: -10 }}, {{ y: 26, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: 2, immediateRender: false }}, T.g4_here + 0.15);
@@ -294,4 +309,22 @@ html = f"""<!doctype html>
 </html>
 """
 open(OUT, "w").write(html)
+
+# Sound cues, rendered to sfx.wav by tools/sfx.py.
+G = TIMES
+events = [("whoosh_soft", t("אבל"))]
+events += [("thump", at) for kind, at, *_ in ZOOM if kind in ("snap", "punch")]
+for k in ("g1_in", "g1_b"):
+    events += [("whoosh", G[k]), ("scratch", G[k] + 0.25)]
+events += [("whoosh_out", G["g1_out"] - 0.35), ("whoosh", G["g2_in"])]
+events += [("tick", G["g2_lit"] + i * 0.07) for i in range(6)]
+events += [("pop", G["g2_lit"] + 0.42)]
+for k in ("g2_c1", "g2_c2"):
+    events += [("whoosh", G[k]), ("ding", G[k] + 0.3)]
+events += [("whoosh_out", G["g2_out"] - 0.35)]
+events += [("whoosh", G[k]) for k in ("g3_a", "g3_b", "g3_c")]
+events += [("ding", G["g3_check"] + i * 0.12 + 0.05) for i in range(3)]
+events += [("whoosh_out", G["g3_out"] - 0.35), ("whoosh", G["g4_in"]), ("pop", G["g4_here"])]
+json.dump({"duration": DURATION, "events": [[n, round(a, 3)] for n, a in sorted(events, key=lambda e: e[1])]},
+          open(OUT.rsplit("/", 1)[0] + "/sfx.json", "w"))
 print("wrote", OUT, len(captions), "captions")
