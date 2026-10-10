@@ -39,6 +39,8 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   `python3 tools/music2.py voice48.wav music.wav 22.3 9.3,12.9,15.9,18.65`.
   Fix 15: client wanted a different song, now `tools/music3.py` (phonk: 140 BPM, cowbell riff, distorted sliding 808,
   hard kick, half-time snare), same arguments.
+  Fix 16: client asked for a Drake-style hip-hop beat, now `tools/music4.py` (original composition: 68 BPM half-time,
+  muffled FM electric-piano chords Fm9-Dbmaj9-Bbm9-C7 with reverb, long deep 808, clap/snare on 3, triplet hat rolls).
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
