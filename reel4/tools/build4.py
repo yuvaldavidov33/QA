@@ -12,6 +12,7 @@ face = json.load(open(sys.argv[1]))
 words = json.load(open(sys.argv[2]))
 OUT, VIDEO = sys.argv[3], sys.argv[4]
 CUT_A, CUT_B = int(sys.argv[5]), int(sys.argv[6])
+SIDE_A, SIDE_B = 56, 88  # cutouts for the side-angle insert (sharp subject over a blurred background)
 SPEECH_END = 19.87
 DURATION = 21.0  # last frame holds ~1.1 s so the DM notification stays readable
 KEYWORDS = {"אחרת", "הפעם"}
@@ -61,9 +62,12 @@ cap_html = "\n".join(
 
 TIMES.update({
     # Hook: two phrases, each enters whole.
-    "hk_a": 0.12, "hk_b": t("לא") - 0.06, "hk_out": t("מתחילים") - 0.42,
+    "hk_a": 0.06, "hk_a2": t("למה") - 0.06, "hk_out": t("באימונים") + 0.06,
+    # Side-angle insert (client reference 78929e38-….mov): warm flare from bottom-left, pink/peach wash, cut to a fake
+    # second camera under the wash, orange clears in ~0.17 s, slow drift, hard cut back to the front.
+    "sd_flare": t("לא") - 0.24, "sd_cut": t("לא") - 0.07, "sd_back": after("באימונים") + 0.02,
     # Reasons page (full screen): zoom-blur in, rows glide in as spoken, light-leak back to the video on "ואז".
-    "rs_in": t("מתחילים") - 0.28, "rs_1": t("מתחילים") - 0.05, "rs_2": t("מתאמנים") - 0.08, "rs_3": t("יודעים") - 0.12,
+    "rs_in": t("מתחילים") + 0.02, "rs_1": t("מתחילים") + 0.12, "rs_2": t("מתאמנים") - 0.08, "rs_3": t("יודעים") - 0.12,
     "rs_out": t("ואז") - 0.02,
     # "אחרי חודש / מפסיקים" behind the trainer, calendar ticking to 30, drops on "מפסיקים".
     "tb_in": t("אחרי") - 0.1, "tb_big": t("מפסיקים") - 0.1, "tb_out": t("בדיוק", 2) - 0.3,
@@ -77,7 +81,10 @@ T_ = TIMES
 
 ZOOM = [
     ("set", 0.0, 1.00, 0),
-    ("push", 0.0, 1.08, T_["rs_in"]),
+    ("push", 0.0, 1.08, T_["sd_cut"]),
+    ("set", T_["sd_cut"], 1.0, 0),
+    ("set", T_["sd_back"], 1.06, 0),
+    ("push", T_["sd_back"], 1.09, T_["rs_in"] - T_["sd_back"]),
     # back on the video after the reasons page
     ("set", T_["rs_out"], 1.04, 0),
     ("push", T_["rs_out"], 1.10, t("בדיוק") - T_["rs_out"]),
@@ -155,11 +162,21 @@ html = f"""<!doctype html>
       :root {{ --red: #ff3340; --green: #39e46b; --royal: #3a64f0; --blue: #5b86ff; }}
       #cam {{ position: absolute; inset: 0; overflow: hidden; }}
       #frame {{ position: absolute; inset: 0; will-change: transform; }}
+      #side {{ position: absolute; inset: 0; transform-origin: 50% 30%; }}
+      #dof {{ position: absolute; inset: 0; backdrop-filter: blur(7px) brightness(.82) saturate(1.15); }}
+      #vig {{ position: absolute; inset: 0; pointer-events: none; background: radial-gradient(85% 70% at 45% 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%); }}
+      #flareClip {{ position: absolute; inset: 0; pointer-events: none; overflow: hidden; }}
+      #flareBlob {{ position: absolute; left: -260px; bottom: -300px; width: 1100px; height: 1100px; border-radius: 50%; mix-blend-mode: screen;
+                    background: radial-gradient(closest-side, rgba(255,236,150,.95), rgba(255,196,80,.7) 40%, rgba(255,150,60,.25) 70%, rgba(255,140,60,0)); filter: blur(30px); }}
+      #wash {{ position: absolute; inset: 0; mix-blend-mode: screen; background: linear-gradient(160deg, #ffc6c0 0%, #ffb08a 50%, #ff9a55 100%); }}
+      #wash2 {{ position: absolute; inset: 0; mix-blend-mode: screen; background: linear-gradient(160deg, #ff9b52 0%, #ff8a3c 60%, #ff7a30 100%);
+                 -webkit-mask-image: radial-gradient(120% 90% at 100% 100%, #000 40%, transparent 100%); mask-image: radial-gradient(120% 90% at 100% 100%, #000 40%, transparent 100%); }}
       #cutout {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
 
       /* Opening: plain centered text, each phrase enters whole. */
-      #hook {{ top: 1060px; bottom: auto; display: flex; flex-direction: column; align-items: center; gap: 6px; }}
+      #hook {{ top: 1060px; bottom: auto; }}
+      #hook .beat {{ position: absolute; left: 0; right: 0; top: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }}
       #hook .hl {{ font-family: "Heebo", sans-serif; font-weight: 900; font-size: 84px; line-height: 1.08; color: #fff; white-space: nowrap;
                    text-shadow: 0 6px 26px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.9); }}
       #hook .royal {{ color: var(--royal); display: inline-block; text-shadow: 0 0 2px rgba(255,255,255,.45), 0 6px 26px rgba(0,0,0,.6); }}
@@ -270,6 +287,7 @@ html = f"""<!doctype html>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{DURATION}" data-width="1080" data-height="1920">
       <div id="cam">
+        <div id="side">
         <div id="frame">
           <video id="a-roll" class="clip" src="{VIDEO}" playsinline data-start="0" data-duration="{DURATION}" data-track-index="0"
                  data-has-audio="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video>
@@ -277,16 +295,19 @@ html = f"""<!doctype html>
             <div class="top"><span class="tw">{TB_A}</span><div id="cal"><i class="bar"></i><b id="calN">1</b></div></div>
             <div class="big">{TB_B}</div>
           </div>
-          <img id="cutout" class="clip" alt="" data-cut-ranges="{CUT_A}-{CUT_B}" data-start="0" data-duration="{DURATION}" data-track-index="1" />
+          <div id="dof" class="clip" data-start="{round(T_["sd_cut"], 2)}" data-duration="{round(T_["sd_back"] - T_["sd_cut"], 2)}" data-track-index="1"></div>
+          <img id="cutout" class="clip" alt="" data-cut-ranges="{SIDE_A}-{SIDE_B},{CUT_A}-{CUT_B}" data-start="0" data-duration="{DURATION}" data-track-index="1" />
         </div>
+        </div>
+        <div id="vig" class="clip" data-start="{round(T_["sd_cut"], 2)}" data-duration="{round(T_["sd_back"] - T_["sd_cut"], 2)}" data-track-index="1"></div>
       </div>
 
       <audio id="music" src="music.wav" data-start="0" data-duration="{DURATION}" data-track-index="6" data-volume="1"></audio>
       <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="0.35"></audio>
 
       <div class="ov clip" id="hook" data-start="0" data-duration="{round(T_["hk_out"] + 0.25, 2)}" data-track-index="2">
-        <div class="hl" id="hookL">למה רוב האנשים</div>
-        <div class="hl" id="hookR">לא <span class="royal">מתמידים</span> באימונים?</div>
+        <div class="beat" id="hookA"><div class="hl" id="hookL">בואו אני אגיד לכם</div><div class="hl" id="hookL2">למה רוב האנשים</div></div>
+        <div class="beat" id="hookB"><div class="hl" id="hookR">לא מצליחים</div><div class="hl" id="hookR2"><span class="royal">להתמיד</span> באימונים</div></div>
       </div>
 
       <div class="clip page" id="reasons" data-start="{round(T_["rs_in"], 2)}" data-duration="{round(T_["rs_out"] - T_["rs_in"], 2)}" data-track-index="3">
@@ -308,6 +329,7 @@ html = f"""<!doctype html>
           </div>
         </div>
       </div>
+      <div class="clip" id="flareClip" data-start="{round(T_["sd_flare"], 2)}" data-duration="{round(T_["sd_cut"] + 0.32 - T_["sd_flare"], 2)}" data-track-index="4"><div id="flareBlob"></div><div id="wash"></div><div id="wash2"></div></div>
       <div class="clip" id="leakClip" data-start="{round(T_["rs_out"] - 0.2, 2)}" data-duration="0.5" data-track-index="4"><div id="leak"></div></div>
 
       <div class="ov clip" id="g6" data-start="{round(T_["dm_in"] - 0.05, 2)}" data-duration="{round(DURATION - T_["dm_in"] + 0.05, 2)}" data-track-index="3">
@@ -348,15 +370,35 @@ html = f"""<!doctype html>
       }}
 
       // Hidden until their own entrance.
-      tl.set(["#hookL", "#hookR", "#rsTtl", "#soTtl", ".row", "#dm", "#behind .la", "#behind .lb", "#cal"], {{ opacity: 0 }}, 0);
+      tl.set(["#hookL", "#hookL2", "#hookR", "#hookR2", "#rsTtl", "#soTtl", ".row", "#dm", "#behind .la", "#behind .lb", "#cal"], {{ opacity: 0 }}, 0);
 
       // Opening: each phrase enters whole from a soft blur.
       const phraseIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, y: 34, scale: 0.94, filter: "blur(12px)" }},
         {{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }}, at);
       phraseIn("#hookL", T.hk_a);
-      phraseIn("#hookR", T.hk_b);
-      tl.fromTo("#hookR .royal", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.45, ease: spring, immediateRender: false }}, T.hk_b + 0.35);
-      tl.to(["#hookL", "#hookR"], {{ opacity: 0, y: -24, filter: "blur(12px)", duration: 0.22, ease: "power2.in" }}, T.hk_out);
+      phraseIn("#hookL2", T.hk_a2);
+      // The first beat goes under the wash; the second lands with the side shot (as in the reference).
+      tl.set("#hookA", {{ opacity: 0 }}, T.sd_cut);
+      tl.fromTo(["#hookR", "#hookR2"], {{ opacity: 0, scale: 1.12, filter: "blur(8px)" }},
+        {{ opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.22, stagger: 0.05, ease: "power3.out", immediateRender: false }}, T.sd_cut - 0.02);
+      tl.fromTo("#hookR2 .royal", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.45, ease: spring, immediateRender: false }}, T.sd_cut + 0.3);
+      tl.set("#hookB", {{ opacity: 0 }}, T.sd_back);
+
+      // Side-angle insert: a fake second camera. Mirrored, closer, turned in 3D with a slight dutch tilt, warmer
+      // grade, shallow focus (blurred background, sharp trainer from the cutouts), drifting slowly; hard cut back.
+      const SD = T.sd_back - T.sd_cut;
+      tl.set("#side", {{ scaleX: -1.42, scaleY: 1.42, rotationY: -16, rotation: 2.2, transformPerspective: 1300, x: 30, filter: "contrast(1.12) saturate(1.2) sepia(.12)" }}, T.sd_cut);
+      tl.fromTo("#side", {{ x: 30, rotationY: -16 }}, {{ x: -50, rotationY: -12, duration: SD, ease: "sine.inOut", immediateRender: false }}, T.sd_cut);
+      tl.set("#side", {{ scaleX: 1, scaleY: 1, rotationY: 0, rotation: 0, x: 0, filter: "none" }}, T.sd_back);
+      // Flare: warm blob grows from the bottom-left, then the whole frame washes pink/peach; the cut happens under it,
+      // the wash turns orange and clears from the top-left within ~0.2 s.
+      tl.set(["#wash", "#wash2", "#flareBlob"], {{ opacity: 0 }}, 0);
+      tl.fromTo("#flareBlob", {{ opacity: 0.3, scale: 0.8, x: 0, y: 0 }}, {{ opacity: 1, scale: 1.7, duration: T.sd_cut - T.sd_flare + 0.03, ease: "power1.out", immediateRender: false }}, T.sd_flare);
+      tl.to("#flareBlob", {{ x: -300, y: -900, opacity: 0, duration: 0.3, ease: "power2.out" }}, T.sd_cut + 0.03);
+      tl.fromTo("#wash", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.06, ease: "power2.in", immediateRender: false }}, T.sd_cut - 0.06);
+      tl.to("#wash", {{ opacity: 0, duration: 0.1, ease: "none" }}, T.sd_cut + 0.04);
+      tl.fromTo("#wash2", {{ opacity: 0 }}, {{ opacity: 0.6, duration: 0.08, ease: "none", immediateRender: false }}, T.sd_cut + 0.02);
+      tl.to("#wash2", {{ opacity: 0, duration: 0.18, ease: "power2.out" }}, T.sd_cut + 0.11);
 
       // Captions pop in.
       CAPS.forEach((at, i) => tl.fromTo(`#cap${{i}} .cap-in`, {{ opacity: 0, scale: 0.82, y: 24 }},
@@ -471,7 +513,7 @@ open(OUT, "w").write(html)
 
 # Sound cues, rendered to sfx.wav by tools/sfx.py.
 G = TIMES
-ev = [("whoosh_soft", G["hk_a"]), ("pop", G["hk_b"] + 0.35)]
+ev = [("whoosh_soft", G["hk_a"]), ("whoosh", G["sd_flare"]), ("thump", G["sd_cut"]), ("pop", G["sd_cut"] + 0.3), ("whoosh_soft", G["sd_back"])]
 ev += [("thump", at) for kind, at, *_ in ZOOM if kind in ("snap", "punch")]
 ev += [("whoosh", G["rs_in"] - 0.2), ("thump", G["rs_in"]), ("pop", G["rs_in"] + 0.1)]
 for k in ("rs_1", "rs_2", "rs_3"):

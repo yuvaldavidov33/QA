@@ -17,13 +17,20 @@ voice + SFX only, for adding a song from Instagram's library.
     Hard cut back on "אם" with the approved over-exposed settle.
   - CTA: low-opacity Instagram DM notification with the round profile picture, "שלחו לנו הודעה" (plural, as spoken).
     The last frame holds to 21.0 s so the notification stays readable.
+- Fix 1 (client): opening wording is the full sentence as spoken: "בואו אני אגיד לכם / למה רוב האנשים", then
+  "לא מצליחים / **להתמיד** באימונים".
+- Fix 2 (client): "לא מצליחים להתמיד באימונים" is a side-angle insert copied from the client's reference
+  (`78929e38-….mov` on `main`): warm flare grows from the bottom-left, the frame washes peach, the cut happens under
+  the wash, orange clears in ~0.2 s, the shot drifts slowly, hard cut back to the front at the end of the phrase.
+  Only one camera, so the second angle is faked: mirrored, 1.42× closer, turned 16° in 3D with a 2° tilt, warmer
+  grade, vignette, and shallow focus (background blurred, trainer sharp from cutouts 56-88).
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
 - Music: `tools/music6.py` (the clean low bed approved on reel3). SFX at 0.35.
 
 Rebuild: frames `ffmpeg -i in.mov -vf "scale=1440:2560:flags=lanczos,unsharp=5:5:0.7:5:5:0" -q:v 2 -start_number 1 work/frames/%05d.jpg`,
-`python3 tools/cutout.py work/frames u2net_human_seg.onnx work/cutout 188 238`,
+`python3 tools/cutout.py work/frames u2net_human_seg.onnx work/cutout 188 238` and `... 56 88`,
 `python3 tools/build4.py tools/face.json tools/words.json index.html in.mov 188 238`, `python3 tools/sfx.py sfx.json sfx.wav`,
 `python3 tools/music6.py voice48.wav music.wav 21.0 9.77`, `python3 tools/render.py . work/frames in.mov reel_final.mp4 30`
 (writes `reel_final.mp4` and `reel_no_music.mp4`).
