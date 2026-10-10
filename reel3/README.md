@@ -37,6 +37,8 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   glide in smoothly (no 3D tilt) and the snap zoom on "עכשיו" is gone; SFX volume 0.55 → 0.35; new upbeat music
   `tools/music2.py` (126 BPM four-on-the-floor, offbeat pumping bass, short stabs, rolls + risers into 9.3/12.9/15.9/18.65):
   `python3 tools/music2.py voice48.wav music.wav 22.3 9.3,12.9,15.9,18.65`.
+  Fix 15: client wanted a different song, now `tools/music3.py` (phonk: 140 BPM, cowbell riff, distorted sliding 808,
+  hard kick, half-time snare), same arguments.
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
