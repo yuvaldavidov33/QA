@@ -97,7 +97,7 @@ def esc_words(ws):
         f'<span class="w{" key " + KEY_COLOR.get(w.strip("?"), "") if w.strip("?") in KEYWORDS else ""}">{w}</span>' for w in ws)
 
 
-# The CTA pill and "פה למטה" cover the last two chunks, so their captions are dropped.
+# The DM card and "ונשמור לכם מקום" cover the last two chunks, so their captions are dropped.
 captions = [c for c in captions if c["words"] not in (["שלחו", "לי", "הודעה"], ["ונשמור", "לכם", "מקום"])]
 # The price card shows "199₪", so that caption is dropped too.
 captions = [c for c in captions if c["words"] not in (["של", "199", "ש״ח"], ["יצאתי", "במבצע"], ["לחודש", "הראשון"])]
@@ -114,7 +114,7 @@ cap_html = "\n".join(
 HOOK_BEATS = [("hookA", [(0, 2)]), ("hookB", [(2, 4)])]
 def hook_line(a, b):
     return "<div>" + " ".join(
-        f'<span class="hw{" key" if HOOK[i]["w"] in KEYWORDS else ""}" id="hw{i}">{HOOK[i]["w"]}</span>' for i in range(a, b)) + "</div>"
+        f'<span class="hw{" key" if HOOK[i]["w"] in KEYWORDS else ""}{" royal" if HOOK[i]["w"] == "לשגרה" else ""}" id="hw{i}">{HOOK[i]["w"]}</span>' for i in range(a, b)) + "</div>"
 hook_html = "\n".join(
     f'        <div class="beat" id="{bid}">' + "".join(hook_line(a, b) for a, b in lines) + "</div>" for bid, lines in HOOK_BEATS)
 
@@ -183,6 +183,7 @@ html = f"""<!doctype html>
       .key {{ color: var(--red); }}
       .key.key-green {{ color: var(--green); }}
       .key.key-cyan {{ color: var(--cyan); }}
+      .hw.royal {{ color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.35), 0 6px 30px rgba(0,0,0,.55); }}
 
       /* Captions: 2-4 words, white heavy, centered on the chest. */
       .cap {{ position: absolute; left: 0; right: 0; top: 1240px; display: flex; justify-content: center; direction: rtl; }}
@@ -267,10 +268,21 @@ html = f"""<!doctype html>
                font-weight: 900; font-size: 128px; color: #fff; text-shadow: 0 6px 30px rgba(0,0,0,.6); pointer-events: none; }}
 
       /* G6: call to action. */
-      #g6 {{ top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 10px; }}
-      #g6 .pill {{ background: var(--cyan); text-shadow: 0 2px 8px rgba(0,60,90,.45); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(41,196,246,.45); }}
+      /* CTA as an Instagram DM notification: low-opacity glass, round profile picture. */
+      #g6 {{ top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 14px; direction: rtl; }}
+      #dm {{ display: flex; align-items: center; gap: 26px; width: 900px; padding: 26px 32px; border-radius: 46px;
+             background: rgba(255,255,255,.14); border: 1.5px solid rgba(255,255,255,.28); backdrop-filter: blur(22px) saturate(1.3);
+             box-shadow: 0 20px 60px rgba(0,0,0,.28); }}
+      #dm .av {{ width: 128px; height: 128px; border-radius: 50%; flex: none; padding: 5px;
+                 background: conic-gradient(from 200deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5, #feda75); }}
+      #dm .av img {{ width: 100%; height: 100%; border-radius: 50%; display: block; border: 4px solid rgba(20,20,22,.9); }}
+      #dm .body {{ flex: 1; min-width: 0; text-align: right; }}
+      #dm .top {{ display: flex; align-items: baseline; gap: 14px; font-size: 40px; font-weight: 800; color: #fff; direction: ltr; justify-content: flex-end; }}
+      #dm .top .when {{ font-weight: 500; font-size: 34px; color: rgba(255,255,255,.7); }}
+      #dm .top .ig {{ font-weight: 500; font-size: 34px; color: rgba(255,255,255,.7); }}
+      #dm .msg {{ font-size: 62px; font-weight: 900; color: #fff; margin-top: 6px; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,.25); }}
+      #dm .dot {{ width: 26px; height: 26px; border-radius: 50%; background: #3797f0; flex: none; box-shadow: 0 0 14px rgba(55,151,240,.7); }}
       #g6 .here {{ font-weight: 900; font-size: 62px; text-shadow: 0 4px 18px rgba(0,0,0,.7), 0 0 2px rgba(0,0,0,.9); margin-top: 6px; }}
-      #g6 .arrow {{ font-size: 90px; font-weight: 900; line-height: 1; text-shadow: 0 4px 18px rgba(0,0,0,.6); }}
     </style>
   </head>
   <body>
@@ -339,9 +351,15 @@ html = f"""<!doctype html>
       <div class="clip" id="marq" data-start="{TIMES["mq_in"]}" data-duration="{round(TIMES["sp_in"] + 0.9 - TIMES["mq_in"], 2)}" data-track-index="3">יצאתי במבצע</div>
 
       <div class="ov clip" id="g6" data-start="{TIMES["g6_in"]}" data-duration="{round(DURATION - TIMES["g6_in"], 2)}" data-track-index="3">
-        <div class="pill" id="pill">שלחו לי הודעה</div>
-        <div class="here" id="here">פה למטה</div>
-        <div class="arrow" id="arrow">↓</div>
+        <div id="dm">
+          <div class="av"><img src="avatar.png" alt="" /></div>
+          <div class="body">
+            <div class="top"><span class="when">עכשיו</span><span>idoamarr</span></div>
+            <div class="msg">שלחו לי הודעה</div>
+          </div>
+          <i class="dot"></i>
+        </div>
+        <div class="here" id="here">ונשמור לכם מקום</div>
       </div>
 
 {cap_html}
@@ -397,7 +415,7 @@ html = f"""<!doctype html>
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
       tl.set(["#g1a", "#g1b", "#lines", "#pop span", "#mgCard", "#mgTtl", "#mgLbl", "#mgBand", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
-              "#pill", "#here", "#arrow"], {{ opacity: 0 }}, 0);
+              "#dm", "#here"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
       const cardIn = (sel, at) => tl.fromTo(sel, CARD_FROM, {{ ...CARD_TO, duration: 0.6, ease: "power3.out", immediateRender: false }}, at);
@@ -516,10 +534,11 @@ html = f"""<!doctype html>
       tl.fromTo("#deal", {{ x: -30 }}, {{ x: 30, duration: T.sp_out - T.sp_num, ease: "none", immediateRender: false }}, T.sp_num);
 
       // G6: call to action with a bouncing arrow.
-      cardIn("#pill", T.g6_in);
+      // DM notification drops in from the top of its slot like a real banner, then the line under it.
+      tl.fromTo("#dm", {{ opacity: 0, y: -90, scale: 0.92, filter: "blur(8px)" }},
+        {{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.5, ease: spring, immediateRender: false }}, T.g6_in - 0.05);
+      tl.fromTo("#dm .dot", {{ scale: 0 }}, {{ scale: 1, duration: 0.3, ease: "back.out(3)", immediateRender: false }}, T.g6_in + 0.35);
       tl.fromTo("#here", {{ opacity: 0, y: 20 }}, {{ opacity: 1, y: 0, duration: 0.25, ease: "back.out(2)", immediateRender: false }}, T.g6_here);
-      tl.fromTo("#arrow", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.2, immediateRender: false }}, T.g6_here + 0.15);
-      tl.fromTo("#arrow", {{ y: -10 }}, {{ y: 26, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }}, T.g6_here + 0.15);
 
       window.__timelines = window.__timelines || {{}};
       window.__timelines["main"] = tl;
@@ -544,7 +563,7 @@ events += [("tick", G[k]) for k in ("ln_w1", "ln_w2", "ln_b")] + [("scratch", G[
 events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_soft", G["mq_in"]), ("whoosh", G["sp_in"])]
 events += [("tick", G["sp_num"] + i * 0.07) for i in range(4)] + [("thump", G["sp_num"] + 0.25)]
 events += [("pop", G["sp_sub"]), ("thump", G["sp_out"])]
-events += [("whoosh", G["g6_in"]), ("pop", G["g6_here"])]
+events += [("whoosh_soft", G["g6_in"] - 0.05), ("ding", G["g6_in"] + 0.3), ("pop", G["g6_here"])]
 json.dump({"duration": DURATION, "events": [[n, round(a, 3)] for n, a in sorted(events, key=lambda e: e[1])]},
           open(os.path.join(os.path.dirname(OUT), "sfx.json"), "w"))
 print("wrote", OUT, len(captions), "captions")

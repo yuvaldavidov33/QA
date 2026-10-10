@@ -18,8 +18,9 @@ a = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
 db = 20 * np.log10(np.array([np.sqrt(np.mean(a[i:i + 320] ** 2)) for i in range(0, len(a) - 320, 160)]) + 1e-6)
 
 SEGS = [
-    (0.22, 1.98, "החגים נגמרו חוזרים"),
-    (2.22, 3.97, "לשגרה וזה הזמן לחזור גם לאימונים"),
+    (0.22, 1.04, "החגים נגמרו"),
+    (1.20, 1.98, "חוזרים לשגרה"),
+    (2.22, 3.97, "וזה הזמן לחזור גם לאימונים"),
     (4.13, 6.32, "אם כבר הרבה זמן אתם אומרים לעצמכם שהגיע הזמן"),
     (6.45, 7.21, "להתחיל להתאמן"),
     (7.37, 8.36, "עכשיו זה סיבה טובה להתחיל"),
@@ -38,7 +39,7 @@ SEGS = [
 # Spoken length in letters for words written as digits or abbreviations.
 SPOKEN = {"6": 4, "199": 12, "ש״ח": 5}
 # Hand anchors (word, nth occurrence) -> start time, from the window transcriptions.
-ANCHOR = {("199", 1): 16.62, ("ש״ח", 1): 17.30, ("לחודש", 1): 17.72}
+ANCHOR = {("לשגרה", 1): 1.60, ("199", 1): 16.62, ("ש״ח", 1): 17.30, ("לחודש", 1): 17.72}
 
 out, seen = [], {}
 for s, e, txt in SEGS:

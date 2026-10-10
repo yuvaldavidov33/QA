@@ -25,6 +25,9 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   streams across on a red glow, a red band types "עד 6 מתאמנים באימון" with a cursor, the band tips into a 3D
   "תכנית אישית" card with two filling rings (dumbbell, group) and "לכל מתאמן", light-leak flash back to the video.
   It replaces the small-groups and plan cards.
+- Fix 10 (client): hook word "לשגרה" re-timed to 1.60 s (was 0.6 s late) and colored royal blue; CTA is now a
+  low-opacity Instagram DM notification with the client's round profile picture (`avatar.png`, cropped from their
+  profile screenshot), "שלחו לי הודעה", and "ונשמור לכם מקום" under it (replaces the pill, "פה למטה" and arrow).
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
