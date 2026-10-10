@@ -17,7 +17,8 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   letter by letter with "לחודש הראשון" under it, slow drift, hard cut back on "רוצים".
 - Fix 5 (client): "מלווה אתכם לאורך כל הדרך" copies the client's third reference (`32372936-….mp4` on `main`):
   hard cut to a dark grid page with one long glowing line, a red dot running along it, words resolving from grey
-  blur above it, "כל הדרך" glitching in red; hard cut back on "לכבוד".
+  blur above it, "כל הדרך" glitching in red; the line is alive (waves, tilts, crackling edge, breathing glow,
+  a bright pulse riding with the dot); hard cut back on "לכבוד".
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 

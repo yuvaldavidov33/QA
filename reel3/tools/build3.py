@@ -210,6 +210,8 @@ html = f"""<!doctype html>
         background-size: 112px 112px; }}
       #lines .beam {{ position: absolute; left: -40px; right: -40px; top: 1038px; height: 20px; border-radius: 10px; background: #fff;
         box-shadow: 0 0 10px #fff, 0 0 34px rgba(255,255,255,.7), 0 0 90px rgba(255,255,255,.35); filter: url(#rough); transform-origin: 0 50%; }}
+      #lines .shine {{ position: absolute; top: -10px; bottom: -10px; left: 0; width: 360px; margin-left: -180px; border-radius: 20px;
+        background: radial-gradient(closest-side, rgba(255,255,255,1), rgba(255,255,255,0)); filter: blur(4px); }}
       #lines .dot {{ position: absolute; top: 1048px; left: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
         background: radial-gradient(circle at 40% 40%, #ff6b6b, #ff2a2a 55%, #c40d0d); box-shadow: 0 0 24px #ff3030, 0 0 70px rgba(255,40,40,.75); }}
       #lines .txt {{ position: absolute; left: 0; right: 0; bottom: 915px; text-align: center; white-space: nowrap; text-shadow: 0 6px 30px rgba(0,0,0,.5); }}
@@ -288,14 +290,14 @@ html = f"""<!doctype html>
       </div>
 
       <div class="clip" id="lines" data-start="{TIMES["ln_in"]}" data-duration="{round(TIMES["tb_in"] - TIMES["ln_in"], 2)}" data-track-index="3">
-        <svg width="0" height="0" style="position:absolute"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.9" numOctaves="2" seed="4"/>
-          <feDisplacementMap in="SourceGraphic" scale="9"/></filter></svg>
+        <svg width="0" height="0" style="position:absolute"><filter id="rough"><feTurbulence id="roughNoise" type="fractalNoise" baseFrequency="0.012 0.9" numOctaves="2" seed="4"/>
+          <feDisplacementMap id="roughDisp" in="SourceGraphic" scale="9"/></filter></svg>
         <div class="grid"></div>
         <div class="txt">
           <div class="l1"><span class="w" id="lw1">מלווה</span> <span class="w" id="lw2">אתכם</span></div>
           <div class="l2"><span class="w" id="lw3">לאורך</span> <span class="w red" id="lw4">כל הדרך</span></div>
         </div>
-        <div class="beam"></div>
+        <div class="beam"><i class="shine"></i></div>
         <div class="dot"></div>
       </div>
 
@@ -399,6 +401,25 @@ html = f"""<!doctype html>
       tl.fromTo("#lines .grid", {{ scale: 1.0 }}, {{ scale: 1.06, duration: T.tb_in - T.ln_in, ease: "none", immediateRender: false }}, T.ln_in);
       tl.fromTo("#lines .beam", {{ scaleX: 0.15, opacity: 0.4 }}, {{ scaleX: 1, opacity: 1, duration: 0.22, ease: "power3.out", immediateRender: false }}, T.ln_in);
       tl.fromTo("#lines .dot", {{ x: -80 }}, {{ x: 1160, duration: T.tb_in - T.ln_in - 0.05, ease: "sine.inOut", immediateRender: false }}, T.ln_in);
+      // The line lives on its own: its rough edge crackles, it waves gently, the glow breathes,
+      // and a bright pulse rides along it with the red dot.
+      const beamEl = document.querySelector("#lines .beam"), noise = document.querySelector("#roughNoise"),
+            disp = document.querySelector("#roughDisp"), shine = document.querySelector("#lines .shine");
+      const live = {{ k: 0 }};
+      const LN_DUR = T.tb_in - T.ln_in;
+      tl.fromTo(live, {{ k: 0 }}, {{ k: 1, duration: LN_DUR, ease: "none", immediateRender: false, onUpdate: () => {{
+        const s = live.k * LN_DUR;
+        noise.setAttribute("seed", String(4 + Math.floor(s * 18)));
+        noise.setAttribute("baseFrequency", `${{(0.010 + 0.004 * Math.sin(s * 5.3)).toFixed(4)}} 0.9`);
+        disp.setAttribute("scale", String((11 + 8 * Math.sin(s * 9.1)).toFixed(2)));
+        const glow = 0.75 + 0.25 * Math.sin(s * 11);
+        beamEl.style.boxShadow = `0 0 ${{10 + 6 * glow}}px #fff, 0 0 ${{30 + 14 * glow}}px rgba(255,255,255,${{0.55 + 0.25 * glow}}), 0 0 ${{80 + 30 * glow}}px rgba(255,255,255,${{0.25 + 0.15 * glow}})`;
+        beamEl.style.translate = `0 ${{(16 * Math.sin(s * 3.4)).toFixed(2)}}px`;
+        beamEl.style.rotate = `${{(1.1 * Math.sin(s * 2.1)).toFixed(3)}}deg`;
+        shine.style.left = `${{(-10 + 125 * (s / LN_DUR)).toFixed(2)}}%`;
+      }} }}, T.ln_in);
+      tl.fromTo("#lines .dot", {{ y: 0 }}, {{ y: 0, duration: LN_DUR, ease: "none", immediateRender: false,
+        onUpdate: function () {{ const s = this.progress() * LN_DUR; gsap.set("#lines .dot", {{ y: 16 * Math.sin(s * 3.4) + (s / LN_DUR * 1160 - 540) * Math.tan(1.1 * Math.sin(s * 2.1) * Math.PI / 180) }}); }} }}, T.ln_in);
       const wordIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, color: "#8a8a8a", filter: "blur(10px)", y: 10 }},
         {{ opacity: 1, color: "#ffffff", filter: "blur(0px)", y: 0, duration: 0.3, ease: "power2.out", immediateRender: false }}, at);
       wordIn("#lw1", T.ln_w1); wordIn("#lw2", T.ln_w2); wordIn("#lw3", T.ln_b);
