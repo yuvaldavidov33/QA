@@ -63,10 +63,10 @@ ZOOM = [
     # "עכשיו": the second snap.
     ("snap", t("עכשיו"), 1.30, 0.2),
     ("back", t("סיבה"), 1.00, t("אימוני") - t("סיבה")),
-    ("push", t("אימוני"), 1.08, t("6") - t("אימוני")),
-    ("punch", t("6"), 1.22, 0.45),
-    ("ease", t("אני"), 1.00, 0.45),
-    ("push", t("אני") + 0.45, 1.08, t("מלווה") - t("אני") - 0.45),
+    ("push", t("אימוני"), 1.10, t("בקבוצות") - t("אימוני")),
+    # (8.6-12.45 the motion-graphics page covers the video)
+    ("set", t("אישית") + 0.42, 1.00, 0),
+    ("push", t("אישית") + 0.42, 1.05, t("מלווה") - t("אישית") - 0.42),
     ("punch", t("מלווה"), 1.20, 0.45),
     ("back", t("לאורך"), 1.00, t("לכבוד") - t("לאורך")),
     ("push", t("לכבוד"), 1.10, t("במבצע") - t("לכבוד")),
@@ -75,8 +75,12 @@ ZOOM = [
 
 TIMES = {
     "g1_in": t("אומרים") - 0.05, "g1_strike": t("לעצמכם") + 0.1, "g1_b": t("עכשיו") - 0.05, "g1_out": after("להתחיל", 2) + 0.1,
-    "g2_in": t("אימוני"), "g2_tag": t("בקבוצות"), "g2_lit": t("עד"), "g2_num": t("6"), "g2_out": t("אני") - 0.05,
-    "g3_in": t("בונה") - 0.05, "g3_check": t("תכנית"), "g3_out": t("מלווה") - 0.05,
+    # Small groups + personal plan (client's motion-graphics reference): big word pops on the video, zoom-blur
+    # through to a dark page, a glowing marquee line, a red band with typed text, the band flips into a 3D card
+    # with two filling rings, light-leak flash back to the video.
+    "mg_word": t("אימוני") - 0.06, "mg_in": t("בקבוצות") - 0.08, "mg_band": t("עד") - 0.14, "mg_type0": t("עד"),
+    "mg_type1": t("באימון") + 0.28, "mg_card": t("אני") - 0.06, "mg_lbl": t("לכל"), "mg_title": t("תכנית"),
+    "mg_out": t("אישית") + 0.42,
     # "ומלווה אתכם לאורך כל הדרך" (client's third reference): hard cut to a grid page with a long glowing line,
     # a red dot travelling along it, text resolving above; hard cut back on "לכבוד".
     "ln_in": t("מלווה") - 0.03, "ln_w1": t("מלווה"), "ln_w2": t("אתכם"), "ln_b": t("לאורך"), "ln_red": t("כל"),
@@ -99,6 +103,8 @@ captions = [c for c in captions if c["words"] not in (["שלחו", "לי", "הו
 captions = [c for c in captions if c["words"] not in (["של", "199", "ש״ח"], ["יצאתי", "במבצע"], ["לחודש", "הראשון"])]
 # The big text behind the trainer already says "לכבוד החזרה / לשגרה" (client: no duplicate at the bottom).
 captions = [c for c in captions if c["words"] not in (["לכבוד", "החזרה"], ["לשגרה"], ["מלווה", "אתכם"], ["לאורך", "כל", "הדרך"])]
+# 8.6-12.45 is the motion-graphics sequence; its own text replaces the captions.
+captions = [c for c in captions if not (TIMES["mg_word"] - 0.01 <= c["start"] < TIMES["mg_out"])]
 cap_html = "\n".join(
     f'      <div class="cap clip" id="cap{i}" data-start="{c["start"]}" data-duration="{round(c["end"] - c["start"], 2)}"'
     f' data-track-index="2"><div class="cap-in">{esc_words(c["words"])}</div></div>'
@@ -123,6 +129,18 @@ STARS = "".join(
     for sz in (_rng.choice([2, 3, 3, 3, 4, 5]) for _ in range(230)))
 STREAKS = "".join(
     f'<i class="streak" style="top:{_rng.uniform(20, 80):.1f}%;width:{_rng.randint(260, 620)}px;left:-700px"></i>' for _ in range(7))
+
+
+RING = ('<svg viewBox="0 0 330 330"><circle cx="165" cy="165" r="150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="16"/>'
+        '<circle id="{id}" cx="165" cy="165" r="150" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"'
+        ' transform="rotate(-90 165 165)" stroke-dasharray="942.5" stroke-dashoffset="942.5"/>'
+        '<g transform="translate(165 165)" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">{icon}</g></svg>')
+ICON_DUMBBELL = ('<line x1="-48" y1="0" x2="48" y2="0"/><rect x="-80" y="-38" width="22" height="76" rx="6"/>'
+                 '<rect x="58" y="-38" width="22" height="76" rx="6"/><line x1="-96" y1="-18" x2="-96" y2="18"/><line x1="96" y1="-18" x2="96" y2="18"/>')
+ICON_PEOPLE = ('<circle cx="0" cy="-30" r="24"/><path d="M -46 52 C -46 14, 46 14, 46 52"/>'
+               '<circle cx="-62" cy="-14" r="17"/><path d="M -100 52 C -100 26, -78 18, -62 18"/>'
+               '<circle cx="62" cy="-14" r="17"/><path d="M 100 52 C 100 26, 78 18, 62 18"/>')
+POP = "&nbsp;".join("".join(f"<span>{ch}</span>" for ch in w) for w in ["אימוני", "כוח"])
 
 
 def letters(word_list, cls):
@@ -185,22 +203,34 @@ html = f"""<!doctype html>
       #g1 .strike {{ position: absolute; right: 120px; left: 30px; top: 50%; height: 7px; background: var(--red); border-radius: 4px; transform-origin: right center; }}
       #g1b {{ font-size: 64px; font-weight: 900; border-color: rgba(57,228,107,.7); }}
 
-      /* G2: strength training in small groups, up to 6. */
-      #g2 {{ top: 210px; bottom: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }}
-      #g2 .tag {{ font-size: 50px; padding: 16px 30px; }}
-      #people {{ display: flex; gap: 16px; background: var(--glass); border: 2px solid var(--line); border-radius: 36px; padding: 24px 34px; backdrop-filter: blur(14px); align-items: center; }}
-      .person {{ width: 72px; height: 72px; fill: rgba(255,255,255,.28); }}
-      #people .num {{ font-family: "Karantina", sans-serif; font-weight: 700; font-size: 104px; line-height: .8; color: var(--green); margin-inline-start: 12px; white-space: nowrap; }}
-
-      /* G3: personal plan, rows check off. */
-      #g3 {{ top: 230px; bottom: auto; display: flex; justify-content: center; }}
-      #plan {{ flex-direction: column; align-items: stretch; gap: 20px; padding: 28px 40px 34px; min-width: 560px; }}
-      #plan .title {{ display: flex; align-items: center; gap: 16px; font-size: 56px; font-weight: 900; }}
-      #plan .title .clip-ico {{ font-size: 50px; }}
-      #plan .row {{ display: flex; align-items: center; gap: 20px; }}
-      #plan .tick {{ width: 58px; height: 58px; border-radius: 16px; border: 3px solid rgba(255,255,255,.35); position: relative; flex: none; }}
-      #plan .tick b {{ position: absolute; inset: -3px; border-radius: 16px; background: var(--green); color: #0b1a10; display: grid; place-items: center; font-size: 38px; font-weight: 900; opacity: 0; }}
-      #plan .bar {{ height: 18px; border-radius: 9px; background: rgba(255,255,255,.3); display: block; }}
+      /* Motion-graphics page (client reference). */
+      #pop {{ position: absolute; left: 0; right: 0; top: 1010px; text-align: center; direction: rtl; font-family: "Heebo", sans-serif;
+              font-weight: 900; font-size: 168px; line-height: 1; color: #fff; white-space: nowrap; text-shadow: 0 10px 40px rgba(0,0,0,.45); }}
+      #pop span {{ display: inline-block; }}
+      #mg {{ position: absolute; inset: 0; overflow: hidden; direction: rtl; font-family: "Heebo", sans-serif; color: #fff;
+             background: radial-gradient(120% 80% at 45% 40%, #3a3a3d 0%, #2a2a2c 55%, #1b1b1d 100%); }}
+      #mgIn {{ position: absolute; inset: 0; }}
+      #mg .glow {{ position: absolute; right: -260px; bottom: -200px; width: 900px; height: 760px; border-radius: 50%;
+                   background: radial-gradient(closest-side, rgba(255,40,50,.42), rgba(255,40,50,0)); filter: blur(30px); }}
+      #mg .glow2 {{ position: absolute; left: -200px; right: -200px; top: 900px; height: 240px; border-radius: 50%;
+                    background: radial-gradient(closest-side, rgba(255,30,40,.7), rgba(255,30,40,0)); filter: blur(26px); }}
+      #mgMarq {{ position: absolute; top: 905px; left: 0; white-space: nowrap; font-weight: 900; font-size: 118px; line-height: 1; }}
+      #mgBand {{ position: absolute; left: -60px; right: -60px; top: 870px; height: 190px;
+                 background: linear-gradient(180deg, #a0141c 0%, #7c0d14 55%, #5e0a10 100%); box-shadow: 0 0 80px rgba(255,30,40,.35);
+                 transform-origin: 50% 50%; }}
+      #mgType {{ position: absolute; right: 120px; top: 52px; font-weight: 900; font-size: 86px; line-height: 1; white-space: nowrap; }}
+      #mgCursor {{ display: inline-block; width: 6px; height: 88px; background: #fff; margin-right: 8px; vertical-align: -12px; }}
+      #mgCard {{ position: absolute; left: 90px; right: 90px; top: 640px; height: 620px; border-radius: 44px;
+                 background: linear-gradient(160deg, #b51720 0%, #8d1018 50%, #650b11 100%);
+                 box-shadow: 0 40px 120px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.18); transform-origin: 50% 50%; }}
+      #mgCard .ttl {{ position: absolute; left: 0; right: 0; top: 46px; text-align: center; font-weight: 900; font-size: 92px; }}
+      #mgCard .ring {{ position: absolute; top: 200px; width: 260px; height: 260px; }}
+      #mgCard .ring.r1 {{ right: 70px; }}
+      #mgCard .ring.r2 {{ left: 70px; }}
+      #mgCard .ring svg {{ width: 100%; height: 100%; overflow: visible; }}
+      #mgCard .lbl {{ position: absolute; left: 0; right: 0; top: 300px; text-align: center; font-weight: 800; font-size: 46px; }}
+      #leak {{ position: absolute; inset: -10%; pointer-events: none; mix-blend-mode: screen;
+               background: radial-gradient(60% 50% at 50% 55%, rgba(255,255,255,.95), rgba(255,170,175,.75) 45%, rgba(255,90,100,.25) 75%, rgba(255,60,70,0)); }}
 
       /* Line page: dark grid, one long glowing white line, red dot running along it, text above. */
       #lines {{ position: absolute; inset: 0; overflow: hidden; direction: rtl; font-family: "Heebo", sans-serif; color: #fff;
@@ -260,6 +290,7 @@ html = f"""<!doctype html>
             <div class="top">{TB_A}</div>
             <div class="big">{TB_B}</div>
           </div>
+          <div id="pop" class="clip" data-start="{TIMES["mg_word"]}" data-duration="{round(TIMES["mg_in"] + 0.35 - TIMES["mg_word"], 2)}" data-track-index="1">{POP}</div>
           <img id="cutout" class="clip" alt="" data-cut-first="{CUT_A}" data-cut-last="{CUT_B}"
                data-start="{round((CUT_A - 1) / face["fps"], 3)}" data-duration="{round((CUT_B - CUT_A + 1) / face["fps"], 3)}" data-track-index="1" />
         </div>
@@ -277,18 +308,21 @@ html = f"""<!doctype html>
         <div class="card" id="g1b"><span class="badge v">✓</span><span>עכשיו!</span></div>
       </div>
 
-      <div class="ov clip" id="g2" data-start="{TIMES["g2_in"]}" data-duration="{round(TIMES["g2_out"] - TIMES["g2_in"], 2)}" data-track-index="3">
-        <div class="card tag" id="g2t">💪 אימוני כוח בקבוצות קטנות</div>
-        <div id="people">{"".join(PERSON for _ in range(6))}<span class="num">עד 6</span></div>
-      </div>
-
-      <div class="ov clip" id="g3" data-start="{TIMES["g3_in"]}" data-duration="{round(TIMES["g3_out"] - TIMES["g3_in"], 2)}" data-track-index="3">
-        <div class="card" id="plan">
-          <div class="title"><span class="clip-ico">📋</span><span>תכנית אישית</span></div>
-          {ROW.format(w=330)}{ROW.format(w=260)}{ROW.format(w=300)}
+      <div class="clip" id="mg" data-start="{TIMES["mg_in"]}" data-duration="{round(TIMES["mg_out"] - TIMES["mg_in"], 2)}" data-track-index="3">
+        <div id="mgIn">
+          <div class="glow"></div>
+          <div class="glow2" id="mgGlow2"></div>
+          <div id="mgMarq">בקבוצות קטנות</div>
+          <div id="mgBand"><div id="mgType"><span id="mgTypeTxt"></span><i id="mgCursor"></i></div></div>
+          <div id="mgCard">
+            <div class="ttl" id="mgTtl">תכנית אישית</div>
+            <div class="ring r1">{RING.format(id="ring1", icon=ICON_DUMBBELL)}</div>
+            <div class="ring r2">{RING.format(id="ring2", icon=ICON_PEOPLE)}</div>
+            <div class="lbl" id="mgLbl">לכל מתאמן</div>
+          </div>
         </div>
       </div>
-
+      <div class="clip" id="leakClip" data-start="{round(TIMES["mg_out"] - 0.2, 2)}" data-duration="0.5" data-track-index="4"><div id="leak"></div></div>
       <div class="clip" id="lines" data-start="{TIMES["ln_in"]}" data-duration="{round(TIMES["tb_in"] - TIMES["ln_in"], 2)}" data-track-index="3">
         <svg width="0" height="0" style="position:absolute"><filter id="rough"><feTurbulence id="roughNoise" type="fractalNoise" baseFrequency="0.012 0.9" numOctaves="2" seed="4"/>
           <feDisplacementMap id="roughDisp" in="SourceGraphic" scale="9"/></filter></svg>
@@ -361,7 +395,7 @@ html = f"""<!doctype html>
 
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
-      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
+      tl.set(["#g1a", "#g1b", "#pop span", "#mgCard", "#mgTtl", "#mgLbl", "#mgBand", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
               "#pill", "#here", "#arrow"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
@@ -379,23 +413,42 @@ html = f"""<!doctype html>
       tl.fromTo("#g1b .badge", {{ scale: 0.4 }}, {{ scale: 1, duration: 0.4, ease: spring, immediateRender: false }}, T.g1_b + 0.3);
       cardOut("#g1 .card", T.g1_out - 0.35);
 
-      // G2: the tag, then six people light up one by one and "עד 6" lands in green.
-      cardIn("#g2t", T.g2_in);
-      cardIn("#people", T.g2_tag);
-      tl.fromTo("#people .person", {{ fill: "rgba(255,255,255,0.28)", scale: 1 }},
-        {{ fill: "#39e46b", scale: 1.12, duration: 0.16, stagger: 0.08, ease: "power2.out", immediateRender: false }}, T.g2_lit);
-      popIn("#people .num", T.g2_num);
-      cardOut(["#g2t", "#people"], T.g2_out - 0.35);
-
-      // G3: the plan card; its three rows check off one after another.
-      cardIn("#plan", T.g3_in);
-      [0, 1, 2].forEach((i) => {{
-        const at = T.g3_check + i * 0.2;
-        tl.fromTo(`#plan .row:nth-of-type(${{i + 2}}) .tick b`, {{ opacity: 0, scale: 0.4 }},
-          {{ opacity: 1, scale: 1, duration: 0.35, ease: spring, immediateRender: false }}, at);
-        tl.to(`#plan .row:nth-of-type(${{i + 2}}) .bar`, {{ backgroundColor: "rgba(57,228,107,.75)", duration: 0.2 }}, at + 0.05);
-      }});
-      cardOut("#plan", T.g3_out - 0.35);
+      // Motion-graphics sequence (client reference) on "אימוני כוח בקבוצות קטנות עד 6 ... תכנית אישית".
+      // A) "אימוני כוח" pops letter by letter on the video, tracking closing in.
+      tl.fromTo("#pop span", {{ opacity: 0, scale: 0.4, y: 40 }},
+        {{ opacity: 1, scale: 1, y: 0, duration: 0.22, stagger: 0.035, ease: "back.out(2.4)", immediateRender: false }}, T.mg_word);
+      tl.fromTo("#pop", {{ letterSpacing: "34px" }}, {{ letterSpacing: "0px", duration: 0.5, ease: "power3.out", immediateRender: false }}, T.mg_word);
+      // B) zoom-blur push through the shot into the dark page.
+      tl.fromTo("#cam", {{ scale: 1, filter: "blur(0px)" }}, {{ scale: 2.6, filter: "blur(26px)", duration: 0.3, ease: "power2.in", immediateRender: false }}, T.mg_in - 0.2);
+      tl.set("#cam", {{ scale: 1, filter: "blur(0px)" }}, T.mg_out);
+      tl.fromTo("#mg", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.14, ease: "power1.in", immediateRender: false }}, T.mg_in);
+      tl.fromTo("#mgIn", {{ scale: 1.0 }}, {{ scale: 1.08, duration: T.mg_out - T.mg_in, ease: "none", immediateRender: false }}, T.mg_in);
+      // C) "בקבוצות קטנות" streams across on a red glow, red-hot at first, cooling to white.
+      tl.fromTo("#mgMarq", {{ x: -1150, color: "#ff3b45", textShadow: "0 0 30px rgba(255,40,50,.9)", filter: "blur(8px)" }},
+        {{ x: 760, color: "#ffffff", textShadow: "0 0 18px rgba(255,255,255,.25)", filter: "blur(0px)", duration: T.mg_band - T.mg_in + 0.25,
+           ease: "power1.inOut", immediateRender: false }}, T.mg_in + 0.02);
+      tl.fromTo("#mgGlow2", {{ opacity: 0.9, scaleX: 0.6 }}, {{ opacity: 0.25, scaleX: 1.3, duration: T.mg_band - T.mg_in, ease: "none", immediateRender: false }}, T.mg_in);
+      tl.to("#mgMarq", {{ opacity: 0, duration: 0.15 }}, T.mg_band + 0.1);
+      // D) the red band opens and "עד 6 מתאמנים באימון" is typed with a cursor.
+      tl.fromTo("#mgBand", {{ scaleY: 0, opacity: 0 }}, {{ scaleY: 1, opacity: 1, duration: 0.25, ease: "power3.out", immediateRender: false }}, T.mg_band);
+      const TYPE = "עד 6 מתאמנים באימון", typ = {{ n: 0 }};
+      tl.fromTo(typ, {{ n: 0 }}, {{ n: TYPE.length, duration: T.mg_type1 - T.mg_type0, ease: "none", immediateRender: false,
+        onUpdate: () => {{ document.querySelector("#mgTypeTxt").textContent = TYPE.slice(0, Math.round(typ.n)); }} }}, T.mg_type0);
+      tl.set("#mgTypeTxt", {{ textContent: "" }}, T.mg_band);
+      [0, 1, 2, 3, 4, 5, 6].forEach((k) => tl.set("#mgCursor", {{ opacity: k % 2 ? 0 : 1 }}, T.mg_type1 + k * 0.12));
+      // E) the band tips over in 3D and becomes the plan card; the rings fill.
+      tl.to("#mgBand", {{ rotationX: 70, rotationZ: -6, y: 120, opacity: 0, transformPerspective: 900, duration: 0.3, ease: "power2.in" }}, T.mg_card);
+      tl.fromTo("#mgCard", {{ opacity: 0, rotationX: 62, rotationY: -28, rotationZ: -9, y: 220, scale: 0.8, transformPerspective: 1100 }},
+        {{ opacity: 1, rotationX: 14, rotationY: -16, rotationZ: -3, y: 0, scale: 1, transformPerspective: 1100, duration: 0.5, ease: "power3.out",
+           immediateRender: false }}, T.mg_card + 0.12);
+      tl.to("#mgCard", {{ rotationX: 6, rotationY: 8, rotationZ: 2, duration: T.mg_out - T.mg_card - 0.62, ease: "sine.inOut" }}, T.mg_card + 0.62);
+      tl.fromTo("#ring1", {{ attr: {{ "stroke-dashoffset": 942.5 }} }}, {{ attr: {{ "stroke-dashoffset": 942.5 * 0.18 }}, duration: 0.9, ease: "power2.out", immediateRender: false }}, T.mg_card + 0.35);
+      tl.fromTo("#ring2", {{ attr: {{ "stroke-dashoffset": 942.5 }} }}, {{ attr: {{ "stroke-dashoffset": 942.5 * 0.32 }}, duration: 0.9, ease: "power2.out", immediateRender: false }}, T.mg_card + 0.45);
+      tl.fromTo("#mgLbl", {{ opacity: 0, filter: "blur(10px)", scale: 0.8 }}, {{ opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.25, ease: "power2.out", immediateRender: false }}, T.mg_lbl);
+      tl.fromTo("#mgTtl", {{ opacity: 0, y: -30, filter: "blur(12px)" }}, {{ opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false }}, T.mg_title - 0.05);
+      // F) light-leak flash back to the video.
+      tl.fromTo("#leak", {{ opacity: 0, scale: 0.8 }}, {{ opacity: 1, scale: 1.15, duration: 0.2, ease: "power2.in", immediateRender: false }}, T.mg_out - 0.2);
+      tl.to("#leak", {{ opacity: 0, scale: 1.4, duration: 0.3, ease: "power2.out" }}, T.mg_out);
 
       // Line page: words resolve from grey blur, the red dot runs the full line, "כל הדרך" glitches in red.
       tl.fromTo("#lines .grid", {{ scale: 1.0 }}, {{ scale: 1.06, duration: T.tb_in - T.ln_in, ease: "none", immediateRender: false }}, T.ln_in);
@@ -478,12 +531,11 @@ events = [("whoosh_soft", t("חוזרים"))]
 events += [("thump", at) for kind, at, *_ in ZOOM if kind in ("snap", "punch")]
 events += [("whoosh", G["g1_in"]), ("scratch", G["g1_strike"]), ("whoosh", G["g1_b"]), ("ding", G["g1_b"] + 0.3)]
 events += [("whoosh_out", G["g1_out"] - 0.35)]
-events += [("whoosh", G["g2_in"]), ("whoosh", G["g2_tag"])]
-events += [("tick", G["g2_lit"] + i * 0.08) for i in range(6)]
-events += [("pop", G["g2_num"]), ("whoosh_out", G["g2_out"] - 0.35)]
-events += [("whoosh", G["g3_in"])]
-events += [("ding", G["g3_check"] + i * 0.2) for i in range(3)]
-events += [("whoosh_out", G["g3_out"] - 0.35), ("thump", G["ln_in"]), ("whoosh_soft", G["ln_in"] + 0.05)]
+events += [("pop", G["mg_word"] + k * 0.07) for k in range(3)] + [("whoosh", G["mg_in"] - 0.2), ("thump", G["mg_in"])]
+events += [("whoosh_soft", G["mg_in"] + 0.05), ("whoosh", G["mg_band"])]
+events += [("tick", G["mg_type0"] + k * (G["mg_type1"] - G["mg_type0"]) / 10) for k in range(10)]
+events += [("whoosh", G["mg_card"]), ("ding", G["mg_card"] + 0.5), ("pop", G["mg_lbl"]), ("pop", G["mg_title"])]
+events += [("whoosh_out", G["mg_out"] - 0.2), ("thump", G["ln_in"]), ("whoosh_soft", G["ln_in"] + 0.05)]
 events += [("tick", G[k]) for k in ("ln_w1", "ln_w2", "ln_b")] + [("scratch", G["ln_red"]), ("pop", G["ln_red"] + 0.28), ("thump", G["tb_in"])]
 events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_soft", G["mq_in"]), ("whoosh", G["sp_in"])]
 events += [("tick", G["sp_num"] + i * 0.07) for i in range(4)] + [("thump", G["sp_num"] + 0.25)]

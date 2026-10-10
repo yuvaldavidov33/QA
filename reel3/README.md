@@ -20,6 +20,11 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   hard cut to a dark grid page with one long glowing line, a red dot running along it, words resolving from grey
   blur above it, "כל הדרך" glitching in red; the line is alive (waves, tilts, crackling edge, breathing glow,
   a bright pulse riding with the dot); hard cut back on "לכבוד".
+- Fix 8 (client): 8.6-12.45 s is a motion-graphics sequence copied from the client's fourth reference
+  (`1b9a93f9-….mp4` on `main`): "אימוני כוח" pops on the video, zoom-blur through to a dark page, "בקבוצות קטנות"
+  streams across on a red glow, a red band types "עד 6 מתאמנים באימון" with a cursor, the band tips into a 3D
+  "תכנית אישית" card with two filling rings (dumbbell, group) and "לכל מתאמן", light-leak flash back to the video.
+  It replaces the small-groups and plan cards.
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
