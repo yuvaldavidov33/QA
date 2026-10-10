@@ -43,6 +43,8 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   muffled FM electric-piano chords Fm9-Dbmaj9-Bbm9-C7 with reverb, long deep 808, clap/snare on 3, triplet hat rolls).
   Fix 17: client disliked it and uploaded a reference (`b3d2041e-….mp4`); measured ~101 BPM, 8th hats with 16th doubles,
   sustained 808 on D1, no melody. Now `tools/music5.py` (original beat in that style), same arguments.
+  Fix 18: client found it harsh; now `tools/music6.py` (90 BPM, clean sine sub, soft kick, snap/rim, quiet dark hats,
+  low-passed, −35 dB RMS). `reel_no_music.mp4` = voice + SFX only, for adding a song from Instagram's library.
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
