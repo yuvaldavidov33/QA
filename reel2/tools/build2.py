@@ -11,6 +11,8 @@ words = json.load(open(sys.argv[2]))
 OUT, VIDEO = sys.argv[3], sys.argv[4]
 DURATION = 18.5
 KEYWORDS = {"מאות", "6", "דואגים", "הודעה", "להתחזק"}
+# Keyword color class; anything not listed is red.
+KEY_COLOR = {"6": "key-green", "דואגים": "key-cyan"}
 
 
 def t(word, nth=1):
@@ -67,7 +69,8 @@ TIMES = {
 
 
 def esc_words(ws):
-    return " ".join(f'<span class="w{" key" if w.strip("?") in KEYWORDS else ""}">{w}</span>' for w in ws)
+    return " ".join(
+        f'<span class="w{" key " + KEY_COLOR.get(w.strip("?"), "") if w.strip("?") in KEYWORDS else ""}">{w}</span>' for w in ws)
 
 
 # The CTA pill already says "שלחי לי הודעה", so that caption is dropped.
@@ -103,7 +106,7 @@ html = f"""<!doctype html>
     <style>
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
       html, body {{ width: 1080px; height: 1920px; overflow: hidden; background: #000; }}
-      :root {{ --red: #ff3340; --green: #39e46b; --glass: rgba(18, 18, 22, 0.62); --line: rgba(255, 255, 255, 0.16); }}
+      :root {{ --red: #ff3340; --green: #39e46b; --cyan: #29c4f6; --glass: rgba(18, 18, 22, 0.62); --line: rgba(255, 255, 255, 0.16); }}
       #cam {{ position: absolute; inset: 0; overflow: hidden; }}
       #frame {{ position: absolute; inset: 0; will-change: transform; }}
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
@@ -115,6 +118,8 @@ html = f"""<!doctype html>
       #hook .beat {{ position: absolute; left: 0; right: 0; top: 0; }}
       #hookB {{ font-size: 150px; }}
       .key {{ color: var(--red); }}
+      .key.key-green {{ color: var(--green); }}
+      .key.key-cyan {{ color: var(--cyan); }}
 
       /* Captions: 2-4 words, white heavy, centered on the chest. */
       .cap {{ position: absolute; left: 0; right: 0; top: 1240px; display: flex; justify-content: center; direction: rtl; }}
@@ -149,7 +154,7 @@ html = f"""<!doctype html>
       #g3 .ok {{ background: var(--green); color: #0b1a10; opacity: 0; }}
 
       #g4 {{ top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 10px; }}
-      #g4 .pill {{ background: var(--red); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(255,51,64,.45); }}
+      #g4 .pill {{ background: var(--cyan); text-shadow: 0 2px 8px rgba(0,60,90,.45); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(41,196,246,.45); }}
       #g4 .here {{ font-weight: 900; font-size: 62px; text-shadow: 0 4px 18px rgba(0,0,0,.7), 0 0 2px rgba(0,0,0,.9); margin-top: 6px; }}
       #g4 .arrow {{ font-size: 90px; font-weight: 900; line-height: 1; text-shadow: 0 4px 18px rgba(0,0,0,.6); }}
     </style>

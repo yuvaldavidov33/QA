@@ -8,7 +8,7 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
-      :root { --red: #ff3340; --green: #39e46b; --glass: rgba(18, 18, 22, 0.62); --line: rgba(255, 255, 255, 0.16); }
+      :root { --red: #ff3340; --green: #39e46b; --cyan: #29c4f6; --glass: rgba(18, 18, 22, 0.62); --line: rgba(255, 255, 255, 0.16); }
       #cam { position: absolute; inset: 0; overflow: hidden; }
       #frame { position: absolute; inset: 0; will-change: transform; }
       .ov { position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }
@@ -20,6 +20,8 @@
       #hook .beat { position: absolute; left: 0; right: 0; top: 0; }
       #hookB { font-size: 150px; }
       .key { color: var(--red); }
+      .key.key-green { color: var(--green); }
+      .key.key-cyan { color: var(--cyan); }
 
       /* Captions: 2-4 words, white heavy, centered on the chest. */
       .cap { position: absolute; left: 0; right: 0; top: 1240px; display: flex; justify-content: center; direction: rtl; }
@@ -54,7 +56,7 @@
       #g3 .ok { background: var(--green); color: #0b1a10; opacity: 0; }
 
       #g4 { top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-      #g4 .pill { background: var(--red); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(255,51,64,.45); }
+      #g4 .pill { background: var(--cyan); text-shadow: 0 2px 8px rgba(0,60,90,.45); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(41,196,246,.45); }
       #g4 .here { font-weight: 900; font-size: 62px; text-shadow: 0 4px 18px rgba(0,0,0,.7), 0 0 2px rgba(0,0,0,.9); margin-top: 6px; }
       #g4 .arrow { font-size: 90px; font-weight: 900; line-height: 1; text-shadow: 0 4px 18px rgba(0,0,0,.6); }
     </style>
@@ -100,11 +102,11 @@
 
       <div class="cap clip" id="cap0" data-start="2.43" data-duration="0.75" data-track-index="2"><div class="cap-in"><span class="w">תקשיבו</span> <span class="w">לי</span></div></div>
       <div class="cap clip" id="cap1" data-start="3.27" data-duration="0.43" data-track-index="2"><div class="cap-in"><span class="w">אצלנו</span> <span class="w">אין</span></div></div>
-      <div class="cap clip" id="cap2" data-start="3.7" data-duration="0.49" data-track-index="2"><div class="cap-in"><span class="w key">מאות</span> <span class="w">אנשים</span></div></div>
+      <div class="cap clip" id="cap2" data-start="3.7" data-duration="0.49" data-track-index="2"><div class="cap-in"><span class="w key ">מאות</span> <span class="w">אנשים</span></div></div>
       <div class="cap clip" id="cap3" data-start="4.19" data-duration="0.35" data-track-index="2"><div class="cap-in"><span class="w">או</span> <span class="w">מכשירים</span></div></div>
       <div class="cap clip" id="cap4" data-start="4.54" data-duration="0.66" data-track-index="2"><div class="cap-in"><span class="w">שאתם</span> <span class="w">לא</span> <span class="w">יודעים</span></div></div>
       <div class="cap clip" id="cap5" data-start="5.2" data-duration="0.84" data-track-index="2"><div class="cap-in"><span class="w">מה</span> <span class="w">לעשות</span> <span class="w">איתם</span></div></div>
-      <div class="cap clip" id="cap6" data-start="6.12" data-duration="0.85" data-track-index="2"><div class="cap-in"><span class="w">עד</span> <span class="w key">6</span> <span class="w">אנשים</span></div></div>
+      <div class="cap clip" id="cap6" data-start="6.12" data-duration="0.85" data-track-index="2"><div class="cap-in"><span class="w">עד</span> <span class="w key key-green">6</span> <span class="w">אנשים</span></div></div>
       <div class="cap clip" id="cap7" data-start="6.97" data-duration="0.64" data-track-index="2"><div class="cap-in"><span class="w">בקבוצה</span></div></div>
       <div class="cap clip" id="cap8" data-start="7.61" data-duration="0.63" data-track-index="2"><div class="cap-in"><span class="w">תכנית</span> <span class="w">אישית</span></div></div>
       <div class="cap clip" id="cap9" data-start="8.24" data-duration="0.86" data-track-index="2"><div class="cap-in"><span class="w">ומאמן</span> <span class="w">שמלווה</span> <span class="w">אתכם</span></div></div>
@@ -116,7 +118,7 @@
       <div class="cap clip" id="cap15" data-start="13.35" data-duration="0.57" data-track-index="2"><div class="cap-in"><span class="w">אתם</span> <span class="w">מגיעים</span></div></div>
       <div class="cap clip" id="cap16" data-start="13.92" data-duration="0.48" data-track-index="2"><div class="cap-in"><span class="w">מקבלים</span> <span class="w">תכנית</span></div></div>
       <div class="cap clip" id="cap17" data-start="14.4" data-duration="0.67" data-track-index="2"><div class="cap-in"><span class="w">שמתאימה</span> <span class="w">לכם</span></div></div>
-      <div class="cap clip" id="cap18" data-start="15.07" data-duration="0.64" data-track-index="2"><div class="cap-in"><span class="w">ואנחנו</span> <span class="w key">דואגים</span></div></div>
+      <div class="cap clip" id="cap18" data-start="15.07" data-duration="0.64" data-track-index="2"><div class="cap-in"><span class="w">ואנחנו</span> <span class="w key key-cyan">דואגים</span></div></div>
       <div class="cap clip" id="cap19" data-start="15.71" data-duration="0.62" data-track-index="2"><div class="cap-in"><span class="w">לכל</span> <span class="w">השאר</span></div></div>
       <div class="cap clip" id="cap20" data-start="16.33" data-duration="0.58" data-track-index="2"><div class="cap-in"><span class="w">רוצה</span> <span class="w">לנסות</span> <span class="w">גם?</span></div></div>
     </div>
