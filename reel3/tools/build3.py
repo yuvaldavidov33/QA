@@ -240,7 +240,6 @@ html = f"""<!doctype html>
         <div id="deal">
           <div class="big"><span>1</span><span>9</span><span>9</span><span class="cur">₪</span></div>
           <div class="s1">לחודש הראשון</div>
-          <div class="s2">מבצע חזרה לשגרה</div>
         </div>
       </div>
       <div id="cam">
@@ -356,7 +355,7 @@ html = f"""<!doctype html>
 
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
-      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#road", "#walker", "#deal .big span", "#deal .s1", "#deal .s2",
+      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#road", "#walker", "#deal .big span", "#deal .s1",
               "#pill", "#here", "#arrow"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
@@ -437,7 +436,6 @@ html = f"""<!doctype html>
       tl.fromTo([...document.querySelectorAll("#deal .big span")].reverse(), {{ opacity: 0, x: -260, filter: "blur(16px)", scaleX: 1.4 }},
         {{ opacity: 1, x: 0, filter: "blur(0px)", scaleX: 1, duration: 0.42, stagger: 0.07, ease: "power3.out", immediateRender: false }}, T.sp_num);
       tl.fromTo("#deal .s1", {{ opacity: 0, x: -60, filter: "blur(14px)" }}, {{ opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }}, T.sp_sub);
-      tl.fromTo("#deal .s2", {{ opacity: 0, x: -60, filter: "blur(14px)" }}, {{ opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }}, T.sp_sub2);
       tl.fromTo("#deal", {{ x: -30 }}, {{ x: 30, duration: T.sp_out - T.sp_num, ease: "none", immediateRender: false }}, T.sp_num);
 
       // G6: call to action with a bouncing arrow.
@@ -469,7 +467,7 @@ events += [("whoosh_out", G["g3_out"] - 0.35), ("whoosh", G["g4_in"]), ("whoosh_
 events += [("whoosh_out", G["g4_out"] - 0.35)]
 events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_soft", G["mq_in"]), ("whoosh", G["sp_in"])]
 events += [("tick", G["sp_num"] + i * 0.07) for i in range(4)] + [("thump", G["sp_num"] + 0.25)]
-events += [("pop", G["sp_sub"]), ("pop", G["sp_sub2"]), ("thump", G["sp_out"])]
+events += [("pop", G["sp_sub"]), ("thump", G["sp_out"])]
 events += [("whoosh", G["g6_in"]), ("pop", G["g6_here"])]
 json.dump({"duration": DURATION, "events": [[n, round(a, 3)] for n, a in sorted(events, key=lambda e: e[1])]},
           open(os.path.join(os.path.dirname(OUT), "sfx.json"), "w"))
