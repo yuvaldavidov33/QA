@@ -257,7 +257,7 @@ html = f"""<!doctype html>
       // from the clip's start until their own pop-in, then pop a second time.
       tl.set(["#g1a", "#g1b", "#people", "#c1", "#c2", "#q1", "#q2", "#q3", "#pill", "#here", "#arrow", "#people .num"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
-      const CARD_TO = {{ opacity: 1, y: 0, rotationX: 8, rotation: -3, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
+      const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
       const cardIn = (sel, at) => tl.fromTo(sel, CARD_FROM, {{ ...CARD_TO, duration: 0.6, ease: "power3.out", immediateRender: false }}, at);
       const cardOut = (sel, at) => tl.to(sel, {{ opacity: 0, y: 260, rotationX: 40, rotation: -6, scale: 0.92, filter: "blur(12px)",
         transformPerspective: 900, duration: 0.35, stagger: 0.04, ease: "power2.in" }}, at);
