@@ -67,7 +67,7 @@ ZOOM = [
     # (8.6-12.45 the motion-graphics page covers the video)
     ("set", t("אישית") + 0.42, 1.00, 0),
     ("push", t("אישית") + 0.42, 1.05, t("מלווה") - t("אישית") - 0.42),
-    ("punch", t("מלווה"), 1.20, 0.45),
+    ("punch", t("מלווה"), 1.06, 0.45),
     ("back", t("לאורך"), 1.00, t("לכבוד") - t("לאורך")),
     ("push", t("לכבוד"), 1.10, t("במבצע") - t("לכבוד")),
     ("push", t("רוצים"), 1.16, DURATION - t("רוצים")),
@@ -233,20 +233,21 @@ html = f"""<!doctype html>
                background: radial-gradient(60% 50% at 50% 55%, rgba(255,255,255,.95), rgba(255,170,175,.75) 45%, rgba(255,90,100,.25) 75%, rgba(255,60,70,0)); }}
 
       /* Line page: dark grid, one long glowing white line, red dot running along it, text above. */
-      #lines {{ position: absolute; inset: 0; overflow: hidden; direction: rtl; font-family: "Heebo", sans-serif; color: #fff;
+      #lines {{ position: absolute; left: 30px; right: 30px; top: 120px; height: 440px; border-radius: 40px; overflow: hidden;
+                border: 2px solid rgba(255,255,255,.14); box-shadow: 0 30px 80px rgba(0,0,0,.5); direction: rtl; font-family: "Heebo", sans-serif; color: #fff;
                 background: radial-gradient(110% 75% at 50% 50%, #2b2c2e 0%, #1c1d1f 70%, #121314 100%); }}
       #lines .grid {{ position: absolute; inset: -60px;
         background-image: linear-gradient(rgba(255,255,255,.055) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.055) 2px, transparent 2px);
         background-size: 112px 112px; }}
-      #lines .beam {{ position: absolute; left: -40px; right: -40px; top: 1038px; height: 20px; border-radius: 10px; background: #fff;
+      #lines .beam {{ position: absolute; left: -40px; right: -40px; top: 284px; height: 18px; border-radius: 10px; background: #fff;
         box-shadow: 0 0 10px #fff, 0 0 34px rgba(255,255,255,.7), 0 0 90px rgba(255,255,255,.35); filter: url(#rough); transform-origin: 0 50%; }}
       #lines .shine {{ position: absolute; top: -10px; bottom: -10px; left: 0; width: 360px; margin-left: -180px; border-radius: 20px;
         background: radial-gradient(closest-side, rgba(255,255,255,1), rgba(255,255,255,0)); filter: blur(4px); }}
-      #lines .dot {{ position: absolute; top: 1048px; left: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+      #lines .dot {{ position: absolute; top: 293px; left: 0; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%;
         background: radial-gradient(circle at 40% 40%, #ff6b6b, #ff2a2a 55%, #c40d0d); box-shadow: 0 0 24px #ff3030, 0 0 70px rgba(255,40,40,.75); }}
-      #lines .txt {{ position: absolute; left: 0; right: 0; bottom: 915px; text-align: center; white-space: nowrap; text-shadow: 0 6px 30px rgba(0,0,0,.5); }}
-      #lines .l1 {{ font-weight: 700; font-size: 92px; line-height: 1.05; }}
-      #lines .l2 {{ font-weight: 900; font-size: 132px; line-height: .95; position: relative; }}
+      #lines .txt {{ position: absolute; left: 0; right: 0; bottom: 186px; text-align: center; white-space: nowrap; text-shadow: 0 6px 30px rgba(0,0,0,.5); }}
+      #lines .l1 {{ font-weight: 700; font-size: 70px; line-height: 1.05; }}
+      #lines .l2 {{ font-weight: 900; font-size: 108px; line-height: .95; position: relative; }}
       #lines .w {{ display: inline-block; }}
       #lines .red {{ color: #ff2b2b; text-shadow: 0 0 22px rgba(255,40,40,.55); }}
 
@@ -395,7 +396,7 @@ html = f"""<!doctype html>
 
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
-      tl.set(["#g1a", "#g1b", "#pop span", "#mgCard", "#mgTtl", "#mgLbl", "#mgBand", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
+      tl.set(["#g1a", "#g1b", "#lines", "#pop span", "#mgCard", "#mgTtl", "#mgLbl", "#mgBand", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
               "#pill", "#here", "#arrow"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
@@ -451,9 +452,12 @@ html = f"""<!doctype html>
       tl.to("#leak", {{ opacity: 0, scale: 1.4, duration: 0.3, ease: "power2.out" }}, T.mg_out);
 
       // Line page: words resolve from grey blur, the red dot runs the full line, "כל הדרך" glitches in red.
+      // Wide card across the top (client: keep the trainer in view), same approved card entrance and exit.
+      cardIn("#lines", T.ln_in);
+      cardOut("#lines", T.tb_in - 0.35);
       tl.fromTo("#lines .grid", {{ scale: 1.0 }}, {{ scale: 1.06, duration: T.tb_in - T.ln_in, ease: "none", immediateRender: false }}, T.ln_in);
       tl.fromTo("#lines .beam", {{ scaleX: 0.15, opacity: 0.4 }}, {{ scaleX: 1, opacity: 1, duration: 0.22, ease: "power3.out", immediateRender: false }}, T.ln_in);
-      tl.fromTo("#lines .dot", {{ x: -80 }}, {{ x: 1160, duration: T.tb_in - T.ln_in - 0.05, ease: "sine.inOut", immediateRender: false }}, T.ln_in);
+      tl.fromTo("#lines .dot", {{ x: -60 }}, {{ x: 1080, duration: T.tb_in - T.ln_in - 0.4, ease: "sine.inOut", immediateRender: false }}, T.ln_in);
       // The line lives on its own: its rough edge crackles, it waves gently, the glow breathes,
       // and a bright pulse rides along it with the red dot.
       const beamEl = document.querySelector("#lines .beam"), noise = document.querySelector("#roughNoise"),
@@ -467,12 +471,12 @@ html = f"""<!doctype html>
         disp.setAttribute("scale", String((11 + 8 * Math.sin(s * 9.1)).toFixed(2)));
         const glow = 0.75 + 0.25 * Math.sin(s * 11);
         beamEl.style.boxShadow = `0 0 ${{10 + 6 * glow}}px #fff, 0 0 ${{30 + 14 * glow}}px rgba(255,255,255,${{0.55 + 0.25 * glow}}), 0 0 ${{80 + 30 * glow}}px rgba(255,255,255,${{0.25 + 0.15 * glow}})`;
-        beamEl.style.translate = `0 ${{(16 * Math.sin(s * 3.4)).toFixed(2)}}px`;
-        beamEl.style.rotate = `${{(1.1 * Math.sin(s * 2.1)).toFixed(3)}}deg`;
+        beamEl.style.translate = `0 ${{(9 * Math.sin(s * 3.4)).toFixed(2)}}px`;
+        beamEl.style.rotate = `${{(0.8 * Math.sin(s * 2.1)).toFixed(3)}}deg`;
         shine.style.left = `${{(-10 + 125 * (s / LN_DUR)).toFixed(2)}}%`;
       }} }}, T.ln_in);
       tl.fromTo("#lines .dot", {{ y: 0 }}, {{ y: 0, duration: LN_DUR, ease: "none", immediateRender: false,
-        onUpdate: function () {{ const s = this.progress() * LN_DUR; gsap.set("#lines .dot", {{ y: 16 * Math.sin(s * 3.4) + (s / LN_DUR * 1160 - 540) * Math.tan(1.1 * Math.sin(s * 2.1) * Math.PI / 180) }}); }} }}, T.ln_in);
+        onUpdate: function () {{ const s = this.progress() * LN_DUR; gsap.set("#lines .dot", {{ y: 9 * Math.sin(s * 3.4) + (Math.min(1, s / (LN_DUR - 0.35)) * 1140 - 510) * Math.tan(0.8 * Math.sin(s * 2.1) * Math.PI / 180) }}); }} }}, T.ln_in);
       const wordIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, color: "#8a8a8a", filter: "blur(10px)", y: 10 }},
         {{ opacity: 1, color: "#ffffff", filter: "blur(0px)", y: 0, duration: 0.3, ease: "power2.out", immediateRender: false }}, at);
       wordIn("#lw1", T.ln_w1); wordIn("#lw2", T.ln_w2); wordIn("#lw3", T.ln_b);
@@ -535,8 +539,8 @@ events += [("pop", G["mg_word"] + k * 0.07) for k in range(3)] + [("whoosh", G["
 events += [("whoosh_soft", G["mg_in"] + 0.05), ("whoosh", G["mg_band"])]
 events += [("tick", G["mg_type0"] + k * (G["mg_type1"] - G["mg_type0"]) / 10) for k in range(10)]
 events += [("whoosh", G["mg_card"]), ("ding", G["mg_card"] + 0.5), ("pop", G["mg_lbl"]), ("pop", G["mg_title"])]
-events += [("whoosh_out", G["mg_out"] - 0.2), ("thump", G["ln_in"]), ("whoosh_soft", G["ln_in"] + 0.05)]
-events += [("tick", G[k]) for k in ("ln_w1", "ln_w2", "ln_b")] + [("scratch", G["ln_red"]), ("pop", G["ln_red"] + 0.28), ("thump", G["tb_in"])]
+events += [("whoosh_out", G["mg_out"] - 0.2), ("whoosh", G["ln_in"]), ("whoosh_soft", G["ln_in"] + 0.15)]
+events += [("tick", G[k]) for k in ("ln_w1", "ln_w2", "ln_b")] + [("scratch", G["ln_red"]), ("pop", G["ln_red"] + 0.28), ("whoosh_out", G["tb_in"] - 0.35)]
 events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_soft", G["mq_in"]), ("whoosh", G["sp_in"])]
 events += [("tick", G["sp_num"] + i * 0.07) for i in range(4)] + [("thump", G["sp_num"] + 0.25)]
 events += [("pop", G["sp_sub"]), ("thump", G["sp_out"])]

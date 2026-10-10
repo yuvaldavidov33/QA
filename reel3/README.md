@@ -17,7 +17,7 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   letter by letter with "לחודש הראשון" under it, slow drift, hard cut back on "רוצים" opening over-exposed
   (+35%, slightly soft) and settling in 0.2 s, matched to the client's 1 s transition clip (same file name, a7c1c6a).
 - Fix 5 (client): "מלווה אתכם לאורך כל הדרך" copies the client's third reference (`32372936-….mp4` on `main`):
-  hard cut to a dark grid page with one long glowing line, a red dot running along it, words resolving from grey
+  (fix 9: now a wide card across the top, the trainer stays in view) a dark grid card with one long glowing line, a red dot running along it, words resolving from grey
   blur above it, "כל הדרך" glitching in red; the line is alive (waves, tilts, crackling edge, breathing glow,
   a bright pulse riding with the dot); hard cut back on "לכבוד".
 - Fix 8 (client): 8.6-12.45 s is a motion-graphics sequence copied from the client's fourth reference
