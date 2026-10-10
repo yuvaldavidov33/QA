@@ -21,9 +21,10 @@ voice + SFX only, for adding a song from Instagram's library.
   "לא מצליחים / **להתמיד** באימונים".
 - Fix 2 (client): a fake side angle on "לא מצליחים להתמיד באימונים" was tried and removed; a real profile shot needs a
   second camera (the client may film one). The wording fix stays.
-- Fix 3 (client): the "אצלנו זה אחרת" page copies the camera move of the client's reference (`d3e71928-….mov` on
-  `main`): the page scrolls down block by block, each new block glides to the focus line (y≈1000) in 0.32 s while
-  the title, earlier blocks and grid travel up, with a slow drift between moves. Blocks unchanged.
+- Fix 3-4 (client): the "אצלנו זה אחרת" page copies the camera move of the client's reference (`d3e71928-….mov` on
+  `main`): the whole scene (perspective grid, dust, glow, title, blocks) lies on a tilted 3D plane, the camera tracks
+  down it block by block (each new block glides to the focus line y≈1000 in 0.34 s), rolling a few degrees the other
+  way on each move and drifting between moves; blocks far from the focus line go soft (depth of field). Blocks unchanged.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.

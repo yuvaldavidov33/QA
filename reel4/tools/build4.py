@@ -5,6 +5,7 @@ text behind the trainer, Instagram DM CTA). Content written for the reel4 script
 usage: build4.py <face.json> <words.json> <out index.html> <video src> <first cutout frame> <last cutout frame>
 """
 import json
+import random
 import os
 import sys
 
@@ -136,12 +137,17 @@ REASONS = "\n".join([
     row("r2", "x", "מתאמנים לבד", "בלי אף אחד שידחוף", VIS_ALONE),
     row("r3", "x", "לא יודעים", "מה בדיוק לעשות", VIS_Q),
 ])
-SOLUTION = "\n".join([
+SOLUTION = "\n".join(f'<div class="rw">{r}</div>' for r in [
     row("s1", "v", "עד 6 מתאמנים", "בקבוצה קטנה", VIS_SIX),
     row("s2", "v", "תכנית אישית", "לכל מתאמן", VIS_PLAN),
     row("s3", "v", "מעקב משקלים", "בכל אימון", VIS_KG),
     row("s4", "v", "והתקדמות", "שרואים בעיניים", VIS_GRAPH),
 ])
+# Dust specks lying on the solution page's plane.
+_r2 = random.Random(5)
+DUST = "".join(
+    f'<i class="dust" style="left:{_r2.uniform(-10, 110):.1f}%;top:{_r2.uniform(-1400, 3300):.0f}px;opacity:{_r2.uniform(.2, .8):.2f};'
+    f'width:{_r2.choice([3, 4, 4, 6, 9])}px;height:{_r2.choice([3, 4, 4])}px"></i>' for _ in range(120))
 
 html = f"""<!doctype html>
 <html lang="he" data-resolution="portrait">
@@ -204,8 +210,17 @@ html = f"""<!doctype html>
       .rows {{ position: absolute; left: 60px; right: 60px; top: 570px; display: flex; flex-direction: column; gap: 30px; }}
       #solution .rows {{ top: 500px; gap: 26px; }}
       #solution .title {{ top: 340px; }}
-      #soScroll {{ position: absolute; inset: 0; }}
-      .page .grid.tall {{ inset: -1400px -60px; }}
+      /* Camera-down page (client reference): the whole scene lies on a tilted 3D plane; the camera tracks down it,
+         rolling slightly with each move; blocks away from the focus line go soft. */
+      #soIn {{ perspective: 1300px; perspective-origin: 50% 1000px; }}
+      #soScroll {{ position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 50% 1000px; }}
+      #soScroll .plane {{ position: absolute; left: -700px; right: -700px; top: -1500px; bottom: -1700px;
+        background-image: linear-gradient(rgba(255,255,255,.075) 3px, transparent 3px), linear-gradient(90deg, rgba(255,255,255,.075) 3px, transparent 3px);
+        background-size: 250px 250px; background-position: 120px 60px; }}
+      #soScroll .glow {{ top: -500px; }}
+      #soScroll .dust {{ position: absolute; border-radius: 50%; background: rgba(255,255,255,.55); }}
+      #soTtlW {{ position: absolute; left: 0; right: 0; top: 0; height: 0; }}
+      #solution .rw {{ position: relative; }}
       .row {{ position: relative; height: 250px; border-radius: 36px; background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.13);
               box-shadow: 0 24px 60px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }}
       #solution .row {{ height: 228px; }}
@@ -308,9 +323,8 @@ html = f"""<!doctype html>
 
       <div class="clip page" id="solution" data-start="{round(T_["sol_in"], 2)}" data-duration="{round(T_["sol_out"] - T_["sol_in"], 2)}" data-track-index="3">
         <div class="inner" id="soIn">
-          <div class="glow"></div>
-          <div id="soScroll"><div class="grid tall"></div>
-          <div class="title" id="soTtl">אצלנו זה <span class="acc">אחרת</span></div>
+          <div id="soScroll"><div class="plane"></div><div class="glow"></div>{DUST}
+          <div id="soTtlW"><div class="title" id="soTtl">אצלנו זה <span class="acc">אחרת</span></div></div>
           <div class="rows">
 {SOLUTION}
           </div></div>
@@ -432,17 +446,32 @@ html = f"""<!doctype html>
 
       // ===== Solution page =====
       pageIn("#solution", "#soIn", T.sol_in, T.sol_out - T.sol_in);
-      // Camera moves down the page: each new block glides to the focus line (y≈1000) with a quick ease, the whole
-      // page (title, earlier blocks, grid) travels up with it, and between moves it keeps drifting slowly.
-      // Block centers: row k at 614 + 254k; the title is framed first.
-      const STOPS = [[T.sol_in, 470], [T.so_1 - 0.04, 386], [T.so_2 - 0.04, 132], [T.so_3 - 0.04, -122], [T.so_4 - 0.04, -376], [T.sol_out, -436]];
-      tl.set("#soScroll", {{ y: STOPS[0][1] + 40 }}, 0);
-      tl.fromTo("#soScroll", {{ y: STOPS[0][1] + 40 }}, {{ y: STOPS[0][1], duration: 0.45, ease: "power3.out", immediateRender: false }}, T.sol_in);
+      // Camera tracks down a tilted 3D plane (client reference d3e71928-….mov): each new block glides to the focus
+      // line (y≈1000) in 0.34 s, the whole scene (grid, dust, glow, title, earlier blocks) travels with it, the camera
+      // rolls a few degrees the other way on each move, and it keeps drifting between moves.
+      // [time, y, tilt X, roll, yaw]; block centers sit at 614 + 254k on the plane.
+      const STOPS = [[T.sol_in, 470, 17, -3, 4], [T.so_1 - 0.04, 386, 14, 2.6, -3], [T.so_2 - 0.04, 132, 17, -2.4, 3],
+                     [T.so_3 - 0.04, -122, 13, 3, -2], [T.so_4 - 0.04, -376, 16, -2.2, 2.5], [T.sol_out, -436, 15, -1.4, 2]];
+      const camAt = (y, rx, rz, ry) => ({{ y, rotationX: rx, rotation: rz, rotationY: ry }});
+      tl.set("#soScroll", camAt(STOPS[0][1] + 160, 24, -6, 7), 0);
+      tl.fromTo("#soScroll", camAt(STOPS[0][1] + 160, 24, -6, 7), {{ ...camAt(STOPS[0][1], 17, -3, 4), duration: 0.5, ease: "power3.out", immediateRender: false }}, T.sol_in);
+      tl.to("#soScroll", {{ ...camAt(STOPS[0][1] - 30, 16, -2.2, 3.4), duration: STOPS[1][0] - T.sol_in - 0.5, ease: "none" }}, T.sol_in + 0.5);
       for (let i = 1; i < STOPS.length - 1; i++) {{
-        const [at, y] = STOPS[i], next = STOPS[i + 1][0];
-        tl.to("#soScroll", {{ y, duration: 0.32, ease: "power3.inOut" }}, at);
-        tl.to("#soScroll", {{ y: y - 34, duration: Math.max(0.2, next - at - 0.32), ease: "none" }}, at + 0.32);
+        const [at, y, rx, rz, ry] = STOPS[i], next = STOPS[i + 1][0];
+        tl.to("#soScroll", {{ ...camAt(y, rx, rz, ry), duration: 0.34, ease: "power3.inOut" }}, at);
+        tl.to("#soScroll", {{ ...camAt(y - 36, rx - 0.8, rz - Math.sign(rz) * 0.7, ry * 0.8), duration: Math.max(0.2, next - at - 0.34), ease: "none" }}, at + 0.34);
       }}
+      tl.fromTo("#solution .dust", {{ x: 0, y: 0 }}, {{ x: (i) => (i % 2 ? 26 : -20), y: (i) => -30 - (i % 5) * 12, duration: T.sol_out - T.sol_in, ease: "none", immediateRender: false }}, T.sol_in);
+      // Depth of field: whatever is far from the focus line goes soft, like the reference lens.
+      const dofEls = [document.querySelector("#soTtlW"), ...document.querySelectorAll("#solution .rw")];
+      const dof = {{ k: 0 }};
+      tl.fromTo(dof, {{ k: 0 }}, {{ k: 1, duration: T.sol_out - T.sol_in, ease: "none", immediateRender: false, onUpdate: () => {{
+        for (const el of dofEls) {{
+          const r = el.firstElementChild.getBoundingClientRect(), cy = r.top + r.height / 2;
+          const b = Math.max(0, Math.min(5, (Math.abs(cy - 1000) - 200) / 120));
+          el.style.filter = b > 0.05 ? `blur(${{b.toFixed(2)}}px)` : "none";
+        }}
+      }} }}, T.sol_in);
       titleIn("#soTtl", T.sol_in + 0.04);
       smoothIn("#s1", T.so_1); badgeIn("#s1 .badge", T.so_1 + 0.25);
       smoothIn("#s2", T.so_2); badgeIn("#s2 .badge", T.so_2 + 0.25);
