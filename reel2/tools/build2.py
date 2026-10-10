@@ -82,6 +82,8 @@ captions = [c for c in captions if c["words"] not in (["שלחי", "לי", "הו
 for c in captions:
     if c["words"] == ["רוצה", "להצטרף?"]:
         c["words"] = ["רוצה", "לנסות", "גם?"]
+    if c["words"] == ["עד", "6", "אנשים"]:
+        c["words"] = ["עד", "6", "מתאמנים"]
 cap_html = "\n".join(
     f'      <div class="cap clip" id="cap{i}" data-start="{c["start"]}" data-duration="{round(c["end"] - c["start"], 2)}"'
     f' data-track-index="2"><div class="cap-in">{esc_words(c["words"])}</div></div>'
