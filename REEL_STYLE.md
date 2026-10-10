@@ -46,3 +46,10 @@ Read this before making a new reel. It records what the client approved on the f
 ## Working with the client
 - Hebrew, phone-only (iPhone). Explain steps simply. Check the phone silent switch when "no sound".
 - Show a plan/list before building when the client asks; then deliver via the artifact page and the raw download link.
+
+## Reel 3 notes (`reel3/`, "מבצע חגים")
+- When npm/PyPI/storage.googleapis.com are blocked: face track with OpenCV DNN (`reel3/tools/face_track.py`),
+  word timing with Whisper small via sherpa-onnx GitHub release binaries on overlapping windows, render with
+  `reel3/tools/render.py` (headless Chrome at /opt/pw-browsers, same index.html). Lanczos+unsharp frames, no Real-ESRGAN.
+- Match loudness to reel 2 (about −18 LUFS integrated).
+- Client approved: CTA wording follows the speech (plural "שלחו לי הודעה"); offer card shows only the offer price, no old price.
