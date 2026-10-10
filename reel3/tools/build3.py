@@ -96,6 +96,8 @@ def esc_words(ws):
 captions = [c for c in captions if c["words"] not in (["שלחו", "לי", "הודעה"], ["ונשמור", "לכם", "מקום"])]
 # The price card shows "199₪", so that caption is dropped too.
 captions = [c for c in captions if c["words"] != ["של", "199", "ש״ח"]]
+# The big text behind the trainer already says "לכבוד החזרה / לשגרה" (client: no duplicate at the bottom).
+captions = [c for c in captions if c["words"] not in (["לכבוד", "החזרה"], ["לשגרה"])]
 cap_html = "\n".join(
     f'      <div class="cap clip" id="cap{i}" data-start="{c["start"]}" data-duration="{round(c["end"] - c["start"], 2)}"'
     f' data-track-index="2"><div class="cap-in">{esc_words(c["words"])}</div></div>'
@@ -138,10 +140,10 @@ html = f"""<!doctype html>
       #cam {{ position: absolute; inset: 0; overflow: hidden; }}
       #frame {{ position: absolute; inset: 0; will-change: transform; }}
       /* Text behind the subject (reference reel): big two-line block left of the head, the person cutout on top. */
-      #behind {{ position: absolute; right: 545px; top: 610px; direction: rtl; text-align: right; font-family: "Heebo", sans-serif;
+      #behind {{ position: absolute; right: 528px; top: 595px; direction: rtl; text-align: right; font-family: "Heebo", sans-serif;
                  color: rgba(255,255,255,.9); text-shadow: 0 6px 28px rgba(0,0,0,.35); white-space: nowrap; transform-origin: 100% 50%; }}
-      #behind .top {{ font-weight: 800; font-size: 66px; line-height: 1; margin-inline-end: 6px; }}
-      #behind .big {{ font-weight: 900; font-size: 158px; line-height: .9; letter-spacing: -2px; }}
+      #behind .top {{ font-weight: 800; font-size: 76px; line-height: 1; margin-inline-end: 6px; }}
+      #behind .big {{ font-weight: 900; font-size: 174px; line-height: .9; letter-spacing: -2px; }}
       #behind span {{ display: inline-block; }}
       #cutout {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
@@ -400,8 +402,8 @@ html = f"""<!doctype html>
         {{ opacity: 1, x: 0, filter: "blur(0px)", duration: 0.32, stagger: 0.035, ease: "power3.out", immediateRender: false }}, T.tb_in);
       tl.fromTo([...document.querySelectorAll("#behind .lb")].reverse(), {{ opacity: 0, x: -70, scale: 1.25, filter: "blur(14px)" }},
         {{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.4, stagger: 0.055, ease: "power3.out", immediateRender: false }}, T.tb_big);
-      tl.fromTo("#behind", {{ x: -6, rotationY: 7, transformPerspective: 1200 }},
-        {{ x: 22, rotationY: 3, transformPerspective: 1200, duration: T.tb_out - T.tb_in, ease: "none", immediateRender: false }}, T.tb_in);
+      tl.fromTo("#behind", {{ x: 6, rotationY: 7, transformPerspective: 1200 }},
+        {{ x: 26, rotationY: 3, transformPerspective: 1200, duration: T.tb_out - T.tb_in, ease: "none", immediateRender: false }}, T.tb_in);
       tl.to("#behind", {{ x: 300, scaleX: 1.35, opacity: 0, filter: "blur(22px)", duration: 0.3, ease: "power2.in" }}, T.tb_out);
 
       // G5: the price card, the number rolls up to 199, then "לחודש הראשון".
