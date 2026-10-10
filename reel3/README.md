@@ -8,13 +8,16 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
 - `tools/words.py` — pause segments + Whisper small (sherpa-onnx GitHub release) on overlapping 2.5 s windows
   to assign words to segments; letter-proportional inside.
 - `tools/build3.py` — writes `index.html` and `sfx.json`. Cards: "אתחיל מחר" ✕ → "עכשיו!" ✓, small groups with 6
-  people + "עד 6", personal plan checklist, road to the flag, 199₪ price roll, CTA "שלחו לי הודעה".
+  people + "עד 6", personal plan checklist, CTA "שלחו לי הודעה".
 - Fix 1 (client): "לכבוד החזרה / לשגרה" as big text behind the trainer, copied from the client's reference reel
   (`fd6defd5-….mp4` on `main`): letters resolve from the left, shallow 3D drift, whip-out to the right.
   `tools/cutout.py` makes per-frame person cutouts (U²-Net human seg, rembg GitHub release) laid over the text.
 - Fix 3 (client): the offer copies the client's second reference (`17664b08-….mov` on `main`): "יצאתי במבצע" streams
   in from the left, the whole shot slides off to the right with motion blur onto a black star page, "199₪" lands
   letter by letter with "לחודש הראשון" under it, slow drift, hard cut back on "רוצים".
+- Fix 5 (client): "מלווה אתכם לאורך כל הדרך" copies the client's third reference (`32372936-….mp4` on `main`):
+  hard cut to a dark grid page with one long glowing line, a red dot running along it, words resolving from grey
+  blur above it, "כל הדרך" glitching in red; hard cut back on "לכבוד".
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 

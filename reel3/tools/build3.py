@@ -77,7 +77,9 @@ TIMES = {
     "g1_in": t("אומרים") - 0.05, "g1_strike": t("לעצמכם") + 0.1, "g1_b": t("עכשיו") - 0.05, "g1_out": after("להתחיל", 2) + 0.1,
     "g2_in": t("אימוני"), "g2_tag": t("בקבוצות"), "g2_lit": t("עד"), "g2_num": t("6"), "g2_out": t("אני") - 0.05,
     "g3_in": t("בונה") - 0.05, "g3_check": t("תכנית"), "g3_out": t("מלווה") - 0.05,
-    "g4_in": t("מלווה"), "g4_draw": t("לאורך"), "g4_flag": t("הדרך"), "g4_out": t("לכבוד") - 0.05,
+    # "ומלווה אתכם לאורך כל הדרך" (client's third reference): hard cut to a grid page with a long glowing line,
+    # a red dot travelling along it, text resolving above; hard cut back on "לכבוד".
+    "ln_in": t("מלווה") - 0.03, "ln_w1": t("מלווה"), "ln_w2": t("אתכם"), "ln_b": t("לאורך"), "ln_red": t("כל"),
     "tb_in": t("לכבוד") - 0.12, "tb_big": t("לשגרה", 2) - 0.2, "tb_out": t("במבצע") + 0.5,
     # Offer (client reference): the frame slides off sideways onto a black star page, hard cut back at "רוצים".
     "mq_in": t("יצאתי") - 0.05, "sp_in": t("במבצע") - 0.05, "sp_num": t("199") - 0.1, "sp_sub": t("לחודש"),
@@ -96,7 +98,7 @@ captions = [c for c in captions if c["words"] not in (["שלחו", "לי", "הו
 # The price card shows "199₪", so that caption is dropped too.
 captions = [c for c in captions if c["words"] not in (["של", "199", "ש״ח"], ["יצאתי", "במבצע"], ["לחודש", "הראשון"])]
 # The big text behind the trainer already says "לכבוד החזרה / לשגרה" (client: no duplicate at the bottom).
-captions = [c for c in captions if c["words"] not in (["לכבוד", "החזרה"], ["לשגרה"])]
+captions = [c for c in captions if c["words"] not in (["לכבוד", "החזרה"], ["לשגרה"], ["מלווה", "אתכם"], ["לאורך", "כל", "הדרך"])]
 cap_html = "\n".join(
     f'      <div class="cap clip" id="cap{i}" data-start="{c["start"]}" data-duration="{round(c["end"] - c["start"], 2)}"'
     f' data-track-index="2"><div class="cap-in">{esc_words(c["words"])}</div></div>'
@@ -113,8 +115,6 @@ hook_html = "\n".join(
 PERSON = ('<svg viewBox="0 0 24 24" class="person"><circle cx="12" cy="7" r="4"/>'
           '<path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg>')
 ROW = '<div class="row"><span class="tick"><b>✓</b></span><i class="bar" style="width:{w}px"></i></div>'
-# Road from start dot to finish flag (drawn right-to-left, like the text).
-ROAD = "M 600 150 C 470 150, 450 40, 320 60 S 140 150, 60 70"
 
 import random
 _rng = random.Random(11)
@@ -202,13 +202,21 @@ html = f"""<!doctype html>
       #plan .tick b {{ position: absolute; inset: -3px; border-radius: 16px; background: var(--green); color: #0b1a10; display: grid; place-items: center; font-size: 38px; font-weight: 900; opacity: 0; }}
       #plan .bar {{ height: 18px; border-radius: 9px; background: rgba(255,255,255,.3); display: block; }}
 
-      /* G4: the road, walked together to the flag. */
-      #g4 {{ top: 230px; bottom: auto; display: flex; justify-content: center; }}
-      #road {{ flex-direction: column; gap: 6px; padding: 22px 30px 18px; }}
-      #road .lbl {{ font-size: 50px; font-weight: 900; }}
-      #road svg {{ width: 660px; height: 210px; overflow: visible; }}
-      #road .track {{ fill: none; stroke: rgba(255,255,255,.18); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 2 26; }}
-      #road .done {{ fill: none; stroke: var(--cyan); stroke-width: 14; stroke-linecap: round; }}
+      /* Line page: dark grid, one long glowing white line, red dot running along it, text above. */
+      #lines {{ position: absolute; inset: 0; overflow: hidden; direction: rtl; font-family: "Heebo", sans-serif; color: #fff;
+                background: radial-gradient(110% 75% at 50% 50%, #2b2c2e 0%, #1c1d1f 70%, #121314 100%); }}
+      #lines .grid {{ position: absolute; inset: -60px;
+        background-image: linear-gradient(rgba(255,255,255,.055) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.055) 2px, transparent 2px);
+        background-size: 112px 112px; }}
+      #lines .beam {{ position: absolute; left: -40px; right: -40px; top: 1038px; height: 20px; border-radius: 10px; background: #fff;
+        box-shadow: 0 0 10px #fff, 0 0 34px rgba(255,255,255,.7), 0 0 90px rgba(255,255,255,.35); filter: url(#rough); transform-origin: 0 50%; }}
+      #lines .dot {{ position: absolute; top: 1048px; left: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+        background: radial-gradient(circle at 40% 40%, #ff6b6b, #ff2a2a 55%, #c40d0d); box-shadow: 0 0 24px #ff3030, 0 0 70px rgba(255,40,40,.75); }}
+      #lines .txt {{ position: absolute; left: 0; right: 0; bottom: 915px; text-align: center; white-space: nowrap; text-shadow: 0 6px 30px rgba(0,0,0,.5); }}
+      #lines .l1 {{ font-weight: 700; font-size: 92px; line-height: 1.05; }}
+      #lines .l2 {{ font-weight: 900; font-size: 132px; line-height: .95; position: relative; }}
+      #lines .w {{ display: inline-block; }}
+      #lines .red {{ color: #ff2b2b; text-shadow: 0 0 22px rgba(255,40,40,.55); }}
 
       /* Offer page: black sky with stars behind the video; the video slides away sideways to reveal it. */
       #space {{ position: absolute; inset: 0; overflow: hidden; background: radial-gradient(120% 80% at 60% 45%, #1b1f28 0%, #0d1016 60%, #07090c 100%); }}
@@ -279,20 +287,16 @@ html = f"""<!doctype html>
         </div>
       </div>
 
-      <div class="ov clip" id="g4" data-start="{TIMES["g4_in"]}" data-duration="{round(TIMES["g4_out"] - TIMES["g4_in"], 2)}" data-track-index="3">
-        <div class="card" id="road">
-          <div class="lbl">לאורך כל הדרך</div>
-          <svg viewBox="0 0 660 210">
-            <path class="track" d="{ROAD}"/>
-            <path class="done" id="roadDone" d="{ROAD}"/>
-            <circle cx="600" cy="150" r="20" fill="#fff"/>
-            <g id="flag" transform="translate(60 70)">
-              <line x1="0" y1="10" x2="0" y2="-80" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-              <path d="M 0 -80 L -70 -60 L 0 -40 Z" fill="var(--red)"/>
-            </g>
-            <g id="walker"><circle r="26" fill="var(--cyan)" stroke="#fff" stroke-width="6"/></g>
-          </svg>
+      <div class="clip" id="lines" data-start="{TIMES["ln_in"]}" data-duration="{round(TIMES["tb_in"] - TIMES["ln_in"], 2)}" data-track-index="3">
+        <svg width="0" height="0" style="position:absolute"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.9" numOctaves="2" seed="4"/>
+          <feDisplacementMap in="SourceGraphic" scale="9"/></filter></svg>
+        <div class="grid"></div>
+        <div class="txt">
+          <div class="l1"><span class="w" id="lw1">מלווה</span> <span class="w" id="lw2">אתכם</span></div>
+          <div class="l2"><span class="w" id="lw3">לאורך</span> <span class="w red" id="lw4">כל הדרך</span></div>
         </div>
+        <div class="beam"></div>
+        <div class="dot"></div>
       </div>
 
       <div class="clip" id="marq" data-start="{TIMES["mq_in"]}" data-duration="{round(TIMES["sp_in"] + 0.9 - TIMES["mq_in"], 2)}" data-track-index="3">יצאתי במבצע</div>
@@ -355,7 +359,7 @@ html = f"""<!doctype html>
 
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
-      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#road", "#walker", "#deal .big span", "#deal .s1",
+      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
               "#pill", "#here", "#arrow"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
@@ -391,24 +395,16 @@ html = f"""<!doctype html>
       }});
       cardOut("#plan", T.g3_out - 0.35);
 
-      // G4: the road draws from the start dot to the flag, the walker rides its tip.
-      cardIn("#road", T.g4_in);
-      const road = document.querySelector("#roadDone");
-      const LEN = road.getTotalLength();
-      const prog = {{ p: 0 }};
-      const placeWalker = () => {{
-        road.style.strokeDasharray = `${{LEN}}`;
-        road.style.strokeDashoffset = `${{LEN * (1 - prog.p)}}`;
-        const pt = road.getPointAtLength(LEN * prog.p);
-        document.querySelector("#walker").setAttribute("transform", `translate(${{pt.x}} ${{pt.y}})`);
-      }};
-      placeWalker();
-      tl.set("#walker", {{ opacity: 1 }}, T.g4_in);
-      tl.fromTo(prog, {{ p: 0 }}, {{ p: 1, duration: T.g4_flag - T.g4_draw + 0.3, ease: "power1.inOut", onUpdate: placeWalker,
-        immediateRender: false }}, T.g4_draw);
-      tl.fromTo("#flag", {{ scale: 1 }}, {{ scale: 1.25, duration: 0.4, ease: spring, transformOrigin: "50% 100%",
-        immediateRender: false }}, T.g4_flag + 0.3);
-      cardOut("#road", T.g4_out - 0.35);
+      // Line page: words resolve from grey blur, the red dot runs the full line, "כל הדרך" glitches in red.
+      tl.fromTo("#lines .grid", {{ scale: 1.0 }}, {{ scale: 1.06, duration: T.tb_in - T.ln_in, ease: "none", immediateRender: false }}, T.ln_in);
+      tl.fromTo("#lines .beam", {{ scaleX: 0.15, opacity: 0.4 }}, {{ scaleX: 1, opacity: 1, duration: 0.22, ease: "power3.out", immediateRender: false }}, T.ln_in);
+      tl.fromTo("#lines .dot", {{ x: -80 }}, {{ x: 1160, duration: T.tb_in - T.ln_in - 0.05, ease: "sine.inOut", immediateRender: false }}, T.ln_in);
+      const wordIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, color: "#8a8a8a", filter: "blur(10px)", y: 10 }},
+        {{ opacity: 1, color: "#ffffff", filter: "blur(0px)", y: 0, duration: 0.3, ease: "power2.out", immediateRender: false }}, at);
+      wordIn("#lw1", T.ln_w1); wordIn("#lw2", T.ln_w2); wordIn("#lw3", T.ln_b);
+      tl.fromTo("#lw4", {{ opacity: 0, x: -30, skewX: -14, textShadow: "-10px 0 rgba(0,220,255,.8), 10px 0 rgba(255,0,60,.9)" }},
+        {{ opacity: 1, x: 0, skewX: 0, textShadow: "0px 0 rgba(0,220,255,0), 0px 0 rgba(255,0,60,0)", duration: 0.28, ease: "steps(5)", immediateRender: false }}, T.ln_red);
+      tl.fromTo("#lw4", {{ scale: 1.15 }}, {{ scale: 1, duration: 0.35, ease: spring, immediateRender: false }}, T.ln_red + 0.28);
 
       // Text behind the subject: letters resolve from the left with tracking closing in,
       // the block drifts in shallow 3D, then whips out to the right with a smear.
@@ -463,8 +459,8 @@ events += [("tick", G["g2_lit"] + i * 0.08) for i in range(6)]
 events += [("pop", G["g2_num"]), ("whoosh_out", G["g2_out"] - 0.35)]
 events += [("whoosh", G["g3_in"])]
 events += [("ding", G["g3_check"] + i * 0.2) for i in range(3)]
-events += [("whoosh_out", G["g3_out"] - 0.35), ("whoosh", G["g4_in"]), ("whoosh_soft", G["g4_draw"]), ("ding", G["g4_flag"] + 0.3)]
-events += [("whoosh_out", G["g4_out"] - 0.35)]
+events += [("whoosh_out", G["g3_out"] - 0.35), ("thump", G["ln_in"]), ("whoosh_soft", G["ln_in"] + 0.05)]
+events += [("tick", G[k]) for k in ("ln_w1", "ln_w2", "ln_b")] + [("scratch", G["ln_red"]), ("pop", G["ln_red"] + 0.28), ("thump", G["tb_in"])]
 events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_soft", G["mq_in"]), ("whoosh", G["sp_in"])]
 events += [("tick", G["sp_num"] + i * 0.07) for i in range(4)] + [("thump", G["sp_num"] + 0.25)]
 events += [("pop", G["sp_sub"]), ("thump", G["sp_out"])]
