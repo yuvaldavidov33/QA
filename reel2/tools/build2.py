@@ -62,7 +62,7 @@ TIMES = {
     "g1_in": t("מאות") - 0.05, "g1_b": t("מכשירים") - 0.05, "g1_out": t("איתם") + 0.15,
     "g2_in": t("עד"), "g2_lit": t("6"), "g2_c1": t("תכנית", 1), "g2_c2": t("ומאמן"), "g2_out": t("הדרך") + 0.55,
     "g3_a": t("תרגיל"), "g3_b": t("משקל"), "g3_c": t("חזרות"), "g3_check": t("מקבלים"), "g3_out": t("דואגים") - 0.1,
-    "g4_in": t("שלחי"),
+    "g4_in": t("שלחי"), "g4_here": t("פה"),
 }
 
 
@@ -71,18 +71,24 @@ def esc_words(ws):
 
 
 # The CTA pill already says "שלחי לי הודעה", so that caption is dropped.
-captions = [c for c in captions if c["words"] != ["שלחי", "לי", "הודעה"]]
+captions = [c for c in captions if c["words"] not in (["שלחי", "לי", "הודעה"], ["פה", "למטה"])]
+# On-screen wording differs from the spoken "רוצה להצטרף".
+for c in captions:
+    if c["words"] == ["רוצה", "להצטרף?"]:
+        c["words"] = ["רוצה", "לנסות", "גם?"]
 cap_html = "\n".join(
     f'      <div class="cap clip" id="cap{i}" data-start="{c["start"]}" data-duration="{round(c["end"] - c["start"], 2)}"'
     f' data-track-index="2"><div class="cap-in">{esc_words(c["words"])}</div></div>'
     for i, c in enumerate(captions)
 )
 # Hook in three balanced lines: "אם אתם לא אוהבים" / "חדרי כושר" / "אבל רוצים להתחזק".
-HOOK_LINES = [(0, 4), (4, 6), (6, 9)]
+# Beat A: "אם אתם לא אוהבים / חדרי כושר"; beat B replaces it alone: "אבל רוצים להתחזק".
+HOOK_BEATS = [("hookA", [(0, 4), (4, 6)]), ("hookB", [(6, 9)])]
+def hook_line(a, b):
+    return "<div>" + " ".join(
+        f'<span class="hw{" key" if HOOK[i]["w"] in KEYWORDS else ""}" id="hw{i}">{HOOK[i]["w"]}</span>' for i in range(a, b)) + "</div>"
 hook_html = "\n".join(
-    "        <div>" + " ".join(
-        f'<span class="hw{" key" if HOOK[i]["w"] in KEYWORDS else ""}" id="hw{i}">{HOOK[i]["w"]}</span>' for i in range(a, b)
-    ) + "</div>" for a, b in HOOK_LINES)
+    f'        <div class="beat" id="{bid}">' + "".join(hook_line(a, b) for a, b in lines) + "</div>" for bid, lines in HOOK_BEATS)
 
 PERSON = ('<svg viewBox="0 0 24 24" class="person"><circle cx="12" cy="7" r="4"/>'
           '<path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg>')
@@ -106,6 +112,8 @@ html = f"""<!doctype html>
       #hook {{ top: 1000px; bottom: auto; text-align: center; font-family: "Karantina", "Heebo", sans-serif; font-weight: 700;
                font-size: 132px; line-height: 0.95; white-space: nowrap; text-shadow: 0 6px 30px rgba(0,0,0,.55); }}
       .hw {{ display: inline-block; opacity: 0; }}
+      #hook .beat {{ position: absolute; left: 0; right: 0; top: 0; }}
+      #hookB {{ font-size: 150px; }}
       .key {{ color: var(--red); }}
 
       /* Captions: 2-4 words, white heavy, centered on the chest. */
@@ -142,6 +150,7 @@ html = f"""<!doctype html>
 
       #g4 {{ top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 10px; }}
       #g4 .pill {{ background: var(--red); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(255,51,64,.45); }}
+      #g4 .here {{ font-weight: 900; font-size: 62px; text-shadow: 0 4px 18px rgba(0,0,0,.7), 0 0 2px rgba(0,0,0,.9); margin-top: 6px; }}
       #g4 .arrow {{ font-size: 90px; font-weight: 900; line-height: 1; text-shadow: 0 4px 18px rgba(0,0,0,.6); }}
     </style>
   </head>
@@ -179,6 +188,7 @@ html = f"""<!doctype html>
 
       <div class="ov clip" id="g4" data-start="{TIMES["g4_in"]}" data-duration="{round(DURATION - TIMES["g4_in"], 2)}" data-track-index="3">
         <div class="pill" id="pill">שלחי לי הודעה</div>
+        <div class="here" id="here">פה למטה</div>
         <div class="arrow" id="arrow">↓</div>
       </div>
 
@@ -221,7 +231,8 @@ html = f"""<!doctype html>
           {{ opacity: 1, y: 0, filter: "blur(0px)", duration: 0.28, ease: "power3.out", immediateRender: false }}, Math.max(0, at - 0.06));
       }});
       tl.fromTo("#hw8", {{ scale: 1 }}, {{ scale: 1.12, duration: 0.4, ease: spring, immediateRender: false }}, HOOK_T[8]);
-      tl.to("#hook .hw", {{ opacity: 0, filter: "blur(16px)", y: -30, duration: 0.18, ease: "power2.in" }}, {round(t("תקשיבו") - 0.12, 2)});
+      tl.to("#hookA .hw", {{ opacity: 0, filter: "blur(16px)", y: -30, duration: 0.16, ease: "power2.in" }}, HOOK_T[6] - 0.18);
+      tl.to("#hookB .hw", {{ opacity: 0, filter: "blur(16px)", y: -30, duration: 0.18, ease: "power2.in" }}, {round(t("תקשיבו") - 0.12, 2)});
 
       // Captions pop in.
       CAPS.forEach((at, i) => {{
@@ -259,8 +270,9 @@ html = f"""<!doctype html>
 
       // G4: call to action with a bouncing arrow.
       tl.fromTo("#pill", {{ opacity: 0, scale: 0.6, y: 40 }}, {{ opacity: 1, scale: 1, y: 0, duration: 0.4, ease: spring, immediateRender: false }}, T.g4_in);
-      tl.fromTo("#arrow", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.2, immediateRender: false }}, T.g4_in + 0.2);
-      tl.fromTo("#arrow", {{ y: -10 }}, {{ y: 26, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: 4, immediateRender: false }}, T.g4_in + 0.2);
+      tl.fromTo("#here", {{ opacity: 0, y: 20 }}, {{ opacity: 1, y: 0, duration: 0.25, ease: "back.out(2)", immediateRender: false }}, T.g4_here);
+      tl.fromTo("#arrow", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.2, immediateRender: false }}, T.g4_here + 0.15);
+      tl.fromTo("#arrow", {{ y: -10 }}, {{ y: 26, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: 2, immediateRender: false }}, T.g4_here + 0.15);
 
       window.__timelines = window.__timelines || {{}};
       window.__timelines["main"] = tl;
