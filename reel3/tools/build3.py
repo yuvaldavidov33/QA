@@ -1,7 +1,7 @@
 """Generate reel3/index.html ("מבצע חגים"): same approved style as reel2 (face-centered zooms,
 blur-in hook, 2-4 word captions, glass cards), content rewritten for the holiday-offer script.
 
-usage: build3.py <face.json> <words.json> <out index.html> <video src>
+usage: build3.py <face.json> <words.json> <out index.html> <video src> <first cutout frame> <last cutout frame>
 """
 import json
 import os
@@ -81,6 +81,7 @@ TIMES = {
     "g2_in": t("אימוני"), "g2_tag": t("בקבוצות"), "g2_lit": t("עד"), "g2_num": t("6"), "g2_out": t("אני") - 0.05,
     "g3_in": t("בונה") - 0.05, "g3_check": t("תכנית"), "g3_out": t("מלווה") - 0.05,
     "g4_in": t("מלווה"), "g4_draw": t("לאורך"), "g4_flag": t("הדרך"), "g4_out": t("לכבוד") - 0.05,
+    "tb_in": t("לכבוד") - 0.12, "tb_big": t("לשגרה", 2) - 0.2, "tb_out": t("199") - 0.5 - 0.2,
     "g5_in": t("199") - 0.5, "g5_num": t("199"), "g5_tag": t("לחודש"), "g5_out": t("רוצים") - 0.05,
     "g6_in": t("שלחו"), "g6_here": t("ונשמור"),
 }
@@ -114,6 +115,15 @@ ROW = '<div class="row"><span class="tick"><b>✓</b></span><i class="bar" style
 # Road from start dot to finish flag (drawn right-to-left, like the text).
 ROAD = "M 600 150 C 470 150, 450 40, 320 60 S 140 150, 60 70"
 
+def letters(word_list, cls):
+    """One span per letter (Hebrew letters don't join), words kept apart."""
+    return "&nbsp;".join("".join(f'<span class="{cls}">{ch}</span>' for ch in w) for w in word_list)
+
+
+TB_A, TB_B = letters(["לכבוד", "החזרה"], "la"), letters(["לשגרה"], "lb")
+# Person cutouts (RGBA PNGs from tools/cutout.py) cover the text while it is on screen.
+CUT_A, CUT_B = int(sys.argv[5]), int(sys.argv[6])
+
 html = f"""<!doctype html>
 <html lang="he" data-resolution="portrait">
   <head>
@@ -127,6 +137,13 @@ html = f"""<!doctype html>
       :root {{ --red: #ff3340; --green: #39e46b; --cyan: #29c4f6; --glass: rgba(18, 18, 22, 0.62); --line: rgba(255, 255, 255, 0.16); }}
       #cam {{ position: absolute; inset: 0; overflow: hidden; }}
       #frame {{ position: absolute; inset: 0; will-change: transform; }}
+      /* Text behind the subject (reference reel): big two-line block left of the head, the person cutout on top. */
+      #behind {{ position: absolute; right: 545px; top: 610px; direction: rtl; text-align: right; font-family: "Heebo", sans-serif;
+                 color: rgba(255,255,255,.9); text-shadow: 0 6px 28px rgba(0,0,0,.35); white-space: nowrap; transform-origin: 100% 50%; }}
+      #behind .top {{ font-weight: 800; font-size: 66px; line-height: 1; margin-inline-end: 6px; }}
+      #behind .big {{ font-weight: 900; font-size: 158px; line-height: .9; letter-spacing: -2px; }}
+      #behind span {{ display: inline-block; }}
+      #cutout {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
 
       /* Hook: big condensed lines at chest height, words resolve from blur. */
@@ -205,6 +222,12 @@ html = f"""<!doctype html>
         <div id="frame">
           <video id="a-roll" class="clip" src="{VIDEO}" playsinline data-start="0" data-duration="{DURATION}" data-track-index="0"
                  data-has-audio="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video>
+          <div id="behind" class="clip" data-start="{TIMES["tb_in"]}" data-duration="{round(TIMES["tb_out"] + 0.35 - TIMES["tb_in"], 2)}" data-track-index="1">
+            <div class="top">{TB_A}</div>
+            <div class="big">{TB_B}</div>
+          </div>
+          <img id="cutout" class="clip" alt="" data-cut-first="{CUT_A}" data-cut-last="{CUT_B}"
+               data-start="{round((CUT_A - 1) / face["fps"], 3)}" data-duration="{round((CUT_B - CUT_A + 1) / face["fps"], 3)}" data-track-index="1" />
         </div>
       </div>
 
@@ -369,6 +392,18 @@ html = f"""<!doctype html>
         immediateRender: false }}, T.g4_flag + 0.3);
       cardOut("#road", T.g4_out - 0.35);
 
+      // Text behind the subject: letters resolve from the left with tracking closing in,
+      // the block drifts in shallow 3D, then whips out to the right with a smear.
+      tl.set(["#behind .la", "#behind .lb"], {{ opacity: 0 }}, 0);
+      tl.fromTo("#behind .top", {{ letterSpacing: "26px" }}, {{ letterSpacing: "0px", duration: 0.6, ease: "power3.out", immediateRender: false }}, T.tb_in);
+      tl.fromTo([...document.querySelectorAll("#behind .la")].reverse(), {{ opacity: 0, x: -40, filter: "blur(10px)" }},
+        {{ opacity: 1, x: 0, filter: "blur(0px)", duration: 0.32, stagger: 0.035, ease: "power3.out", immediateRender: false }}, T.tb_in);
+      tl.fromTo([...document.querySelectorAll("#behind .lb")].reverse(), {{ opacity: 0, x: -70, scale: 1.25, filter: "blur(14px)" }},
+        {{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.4, stagger: 0.055, ease: "power3.out", immediateRender: false }}, T.tb_big);
+      tl.fromTo("#behind", {{ x: -6, rotationY: 7, transformPerspective: 1200 }},
+        {{ x: 22, rotationY: 3, transformPerspective: 1200, duration: T.tb_out - T.tb_in, ease: "none", immediateRender: false }}, T.tb_in);
+      tl.to("#behind", {{ x: 300, scaleX: 1.35, opacity: 0, filter: "blur(22px)", duration: 0.3, ease: "power2.in" }}, T.tb_out);
+
       // G5: the price card, the number rolls up to 199, then "לחודש הראשון".
       cardIn("#offer", T.g5_in);
       const price = {{ v: 0 }};
@@ -405,7 +440,8 @@ events += [("pop", G["g2_num"]), ("whoosh_out", G["g2_out"] - 0.35)]
 events += [("whoosh", G["g3_in"])]
 events += [("ding", G["g3_check"] + i * 0.2) for i in range(3)]
 events += [("whoosh_out", G["g3_out"] - 0.35), ("whoosh", G["g4_in"]), ("whoosh_soft", G["g4_draw"]), ("ding", G["g4_flag"] + 0.3)]
-events += [("whoosh_out", G["g4_out"] - 0.35), ("whoosh", G["g5_in"])]
+events += [("whoosh_out", G["g4_out"] - 0.35)]
+events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_out", G["tb_out"]), ("whoosh", G["g5_in"])]
 events += [("tick", G["g5_num"] - 0.15 + i * 0.07) for i in range(8)]
 events += [("ding", G["g5_num"] + 0.55), ("pop", G["g5_tag"]), ("whoosh_out", G["g5_out"] - 0.35)]
 events += [("whoosh", G["g6_in"]), ("pop", G["g6_here"])]

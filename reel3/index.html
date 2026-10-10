@@ -11,6 +11,13 @@
       :root { --red: #ff3340; --green: #39e46b; --cyan: #29c4f6; --glass: rgba(18, 18, 22, 0.62); --line: rgba(255, 255, 255, 0.16); }
       #cam { position: absolute; inset: 0; overflow: hidden; }
       #frame { position: absolute; inset: 0; will-change: transform; }
+      /* Text behind the subject (reference reel): big two-line block left of the head, the person cutout on top. */
+      #behind { position: absolute; right: 545px; top: 610px; direction: rtl; text-align: right; font-family: "Heebo", sans-serif;
+                 color: rgba(255,255,255,.9); text-shadow: 0 6px 28px rgba(0,0,0,.35); white-space: nowrap; transform-origin: 100% 50%; }
+      #behind .top { font-weight: 800; font-size: 66px; line-height: 1; margin-inline-end: 6px; }
+      #behind .big { font-weight: 900; font-size: 158px; line-height: .9; letter-spacing: -2px; }
+      #behind span { display: inline-block; }
+      #cutout { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
       .ov { position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }
 
       /* Hook: big condensed lines at chest height, words resolve from blur. */
@@ -89,6 +96,12 @@
         <div id="frame">
           <video id="a-roll" class="clip" src="quick.mp4" playsinline data-start="0" data-duration="22.3" data-track-index="0"
                  data-has-audio="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video>
+          <div id="behind" class="clip" data-start="14.450000000000001" data-duration="1.82" data-track-index="1">
+            <div class="top"><span class="la">ל</span><span class="la">כ</span><span class="la">ב</span><span class="la">ו</span><span class="la">ד</span>&nbsp;<span class="la">ה</span><span class="la">ח</span><span class="la">ז</span><span class="la">ר</span><span class="la">ה</span></div>
+            <div class="big"><span class="lb">ל</span><span class="lb">ש</span><span class="lb">ג</span><span class="lb">ר</span><span class="lb">ה</span></div>
+          </div>
+          <img id="cutout" class="clip" alt="" data-cut-first="425" data-cut-last="497"
+               data-start="14.154" data-duration="2.437" data-track-index="1" />
         </div>
       </div>
 
@@ -182,7 +195,7 @@
       const ZOOM = [["set", 0.0, 1.0, 0], ["push", 0.0, 1.14, 2.54], ["snap", 3.53, 1.3, 0.2], ["back", 3.97, 1.0, 0.4099999999999997], ["push", 4.38, 1.12, 2.99], ["snap", 7.37, 1.3, 0.2], ["back", 7.74, 1.0, 0.9100000000000001], ["push", 8.65, 1.08, 1.8399999999999999], ["punch", 10.49, 1.22, 0.45], ["ease", 11.22, 1.0, 0.45], ["push", 11.67, 1.08, 1.3299999999999994], ["punch", 13.0, 1.2, 0.45], ["back", 13.58, 1.0, 0.9900000000000002], ["push", 14.57, 1.1, 2.0500000000000007], ["snap", 16.62, 1.32, 0.2], ["back", 17.72, 1.0, 0.8900000000000006], ["push", 18.61, 1.16, 3.6900000000000013]];
       const HOOK_T = [0.22, 0.69, 1.31, 2.22];
       const CAPS = [2.54, 3.09, 4.13, 4.91, 5.73, 6.45, 7.37, 8.18, 8.65, 9.36, 10.37, 10.87, 11.22, 11.51, 11.87, 13.0, 13.58, 14.57, 15.28, 15.42, 17.72, 18.61, 19.39];
-      const T = {"g1_in": 4.98, "g1_strike": 5.55, "g1_b": 7.32, "g1_out": 8.46, "g2_in": 8.65, "g2_tag": 9.36, "g2_lit": 10.37, "g2_num": 10.49, "g2_out": 11.17, "g3_in": 11.29, "g3_check": 11.87, "g3_out": 12.95, "g4_in": 13.0, "g4_draw": 13.58, "g4_flag": 14.14, "g4_out": 14.52, "g5_in": 16.12, "g5_num": 16.62, "g5_tag": 17.72, "g5_out": 18.56, "g6_in": 20.19, "g6_here": 21.02};
+      const T = {"g1_in": 4.98, "g1_strike": 5.55, "g1_b": 7.32, "g1_out": 8.46, "g2_in": 8.65, "g2_tag": 9.36, "g2_lit": 10.37, "g2_num": 10.49, "g2_out": 11.17, "g3_in": 11.29, "g3_check": 11.87, "g3_out": 12.95, "g4_in": 13.0, "g4_draw": 13.58, "g4_flag": 14.14, "g4_out": 14.52, "tb_in": 14.45, "tb_big": 15.08, "tb_out": 15.92, "g5_in": 16.12, "g5_num": 16.62, "g5_tag": 17.72, "g5_out": 18.56, "g6_in": 20.19, "g6_here": 21.02};
 
       const tl = gsap.timeline({ paused: true });
 
@@ -275,6 +288,18 @@
       tl.fromTo("#flag", { scale: 1 }, { scale: 1.25, duration: 0.4, ease: spring, transformOrigin: "50% 100%",
         immediateRender: false }, T.g4_flag + 0.3);
       cardOut("#road", T.g4_out - 0.35);
+
+      // Text behind the subject: letters resolve from the left with tracking closing in,
+      // the block drifts in shallow 3D, then whips out to the right with a smear.
+      tl.set(["#behind .la", "#behind .lb"], { opacity: 0 }, 0);
+      tl.fromTo("#behind .top", { letterSpacing: "26px" }, { letterSpacing: "0px", duration: 0.6, ease: "power3.out", immediateRender: false }, T.tb_in);
+      tl.fromTo([...document.querySelectorAll("#behind .la")].reverse(), { opacity: 0, x: -40, filter: "blur(10px)" },
+        { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.32, stagger: 0.035, ease: "power3.out", immediateRender: false }, T.tb_in);
+      tl.fromTo([...document.querySelectorAll("#behind .lb")].reverse(), { opacity: 0, x: -70, scale: 1.25, filter: "blur(14px)" },
+        { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.4, stagger: 0.055, ease: "power3.out", immediateRender: false }, T.tb_big);
+      tl.fromTo("#behind", { x: -6, rotationY: 7, transformPerspective: 1200 },
+        { x: 22, rotationY: 3, transformPerspective: 1200, duration: T.tb_out - T.tb_in, ease: "none", immediateRender: false }, T.tb_in);
+      tl.to("#behind", { x: 300, scaleX: 1.35, opacity: 0, filter: "blur(22px)", duration: 0.3, ease: "power2.in" }, T.tb_out);
 
       // G5: the price card, the number rolls up to 199, then "לחודש הראשון".
       cardIn("#offer", T.g5_in);

@@ -4,7 +4,7 @@ Chrome: per frame, shows the matching source frame in place of the <video>, seek
 GSAP timeline, applies clip visibility (data-start / data-duration), screenshots.
 Audio is mixed in ffmpeg: voice + music.wav + sfx.wav x data-volume.
 
-usage: render.py <reel dir> <frames dir (%05d.jpg, 1-based)> <voice source video> <out.mp4> [fps]
+usage: render.py <reel dir> <frames dir (%05d.jpg, 1-based; cutouts in ../cutout)> <voice source video> <out.mp4> [fps]
 """
 import subprocess
 import sys
@@ -24,7 +24,7 @@ enc = subprocess.Popen(
      "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p", str(silent)],
     stdin=subprocess.PIPE)
 
-SETUP = """(framesUrl) => {
+SETUP = """([framesUrl, cutUrl]) => {
   const v = document.querySelector('#a-roll');
   const img = document.createElement('img');
   img.id = 'a-roll-img';
@@ -32,6 +32,7 @@ SETUP = """(framesUrl) => {
   v.replaceWith(img);
   window.__frames = framesUrl;
   window.__clips = [...document.querySelectorAll('.clip')].filter(e => e.id !== 'a-roll');
+  window.__cutDir = cutUrl;
 }"""
 SEEK = """async ([t, idx]) => {
   const img = document.querySelector('#a-roll-img');
@@ -40,6 +41,15 @@ SEEK = """async ([t, idx]) => {
   for (const c of window.__clips) {
     const s = parseFloat(c.dataset.start), d = parseFloat(c.dataset.duration);
     c.style.visibility = (t >= s && t < s + d) ? 'visible' : 'hidden';
+  }
+  const cut = document.querySelector('#cutout');
+  if (cut) {
+    const a = +cut.dataset.cutFirst, b = +cut.dataset.cutLast;
+    if (idx >= a && idx <= b) {
+      const cs = window.__cutDir + String(idx).padStart(5, '0') + '.png';
+      if (!cut.src.endsWith(cs)) { cut.src = cs; await cut.decode(); }
+      cut.style.visibility = 'visible';
+    } else cut.style.visibility = 'hidden';
   }
   window.__timelines.main.seek(t, false);
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -51,7 +61,7 @@ with sync_playwright() as p:
     page.goto((REEL / "index.html").resolve().as_uri())
     page.wait_for_function("!!(window.__timelines && window.__timelines.main)", polling=100)
     page.evaluate("document.fonts.ready")
-    page.evaluate(SETUP, FRAMES.resolve().as_uri() + "/")
+    page.evaluate(SETUP, [FRAMES.resolve().as_uri() + "/", (FRAMES.parent / "cutout").resolve().as_uri() + "/"])
     dur = float(page.evaluate("document.querySelector('#root').dataset.duration"))
     n = int(dur * FPS)
     for i in range(n):
