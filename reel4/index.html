@@ -11,15 +11,6 @@
       :root { --red: #ff3340; --green: #39e46b; --royal: #3a64f0; --blue: #5b86ff; }
       #cam { position: absolute; inset: 0; overflow: hidden; }
       #frame { position: absolute; inset: 0; will-change: transform; }
-      #side { position: absolute; inset: 0; transform-origin: 50% 30%; }
-      #dof { position: absolute; inset: 0; backdrop-filter: blur(7px) brightness(.82) saturate(1.15); }
-      #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(85% 70% at 45% 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%); }
-      #flareClip { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-      #flareBlob { position: absolute; left: -260px; bottom: -300px; width: 1100px; height: 1100px; border-radius: 50%; mix-blend-mode: screen;
-                    background: radial-gradient(closest-side, rgba(255,236,150,.95), rgba(255,196,80,.7) 40%, rgba(255,150,60,.25) 70%, rgba(255,140,60,0)); filter: blur(30px); }
-      #wash { position: absolute; inset: 0; mix-blend-mode: screen; background: linear-gradient(160deg, #ffc6c0 0%, #ffb08a 50%, #ff9a55 100%); }
-      #wash2 { position: absolute; inset: 0; mix-blend-mode: screen; background: linear-gradient(160deg, #ff9b52 0%, #ff8a3c 60%, #ff7a30 100%);
-                 -webkit-mask-image: radial-gradient(120% 90% at 100% 100%, #000 40%, transparent 100%); mask-image: radial-gradient(120% 90% at 100% 100%, #000 40%, transparent 100%); }
       #cutout { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
       .ov { position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }
 
@@ -67,6 +58,8 @@
       .rows { position: absolute; left: 60px; right: 60px; top: 570px; display: flex; flex-direction: column; gap: 30px; }
       #solution .rows { top: 500px; gap: 26px; }
       #solution .title { top: 340px; }
+      #soScroll { position: absolute; inset: 0; }
+      .page .grid.tall { inset: -1400px -60px; }
       .row { position: relative; height: 250px; border-radius: 36px; background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.13);
               box-shadow: 0 24px 60px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
       #solution .row { height: 228px; }
@@ -144,11 +137,9 @@
             <div class="top"><span class="tw"><span class="la">א</span><span class="la">ח</span><span class="la">ר</span><span class="la">י</span>&nbsp;<span class="la">ח</span><span class="la">ו</span><span class="la">ד</span><span class="la">ש</span></span><div id="cal"><i class="bar"></i><b id="calN">1</b></div></div>
             <div class="big"><span class="lb">מ</span><span class="lb">פ</span><span class="lb">ס</span><span class="lb">י</span><span class="lb">ק</span><span class="lb">י</span><span class="lb">ם</span></div>
           </div>
-          <div id="dof" class="clip" data-start="1.96" data-duration="0.84" data-track-index="1"></div>
-          <img id="cutout" class="clip" alt="" data-cut-ranges="56-88,188-238" data-start="0" data-duration="21.0" data-track-index="1" />
+          <img id="cutout" class="clip" alt="" data-cut-ranges="188-238" data-start="0" data-duration="21.0" data-track-index="1" />
         </div>
         </div>
-        <div id="vig" class="clip" data-start="1.96" data-duration="0.84" data-track-index="1"></div>
       </div>
 
       <audio id="music" src="music.wav" data-start="0" data-duration="21.0" data-track-index="6" data-volume="1"></audio>
@@ -159,7 +150,7 @@
         <div class="beat" id="hookB"><div class="hl" id="hookR">לא מצליחים</div><div class="hl" id="hookR2"><span class="royal">להתמיד</span> באימונים</div></div>
       </div>
 
-      <div class="clip page" id="reasons" data-start="3.17" data-duration="3.09" data-track-index="3">
+      <div class="clip page" id="reasons" data-start="3.11" data-duration="3.15" data-track-index="3">
         <div class="inner" id="rsIn">
           <div class="grid"></div><div class="glow"></div>
           <div class="title" id="rsTtl">למה <span class="acc">מפסיקים?</span></div>
@@ -173,17 +164,17 @@
 
       <div class="clip page" id="solution" data-start="9.77" data-duration="6.35" data-track-index="3">
         <div class="inner" id="soIn">
-          <div class="grid"></div><div class="glow"></div>
+          <div class="glow"></div>
+          <div id="soScroll"><div class="grid tall"></div>
           <div class="title" id="soTtl">אצלנו זה <span class="acc">אחרת</span></div>
           <div class="rows">
 <div class="row" id="s1"><div class="txt"><span class="badge v">✓</span><div><div class="m">עד 6 מתאמנים</div><div class=s>בקבוצה קטנה</div></div></div><div class="vis six"><svg viewBox="0 0 24 24" class="p6 p6-0"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-1"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-2"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-3"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-4"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-5"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><b id="sixN">0</b></div></div>
 <div class="row" id="s2"><div class="txt"><span class="badge v">✓</span><div><div class="m">תכנית אישית</div><div class=s>לכל מתאמן</div></div></div><div class="vis plan"><div class="sheet"><div class="hd"><i></i><b>התכנית שלך</b></div><div class="ln"><span class="ck">✓</span><i style="width:150px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:118px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:170px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:132px"></i></div></div></div></div>
 <div class="row" id="s3"><div class="txt"><span class="badge v">✓</span><div><div class="m">מעקב משקלים</div><div class=s>בכל אימון</div></div></div><div class="vis kg"><svg viewBox="-110 -50 220 100" class="db"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><line x1="-46" y1="0" x2="46" y2="0"/><rect x="-78" y="-34" width="22" height="68" rx="6"/><rect x="56" y="-34" width="22" height="68" rx="6"/><line x1="-94" y1="-16" x2="-94" y2="16"/><line x1="94" y1="-16" x2="94" y2="16"/></g></svg><div class="num"><b id="kgN">40</b><span>ק״ג</span></div><div class="up" id="kgUp">▲</div></div></div>
 <div class="row" id="s4"><div class="txt"><span class="badge v">✓</span><div><div class="m">והתקדמות</div><div class=s>שרואים בעיניים</div></div></div><div class="vis graph"><svg viewBox="0 0 330 170"><g stroke="rgba(255,255,255,.1)" stroke-width="2"><line x1="0" y1="40" x2="330" y2="40"/><line x1="0" y1="85" x2="330" y2="85"/><line x1="0" y1="130" x2="330" y2="130"/></g><path id="gArea" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22 L 320 170 L 10 170 Z" fill="url(#gFill)" opacity="0"/><path id="gLine" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22" fill="none" stroke="#5b86ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(80,130,255,.9))"/><circle id="gDot" r="11" fill="#fff"/><defs><linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a64f0" stop-opacity=".55"/><stop offset="1" stop-color="#3a64f0" stop-opacity="0"/></linearGradient></defs></svg></div></div>
-          </div>
+          </div></div>
         </div>
       </div>
-      <div class="clip" id="flareClip" data-start="1.79" data-duration="0.49" data-track-index="4"><div id="flareBlob"></div><div id="wash"></div><div id="wash2"></div></div>
       <div class="clip" id="leakClip" data-start="6.06" data-duration="0.5" data-track-index="4"><div id="leak"></div></div>
 
       <div class="ov clip" id="g6" data-start="17.58" data-duration="3.42" data-track-index="3">
@@ -211,9 +202,9 @@
       const FACE_FPS = 29.949664429530202;
       const FACE_X = [43.3, 43.8, 44.4, 45.0, 45.8, 46.6, 47.4, 48.2, 49.0, 49.8, 50.6, 51.3, 52.1, 52.7, 53.4, 54.0, 54.5, 55.0, 55.4, 55.7, 56.1, 56.3, 56.6, 56.8, 56.9, 57.0, 57.1, 57.2, 57.3, 57.3, 57.3, 57.4, 57.4, 57.4, 57.4, 57.3, 57.3, 57.2, 57.2, 57.1, 57.0, 56.9, 56.7, 56.5, 56.4, 56.1, 55.9, 55.6, 55.4, 55.0, 54.7, 54.3, 54.0, 53.5, 53.1, 52.6, 52.2, 51.7, 51.1, 50.6, 50.0, 49.5, 48.9, 48.3, 47.8, 47.2, 46.6, 46.1, 45.6, 45.0, 44.5, 44.1, 43.6, 43.2, 42.8, 42.4, 42.0, 41.6, 41.3, 41.0, 40.8, 40.7, 40.7, 40.8, 41.1, 41.6, 42.4, 43.4, 44.7, 46.1, 47.5, 48.9, 50.0, 51.0, 51.7, 52.1, 52.3, 52.3, 52.2, 51.9, 51.6, 51.3, 50.9, 50.5, 50.1, 49.7, 49.4, 49.0, 48.6, 48.3, 48.0, 47.8, 47.6, 47.5, 47.6, 47.8, 48.2, 48.7, 49.4, 50.2, 51.1, 52.0, 52.8, 53.4, 54.0, 54.4, 54.6, 54.8, 54.9, 54.9, 54.9, 54.8, 54.8, 54.7, 54.7, 54.6, 54.5, 54.5, 54.4, 54.3, 54.3, 54.2, 54.1, 53.9, 53.7, 53.5, 53.3, 53.0, 52.7, 52.5, 52.3, 52.2, 52.1, 52.2, 52.3, 52.6, 52.9, 53.3, 53.7, 54.2, 54.6, 55.1, 55.6, 56.1, 56.6, 57.0, 57.4, 57.7, 58.0, 58.3, 58.5, 58.6, 58.8, 58.8, 58.9, 58.8, 58.8, 58.7, 58.5, 58.3, 58.1, 57.9, 57.6, 57.3, 57.0, 56.7, 56.4, 56.2, 56.0, 55.9, 55.8, 55.7, 55.6, 55.5, 55.5, 55.4, 55.3, 55.2, 55.2, 55.1, 55.0, 54.8, 54.7, 54.5, 54.3, 54.1, 53.8, 53.5, 53.1, 52.7, 52.3, 51.8, 51.3, 50.7, 50.1, 49.6, 49.0, 48.4, 47.8, 47.1, 46.5, 45.9, 45.3, 44.8, 44.3, 44.0, 43.7, 43.7, 43.9, 44.4, 45.2, 46.3, 47.5, 48.9, 50.3, 51.6, 52.7, 53.6, 54.3, 54.8, 55.1, 55.2, 55.3, 55.3, 55.2, 55.1, 54.9, 54.7, 54.4, 54.1, 53.8, 53.5, 53.1, 52.8, 52.4, 52.0, 51.6, 51.2, 50.8, 50.4, 50.0, 49.6, 49.2, 48.9, 48.5, 48.2, 47.9, 47.6, 47.3, 47.0, 46.7, 46.5, 46.2, 46.0, 45.9, 45.7, 45.5, 45.4, 45.2, 45.1, 45.0, 44.9, 44.9, 44.8, 44.7, 44.7, 44.7, 44.7, 44.7, 44.7, 44.9, 45.0, 45.2, 45.5, 45.9, 46.3, 46.8, 47.3, 47.8, 48.2, 48.6, 49.0, 49.2, 49.4, 49.5, 49.5, 49.5, 49.5, 49.5, 49.5, 49.5, 49.6, 49.7, 49.8, 49.9, 50.0, 50.2, 50.4, 50.5, 50.7, 51.0, 51.2, 51.4, 51.7, 51.9, 52.2, 52.4, 52.7, 52.9, 53.2, 53.4, 53.6, 53.8, 54.0, 54.2, 54.4, 54.6, 54.8, 55.0, 55.1, 55.3, 55.5, 55.6, 55.8, 55.9, 56.0, 56.0, 56.0, 56.0, 55.8, 55.6, 55.2, 54.9, 54.4, 53.9, 53.5, 53.0, 52.6, 52.2, 51.8, 51.5, 51.1, 50.8, 50.5, 50.1, 49.8, 49.4, 49.1, 48.7, 48.4, 48.0, 47.7, 47.4, 47.0, 46.8, 46.5, 46.2, 45.9, 45.7, 45.5, 45.3, 45.1, 44.9, 44.8, 44.6, 44.5, 44.3, 44.2, 44.0, 43.9, 43.8, 43.7, 43.6, 43.7, 43.8, 44.0, 44.4, 45.0, 45.8, 46.7, 47.7, 48.7, 49.8, 50.7, 51.5, 52.1, 52.5, 52.8, 52.8, 52.8, 52.5, 52.2, 51.9, 51.5, 51.0, 50.6, 50.2, 49.8, 49.4, 49.1, 48.8, 48.5, 48.2, 47.9, 47.7, 47.5, 47.2, 47.1, 46.9, 46.7, 46.6, 46.5, 46.4, 46.4, 46.4, 46.5, 46.6, 46.9, 47.2, 47.7, 48.4, 49.1, 49.9, 50.7, 51.4, 52.0, 52.5, 52.9, 53.1, 53.1, 53.0, 52.9, 52.7, 52.4, 52.2, 51.9, 51.6, 51.3, 51.0, 50.8, 50.5, 50.2, 50.0, 49.7, 49.4, 49.2, 48.9, 48.6, 48.4, 48.2, 48.0, 47.9, 48.0, 48.2, 48.6, 49.3, 50.2, 51.3, 52.6, 54.0, 55.3, 56.5, 57.5, 58.3, 58.9, 59.4, 59.6, 59.7, 59.8, 59.7, 59.6, 59.5, 59.3, 59.2, 59.0, 58.8, 58.5, 58.2, 58.0, 57.6, 57.3, 57.0, 56.6, 56.2, 55.9, 55.5, 55.1, 54.6, 54.2, 53.8, 53.4, 52.9, 52.5, 52.0, 51.5, 51.1, 50.6, 50.2, 49.7, 49.3, 48.9, 48.5, 48.1, 47.8, 47.5, 47.1, 46.8, 46.6, 46.3, 46.0, 45.8, 45.6, 45.4, 45.2, 45.1, 44.9, 44.8, 44.7, 44.6, 44.5, 44.4, 44.3, 44.3, 44.2, 44.2, 44.2, 44.2, 44.2, 44.3, 44.4, 44.5, 44.6, 44.8, 45.0, 45.2, 45.4, 45.7, 46.0, 46.3, 46.6, 47.0, 47.3, 47.7, 48.0, 48.4, 48.8, 49.2, 49.5, 49.9, 50.3, 50.6, 51.0, 51.3, 51.6, 51.9, 52.2, 52.4, 52.7, 52.9, 53.1, 53.3, 53.6, 53.8, 54.0, 54.2, 54.4, 54.6, 54.8, 55.0, 55.2, 55.3, 55.5, 55.6, 55.7, 55.8];
       const FACE_Y = [28.7, 28.7, 28.8, 28.9, 29.0, 29.1, 29.2, 29.3, 29.4, 29.4, 29.5, 29.6, 29.6, 29.7, 29.7, 29.7, 29.7, 29.8, 29.8, 29.8, 29.8, 29.7, 29.7, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.7, 29.7, 29.7, 29.7, 29.6, 29.6, 29.6, 29.6, 29.5, 29.5, 29.5, 29.4, 29.4, 29.4, 29.4, 29.3, 29.3, 29.3, 29.3, 29.2, 29.2, 29.2, 29.1, 29.1, 29.1, 29.0, 29.0, 28.9, 28.9, 28.8, 28.8, 28.7, 28.7, 28.6, 28.6, 28.6, 28.5, 28.5, 28.5, 28.5, 28.4, 28.4, 28.4, 28.5, 28.5, 28.6, 28.6, 28.8, 28.9, 29.1, 29.4, 29.6, 29.9, 30.1, 30.3, 30.4, 30.6, 30.7, 30.8, 30.9, 31.0, 31.1, 31.2, 31.2, 31.3, 31.3, 31.3, 31.3, 31.3, 31.2, 31.2, 31.1, 31.0, 31.0, 30.9, 30.8, 30.8, 30.7, 30.7, 30.6, 30.6, 30.6, 30.6, 30.6, 30.7, 30.7, 30.8, 30.9, 31.0, 31.2, 31.3, 31.4, 31.5, 31.6, 31.7, 31.8, 31.9, 31.9, 31.9, 31.9, 31.9, 31.9, 31.9, 31.8, 31.8, 31.7, 31.6, 31.5, 31.4, 31.2, 31.1, 31.0, 30.9, 30.9, 30.9, 30.9, 31.0, 31.1, 31.2, 31.3, 31.4, 31.5, 31.6, 31.6, 31.6, 31.7, 31.7, 31.7, 31.6, 31.6, 31.6, 31.6, 31.5, 31.5, 31.4, 31.4, 31.4, 31.3, 31.3, 31.2, 31.1, 31.1, 31.0, 30.9, 30.8, 30.7, 30.6, 30.4, 30.3, 30.2, 30.0, 29.9, 29.8, 29.7, 29.6, 29.6, 29.6, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.3, 29.3, 29.3, 29.2, 29.2, 29.2, 29.1, 29.1, 29.0, 29.0, 28.9, 28.9, 28.8, 28.8, 28.8, 28.9, 28.9, 29.1, 29.2, 29.4, 29.6, 29.9, 30.0, 30.2, 30.3, 30.4, 30.5, 30.5, 30.5, 30.4, 30.4, 30.3, 30.2, 30.1, 30.0, 29.9, 29.8, 29.7, 29.6, 29.5, 29.5, 29.4, 29.4, 29.3, 29.3, 29.2, 29.2, 29.1, 29.1, 29.1, 29.0, 29.0, 29.0, 28.9, 28.9, 28.9, 28.9, 28.9, 28.8, 28.8, 28.8, 28.8, 28.8, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.8, 28.8, 28.8, 28.8, 28.8, 28.8, 28.8, 28.8, 28.7, 28.7, 28.7, 28.7, 28.8, 28.8, 28.9, 28.9, 29.0, 29.1, 29.1, 29.2, 29.3, 29.3, 29.3, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.5, 29.5, 29.5, 29.5, 29.6, 29.6, 29.6, 29.6, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.7, 29.7, 29.8, 29.8, 29.8, 29.8, 29.9, 29.9, 29.9, 29.9, 29.9, 29.9, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.8, 29.9, 29.9, 29.9, 29.9, 29.9, 29.9, 29.9, 29.8, 29.8, 29.8, 29.7, 29.7, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.5, 29.5, 29.5, 29.5, 29.5, 29.5, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.5, 29.6, 29.6, 29.7, 29.8, 29.9, 29.9, 30.0, 30.0, 30.0, 30.0, 30.0, 29.9, 29.9, 29.9, 29.8, 29.8, 29.8, 29.7, 29.7, 29.7, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.5, 29.5, 29.5, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.4, 29.3, 29.3, 29.2, 29.1, 29.1, 29.0, 28.9, 28.9, 28.8, 28.8, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.7, 28.8, 28.8, 28.9, 29.0, 29.1, 29.1, 29.2, 29.3, 29.4, 29.5, 29.6, 29.6, 29.7, 29.7, 29.8, 29.8, 29.8, 29.8, 29.9, 29.9, 29.9, 29.9, 29.9, 29.9, 29.8, 29.8, 29.8, 29.8, 29.7, 29.7, 29.7, 29.7, 29.6, 29.6, 29.6, 29.6, 29.5, 29.5, 29.5, 29.5, 29.4, 29.4, 29.4, 29.4, 29.3, 29.3, 29.2, 29.2, 29.1, 29.1, 29.1, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.1, 29.1, 29.1, 29.1, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.3, 29.3, 29.3, 29.3, 29.3, 29.3, 29.3, 29.3, 29.3, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.1, 29.1, 29.1, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 29.1, 29.1, 29.1, 29.1, 29.2, 29.2, 29.2, 29.2, 29.2, 29.3];
-      const ZOOM = [["set", 0.0, 1.0, 0], ["push", 0.0, 1.08, 1.9599999999999997], ["set", 1.9599999999999997, 1.0, 0], ["set", 2.8, 1.06, 0], ["push", 2.8, 1.09, 0.3700000000000001], ["set", 6.260000000000001, 1.04, 0], ["push", 6.260000000000001, 1.1, -0.7100000000000009], ["back", 5.5, 1.0, 0.35], ["punch", 8.55, 1.1, 0.45], ["snap", 9.6, 1.3, 0.2], ["set", 16.119999999999997, 1.0, 0], ["push", 16.119999999999997, 1.1, 1.5100000000000016], ["punch", 16.88, 1.16, 0.5], ["push", 17.38, 1.2, 3.620000000000001]];
+      const ZOOM = [["set", 0.0, 1.0, 0], ["push", 0.0, 1.08, 3.11], ["set", 6.260000000000001, 1.04, 0], ["push", 6.260000000000001, 1.1, -0.7100000000000009], ["back", 5.5, 1.0, 0.35], ["punch", 8.55, 1.1, 0.45], ["snap", 9.6, 1.3, 0.2], ["set", 16.119999999999997, 1.0, 0], ["push", 16.119999999999997, 1.1, 1.5100000000000016], ["punch", 16.88, 1.16, 0.5], ["push", 17.38, 1.2, 3.620000000000001]];
       const CAPS = [7.77, 8.51, 9.36, 16.11, 16.84, 17.64, 17.98];
-      const T = {"sol_in": 9.77, "hk_a": 0.06, "hk_a2": 1.14, "hk_out": 2.72, "sd_flare": 1.79, "sd_cut": 1.96, "sd_back": 2.8, "rs_in": 3.17, "rs_1": 3.27, "rs_2": 4.04, "rs_3": 5.08, "rs_out": 6.26, "tb_in": 6.35, "tb_big": 7.03, "tb_out": 7.51, "so_1": 10.18, "so_2": 11.65, "so_3": 13.33, "so_4": 14.21, "sol_out": 16.12, "dm_in": 17.63};
+      const T = {"sol_in": 9.77, "hk_a": 0.06, "hk_a2": 1.14, "hk_out": 2.72, "hk_b": 1.97, "rs_in": 3.11, "rs_1": 3.23, "rs_2": 4.04, "rs_3": 5.08, "rs_out": 6.26, "tb_in": 6.35, "tb_big": 7.03, "tb_out": 7.51, "so_1": 10.18, "so_2": 11.65, "so_3": 13.33, "so_4": 14.21, "sol_out": 16.12, "dm_in": 17.63};
       const tl = gsap.timeline({ paused: true });
 
       // Zoom center follows the face.
@@ -237,28 +228,12 @@
         { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }, at);
       phraseIn("#hookL", T.hk_a);
       phraseIn("#hookL2", T.hk_a2);
-      // The first beat goes under the wash; the second lands with the side shot (as in the reference).
-      tl.set("#hookA", { opacity: 0 }, T.sd_cut);
-      tl.fromTo(["#hookR", "#hookR2"], { opacity: 0, scale: 1.12, filter: "blur(8px)" },
-        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.22, stagger: 0.05, ease: "power3.out", immediateRender: false }, T.sd_cut - 0.02);
-      tl.fromTo("#hookR2 .royal", { scale: 1 }, { scale: 1.08, duration: 0.45, ease: spring, immediateRender: false }, T.sd_cut + 0.3);
-      tl.set("#hookB", { opacity: 0 }, T.sd_back);
+      // Beat A leaves, beat B "לא מצליחים / להתמיד באימונים" comes in whole.
+      tl.to("#hookA", { opacity: 0, y: -24, filter: "blur(12px)", duration: 0.18, ease: "power2.in" }, T.hk_b - 0.18);
+      phraseIn(["#hookR", "#hookR2"], T.hk_b);
+      tl.fromTo("#hookR2 .royal", { scale: 1 }, { scale: 1.08, duration: 0.45, ease: spring, immediateRender: false }, T.hk_b + 0.45);
+      tl.to("#hookB", { opacity: 0, y: -24, filter: "blur(12px)", duration: 0.22, ease: "power2.in" }, T.hk_out);
 
-      // Side-angle insert: a fake second camera. Mirrored, closer, turned in 3D with a slight dutch tilt, warmer
-      // grade, shallow focus (blurred background, sharp trainer from the cutouts), drifting slowly; hard cut back.
-      const SD = T.sd_back - T.sd_cut;
-      tl.set("#side", { scaleX: -1.42, scaleY: 1.42, rotationY: -16, rotation: 2.2, transformPerspective: 1300, x: 30, filter: "contrast(1.12) saturate(1.2) sepia(.12)" }, T.sd_cut);
-      tl.fromTo("#side", { x: 30, rotationY: -16 }, { x: -50, rotationY: -12, duration: SD, ease: "sine.inOut", immediateRender: false }, T.sd_cut);
-      tl.set("#side", { scaleX: 1, scaleY: 1, rotationY: 0, rotation: 0, x: 0, filter: "none" }, T.sd_back);
-      // Flare: warm blob grows from the bottom-left, then the whole frame washes pink/peach; the cut happens under it,
-      // the wash turns orange and clears from the top-left within ~0.2 s.
-      tl.set(["#wash", "#wash2", "#flareBlob"], { opacity: 0 }, 0);
-      tl.fromTo("#flareBlob", { opacity: 0.3, scale: 0.8, x: 0, y: 0 }, { opacity: 1, scale: 1.7, duration: T.sd_cut - T.sd_flare + 0.03, ease: "power1.out", immediateRender: false }, T.sd_flare);
-      tl.to("#flareBlob", { x: -300, y: -900, opacity: 0, duration: 0.3, ease: "power2.out" }, T.sd_cut + 0.03);
-      tl.fromTo("#wash", { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "power2.in", immediateRender: false }, T.sd_cut - 0.06);
-      tl.to("#wash", { opacity: 0, duration: 0.1, ease: "none" }, T.sd_cut + 0.04);
-      tl.fromTo("#wash2", { opacity: 0 }, { opacity: 0.6, duration: 0.08, ease: "none", immediateRender: false }, T.sd_cut + 0.02);
-      tl.to("#wash2", { opacity: 0, duration: 0.18, ease: "power2.out" }, T.sd_cut + 0.11);
 
       // Captions pop in.
       CAPS.forEach((at, i) => tl.fromTo(`#cap${i} .cap-in`, { opacity: 0, scale: 0.82, y: 24 },
@@ -322,6 +297,17 @@
 
       // ===== Solution page =====
       pageIn("#solution", "#soIn", T.sol_in, T.sol_out - T.sol_in);
+      // Camera moves down the page: each new block glides to the focus line (y≈1000) with a quick ease, the whole
+      // page (title, earlier blocks, grid) travels up with it, and between moves it keeps drifting slowly.
+      // Block centers: row k at 614 + 254k; the title is framed first.
+      const STOPS = [[T.sol_in, 470], [T.so_1 - 0.04, 386], [T.so_2 - 0.04, 132], [T.so_3 - 0.04, -122], [T.so_4 - 0.04, -376], [T.sol_out, -436]];
+      tl.set("#soScroll", { y: STOPS[0][1] + 40 }, 0);
+      tl.fromTo("#soScroll", { y: STOPS[0][1] + 40 }, { y: STOPS[0][1], duration: 0.45, ease: "power3.out", immediateRender: false }, T.sol_in);
+      for (let i = 1; i < STOPS.length - 1; i++) {
+        const [at, y] = STOPS[i], next = STOPS[i + 1][0];
+        tl.to("#soScroll", { y, duration: 0.32, ease: "power3.inOut" }, at);
+        tl.to("#soScroll", { y: y - 34, duration: Math.max(0.2, next - at - 0.32), ease: "none" }, at + 0.32);
+      }
       titleIn("#soTtl", T.sol_in + 0.04);
       smoothIn("#s1", T.so_1); badgeIn("#s1 .badge", T.so_1 + 0.25);
       smoothIn("#s2", T.so_2); badgeIn("#s2 .badge", T.so_2 + 0.25);
