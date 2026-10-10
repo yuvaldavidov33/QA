@@ -69,10 +69,7 @@ ZOOM = [
     ("push", t("אני") + 0.45, 1.08, t("מלווה") - t("אני") - 0.45),
     ("punch", t("מלווה"), 1.20, 0.45),
     ("back", t("לאורך"), 1.00, t("לכבוד") - t("לאורך")),
-    ("push", t("לכבוד"), 1.10, t("199") - t("לכבוד")),
-    # "199": the hardest snap of the reel.
-    ("snap", t("199"), 1.32, 0.2),
-    ("back", t("לחודש"), 1.00, t("רוצים") - t("לחודש")),
+    ("push", t("לכבוד"), 1.10, t("במבצע") - t("לכבוד")),
     ("push", t("רוצים"), 1.16, DURATION - t("רוצים")),
 ]
 
@@ -81,8 +78,10 @@ TIMES = {
     "g2_in": t("אימוני"), "g2_tag": t("בקבוצות"), "g2_lit": t("עד"), "g2_num": t("6"), "g2_out": t("אני") - 0.05,
     "g3_in": t("בונה") - 0.05, "g3_check": t("תכנית"), "g3_out": t("מלווה") - 0.05,
     "g4_in": t("מלווה"), "g4_draw": t("לאורך"), "g4_flag": t("הדרך"), "g4_out": t("לכבוד") - 0.05,
-    "tb_in": t("לכבוד") - 0.12, "tb_big": t("לשגרה", 2) - 0.2, "tb_out": t("199") - 0.5 - 0.2,
-    "g5_in": t("199") - 0.5, "g5_num": t("199"), "g5_tag": t("לחודש"), "g5_out": t("רוצים") - 0.05,
+    "tb_in": t("לכבוד") - 0.12, "tb_big": t("לשגרה", 2) - 0.2, "tb_out": t("במבצע") + 0.5,
+    # Offer (client reference): the frame slides off sideways onto a black star page, hard cut back at "רוצים".
+    "mq_in": t("יצאתי") - 0.05, "sp_in": t("במבצע") - 0.05, "sp_num": t("199") - 0.1, "sp_sub": t("לחודש"),
+    "sp_sub2": t("הראשון") + 0.25, "sp_out": t("רוצים"),
     "g6_in": t("שלחו"), "g6_here": t("ונשמור"),
 }
 
@@ -95,7 +94,7 @@ def esc_words(ws):
 # The CTA pill and "פה למטה" cover the last two chunks, so their captions are dropped.
 captions = [c for c in captions if c["words"] not in (["שלחו", "לי", "הודעה"], ["ונשמור", "לכם", "מקום"])]
 # The price card shows "199₪", so that caption is dropped too.
-captions = [c for c in captions if c["words"] != ["של", "199", "ש״ח"]]
+captions = [c for c in captions if c["words"] not in (["של", "199", "ש״ח"], ["יצאתי", "במבצע"], ["לחודש", "הראשון"])]
 # The big text behind the trainer already says "לכבוד החזרה / לשגרה" (client: no duplicate at the bottom).
 captions = [c for c in captions if c["words"] not in (["לכבוד", "החזרה"], ["לשגרה"])]
 cap_html = "\n".join(
@@ -116,6 +115,15 @@ PERSON = ('<svg viewBox="0 0 24 24" class="person"><circle cx="12" cy="7" r="4"/
 ROW = '<div class="row"><span class="tick"><b>✓</b></span><i class="bar" style="width:{w}px"></i></div>'
 # Road from start dot to finish flag (drawn right-to-left, like the text).
 ROAD = "M 600 150 C 470 150, 450 40, 320 60 S 140 150, 60 70"
+
+import random
+_rng = random.Random(11)
+STARS = "".join(
+    f'<i class="star" style="left:{_rng.uniform(0, 100):.2f}%;top:{_rng.uniform(0, 100):.2f}%;width:{sz}px;height:{sz}px;opacity:{_rng.uniform(.25, .9):.2f}"></i>'
+    for sz in (_rng.choice([2, 3, 3, 3, 4, 5]) for _ in range(230)))
+STREAKS = "".join(
+    f'<i class="streak" style="top:{_rng.uniform(20, 80):.1f}%;width:{_rng.randint(260, 620)}px;left:-700px"></i>' for _ in range(7))
+
 
 def letters(word_list, cls):
     """One span per letter (Hebrew letters don't join), words kept apart."""
@@ -202,14 +210,20 @@ html = f"""<!doctype html>
       #road .track {{ fill: none; stroke: rgba(255,255,255,.18); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 2 26; }}
       #road .done {{ fill: none; stroke: var(--cyan); stroke-width: 14; stroke-linecap: round; }}
 
-      /* G5: the offer. */
-      #g5 {{ top: 150px; bottom: auto; display: flex; justify-content: center; }}
-      #offer {{ flex-direction: column; gap: 0; padding: 26px 64px 34px; border-color: rgba(255,51,64,.55); }}
-      #offer .lbl {{ font-size: 46px; font-weight: 800; background: var(--red); border-radius: 999px; padding: 6px 30px; }}
-      #offer .price {{ display: flex; align-items: baseline; gap: 10px; direction: ltr; font-family: "Karantina", sans-serif; font-weight: 700; line-height: .9; margin-top: 10px; }}
-      #offer .price .n {{ font-size: 200px; min-width: 250px; text-align: center; }}
-      #offer .price .cur {{ font-size: 110px; color: var(--red); }}
-      #offer .sub {{ font-size: 54px; font-weight: 900; }}
+      /* Offer page: black sky with stars behind the video; the video slides away sideways to reveal it. */
+      #space {{ position: absolute; inset: 0; overflow: hidden; background: radial-gradient(120% 80% at 60% 45%, #1b1f28 0%, #0d1016 60%, #07090c 100%); }}
+      #space .star {{ position: absolute; border-radius: 50%; background: #fff; }}
+      #space .streak {{ position: absolute; height: 3px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent); }}
+      #stars {{ position: absolute; inset: -40px; }}
+      #deal {{ position: absolute; right: 110px; top: 690px; direction: rtl; text-align: right; font-family: "Heebo", sans-serif; color: #fff;
+               text-shadow: 0 8px 40px rgba(0,0,0,.6); white-space: nowrap; }}
+      #deal .big {{ direction: ltr; font-weight: 900; font-size: 330px; line-height: .85; letter-spacing: -8px; }}
+      #deal .big .cur {{ font-size: 210px; color: var(--red); margin-left: 14px; letter-spacing: 0; }}
+      #deal .big span {{ display: inline-block; }}
+      #deal .s1 {{ font-weight: 900; font-size: 92px; line-height: 1.05; margin-top: 18px; margin-inline-end: 40px; }}
+      #deal .s2 {{ font-weight: 700; font-size: 62px; line-height: 1.1; margin-inline-end: 40px; color: rgba(255,255,255,.82); }}
+      #marq {{ position: absolute; left: 0; right: 0; top: 1170px; direction: rtl; text-align: center; white-space: nowrap; font-family: "Heebo", sans-serif;
+               font-weight: 900; font-size: 128px; color: #fff; text-shadow: 0 6px 30px rgba(0,0,0,.6); pointer-events: none; }}
 
       /* G6: call to action. */
       #g6 {{ top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 10px; }}
@@ -220,6 +234,15 @@ html = f"""<!doctype html>
   </head>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{DURATION}" data-width="1080" data-height="1920">
+      <div id="space" class="clip" data-start="{round(TIMES["sp_in"] - 0.05, 2)}" data-duration="{round(TIMES["sp_out"] - TIMES["sp_in"] + 0.05, 2)}" data-track-index="0">
+        <div id="stars">{STARS}</div>
+        {STREAKS}
+        <div id="deal">
+          <div class="big"><span>1</span><span>9</span><span>9</span><span class="cur">₪</span></div>
+          <div class="s1">לחודש הראשון</div>
+          <div class="s2">מבצע חזרה לשגרה</div>
+        </div>
+      </div>
       <div id="cam">
         <div id="frame">
           <video id="a-roll" class="clip" src="{VIDEO}" playsinline data-start="0" data-duration="{DURATION}" data-track-index="0"
@@ -273,13 +296,7 @@ html = f"""<!doctype html>
         </div>
       </div>
 
-      <div class="ov clip" id="g5" data-start="{TIMES["g5_in"]}" data-duration="{round(TIMES["g5_out"] - TIMES["g5_in"], 2)}" data-track-index="3">
-        <div class="card" id="offer">
-          <div class="lbl">מבצע חזרה לשגרה</div>
-          <div class="price"><span class="n" id="priceN">0</span><span class="cur">₪</span></div>
-          <div class="sub" id="offerSub">לחודש הראשון</div>
-        </div>
-      </div>
+      <div class="clip" id="marq" data-start="{TIMES["mq_in"]}" data-duration="{round(TIMES["sp_in"] + 0.9 - TIMES["mq_in"], 2)}" data-track-index="3">יצאתי במבצע</div>
 
       <div class="ov clip" id="g6" data-start="{TIMES["g6_in"]}" data-duration="{round(DURATION - TIMES["g6_in"], 2)}" data-track-index="3">
         <div class="pill" id="pill">שלחו לי הודעה</div>
@@ -339,7 +356,7 @@ html = f"""<!doctype html>
 
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
-      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#road", "#walker", "#offer", "#offer .price", "#offerSub",
+      tl.set(["#g1a", "#g1b", "#g2t", "#people", "#people .num", "#plan", "#road", "#walker", "#deal .big span", "#deal .s1", "#deal .s2",
               "#pill", "#here", "#arrow"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};
@@ -406,15 +423,22 @@ html = f"""<!doctype html>
         {{ x: 26, rotationY: 3, transformPerspective: 1200, duration: T.tb_out - T.tb_in, ease: "none", immediateRender: false }}, T.tb_in);
       tl.to("#behind", {{ x: 300, scaleX: 1.35, opacity: 0, filter: "blur(22px)", duration: 0.3, ease: "power2.in" }}, T.tb_out);
 
-      // G5: the price card, the number rolls up to 199, then "לחודש הראשון".
-      cardIn("#offer", T.g5_in);
-      const price = {{ v: 0 }};
-      tl.fromTo("#offer .price", {{ opacity: 0, scale: 0.7 }}, {{ opacity: 1, scale: 1, duration: 0.3, ease: "power2.out", immediateRender: false }}, T.g5_num - 0.15);
-      tl.fromTo(price, {{ v: 0 }}, {{ v: 199, duration: 0.7, ease: "power3.out", immediateRender: false,
-        onUpdate: () => {{ document.querySelector("#priceN").textContent = Math.round(price.v); }} }}, T.g5_num - 0.15);
-      tl.fromTo("#offer .price", {{ scale: 1 }}, {{ scale: 1.1, duration: 0.45, ease: spring, immediateRender: false }}, T.g5_num + 0.55);
-      tl.fromTo("#offerSub", {{ opacity: 0, y: 20 }}, {{ opacity: 1, y: 0, duration: 0.3, ease: "back.out(2)", immediateRender: false }}, T.g5_tag);
-      cardOut("#offer", T.g5_out - 0.35);
+      // Offer: "יצאתי במבצע" streams in from the left over the video, the whole shot slides off to the right
+      // with motion blur onto the star page, "199₪" lands letter by letter, the two lines resolve, the block
+      // drifts right; hard cut back to the video on "רוצים".
+      tl.fromTo("#marq", {{ x: -1100, filter: "blur(6px)" }}, {{ x: -60, filter: "blur(0px)", duration: T.sp_in - T.mq_in, ease: "power2.out", immediateRender: false }}, T.mq_in);
+      tl.to("#marq", {{ x: 1500, filter: "blur(16px)", duration: 0.85, ease: "power2.in" }}, T.sp_in);
+      tl.fromTo("#cam", {{ x: 0, filter: "blur(0px)" }}, {{ x: 1300, filter: "blur(18px)", duration: 0.4, ease: "power2.in", immediateRender: false }}, T.sp_in);
+      tl.set("#cam", {{ x: 0, filter: "blur(0px)" }}, T.sp_out);
+      tl.fromTo("#stars", {{ x: -30 }}, {{ x: 40, duration: T.sp_out - T.sp_in, ease: "none", immediateRender: false }}, T.sp_in);
+      document.querySelectorAll("#space .streak").forEach((el, i) => {{
+        tl.fromTo(el, {{ x: 0, opacity: 0.9 }}, {{ x: 2600, opacity: 0, duration: 0.5 + (i % 3) * 0.12, ease: "power1.in", immediateRender: false }}, T.sp_in + i * 0.04);
+      }});
+      tl.fromTo([...document.querySelectorAll("#deal .big span")].reverse(), {{ opacity: 0, x: -260, filter: "blur(16px)", scaleX: 1.4 }},
+        {{ opacity: 1, x: 0, filter: "blur(0px)", scaleX: 1, duration: 0.42, stagger: 0.07, ease: "power3.out", immediateRender: false }}, T.sp_num);
+      tl.fromTo("#deal .s1", {{ opacity: 0, x: -60, filter: "blur(14px)" }}, {{ opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }}, T.sp_sub);
+      tl.fromTo("#deal .s2", {{ opacity: 0, x: -60, filter: "blur(14px)" }}, {{ opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out", immediateRender: false }}, T.sp_sub2);
+      tl.fromTo("#deal", {{ x: -30 }}, {{ x: 30, duration: T.sp_out - T.sp_num, ease: "none", immediateRender: false }}, T.sp_num);
 
       // G6: call to action with a bouncing arrow.
       cardIn("#pill", T.g6_in);
@@ -443,9 +467,9 @@ events += [("whoosh", G["g3_in"])]
 events += [("ding", G["g3_check"] + i * 0.2) for i in range(3)]
 events += [("whoosh_out", G["g3_out"] - 0.35), ("whoosh", G["g4_in"]), ("whoosh_soft", G["g4_draw"]), ("ding", G["g4_flag"] + 0.3)]
 events += [("whoosh_out", G["g4_out"] - 0.35)]
-events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_out", G["tb_out"]), ("whoosh", G["g5_in"])]
-events += [("tick", G["g5_num"] - 0.15 + i * 0.07) for i in range(8)]
-events += [("ding", G["g5_num"] + 0.55), ("pop", G["g5_tag"]), ("whoosh_out", G["g5_out"] - 0.35)]
+events += [("whoosh_soft", G["tb_in"]), ("whoosh", G["tb_big"]), ("whoosh_soft", G["mq_in"]), ("whoosh", G["sp_in"])]
+events += [("tick", G["sp_num"] + i * 0.07) for i in range(4)] + [("thump", G["sp_num"] + 0.25)]
+events += [("pop", G["sp_sub"]), ("pop", G["sp_sub2"]), ("thump", G["sp_out"])]
 events += [("whoosh", G["g6_in"]), ("pop", G["g6_here"])]
 json.dump({"duration": DURATION, "events": [[n, round(a, 3)] for n, a in sorted(events, key=lambda e: e[1])]},
           open(os.path.join(os.path.dirname(OUT), "sfx.json"), "w"))
