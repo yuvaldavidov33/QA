@@ -171,6 +171,9 @@
       });
 
       // G1: the crowd and the confusing machines get struck out.
+      // Hidden from t=0: a clip's later children would otherwise show at full opacity
+      // from the clip's start until their own pop-in, then pop a second time.
+      tl.set(["#g1a", "#g1b", "#people", "#c1", "#c2", "#q1", "#q2", "#q3", "#pill", "#here", "#arrow", "#people .num"], { opacity: 0 }, 0);
       const popIn = (sel, at) => tl.fromTo(sel, { opacity: 0, scale: 0.7, y: -30 },
         { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: spring, immediateRender: false }, at);
       popIn("#g1a", T.g1_in);
