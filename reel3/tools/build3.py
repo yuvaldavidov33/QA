@@ -13,7 +13,7 @@ OUT, VIDEO = sys.argv[3], sys.argv[4]
 DURATION = 22.3
 KEYWORDS = {"לשגרה", "לאימונים", "עכשיו", "6", "אישית", "מלווה", "199"}
 # Keyword color class; anything not listed is red.
-KEY_COLOR = {"6": "key-green", "מלווה": "key-cyan"}
+KEY_COLOR = {"6": "key-green", "מלווה": "key-cyan", "לאימונים": "key-royal", "עכשיו": "key-royal"}
 
 
 def t(word, nth=1):
@@ -183,6 +183,7 @@ html = f"""<!doctype html>
       .key {{ color: var(--red); }}
       .key.key-green {{ color: var(--green); }}
       .key.key-cyan {{ color: var(--cyan); }}
+      .key.key-royal {{ color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.35), 0 4px 18px rgba(0,0,0,.7); }}
       .hw.royal {{ color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.35), 0 6px 30px rgba(0,0,0,.55); }}
 
       /* Captions: 2-4 words, white heavy, centered on the chest. */
