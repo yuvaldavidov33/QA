@@ -161,6 +161,7 @@ html = f"""<!doctype html>
 
       /* Opening: plain centered text, each phrase enters whole. */
       #hook {{ top: 1060px; bottom: auto; }}
+      #hook .hl {{ opacity: 0; }}
       #hook .beat {{ position: absolute; left: 0; right: 0; top: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }}
       #hook .hl {{ font-family: "Heebo", sans-serif; font-weight: 900; font-size: 84px; line-height: 1.08; color: #fff; white-space: nowrap;
                    text-shadow: 0 6px 26px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.9); }}
