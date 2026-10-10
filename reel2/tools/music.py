@@ -1,8 +1,8 @@
-"""Synthesize an original 86 BPM half-time hip-hop bed (A minor) for the reel.
+"""Synthesize an original 128 BPM driving workout bed (A minor) for the reel.
 
 Intro is filtered pads + a riser into the first snap zoom, then the full beat,
 ducked under the voice. Everything is generated; no samples.
-usage: music.py <voice.wav (mono 48k)> <out.wav> <drop_time> <duration>
+usage: music.py <voice.wav (mono 48k)> <out.wav> <drop_time> <duration> [lift,times]
 """
 import sys
 import wave
@@ -10,13 +10,14 @@ import wave
 import numpy as np
 
 SR = 48000
-BPM = 86
+BPM = 128
 BEAT = 60 / BPM
 STEP = BEAT / 4
 rng = np.random.default_rng(3)
 
 voice_path, out_path = sys.argv[1], sys.argv[2]
 DROP, DUR = float(sys.argv[3]), float(sys.argv[4])
+LIFTS = [float(x) for x in sys.argv[5].split(",")] if len(sys.argv) > 5 else []
 N = int(DUR * SR)
 mix = {k: np.zeros(N + SR * 3) for k in ("drums", "bass", "pad", "pluck", "fx")}
 
@@ -47,8 +48,8 @@ def onepole_lp(x, cutoff):
 
 def kick():
     t = t_(0.42)
-    f = 45 + 105 * np.exp(-t / 0.035)
-    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.16)
+    f = 50 + 110 * np.exp(-t / 0.03)
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.11)
     click = rng.standard_normal(len(t)) * np.exp(-t / 0.003) * 0.3
     return np.tanh(1.6 * (body + click)) * 0.9
 
@@ -78,6 +79,12 @@ def bass808(freq, dur):
     return np.tanh(2.2 * y) * 0.55
 
 
+def rolling_bass(freq, dur):
+    t = t_(dur)
+    y = onepole_lp(saw(freq, t) + 0.5 * saw(freq * 1.005, t), 700)
+    return np.tanh(2.5 * y) * np.exp(-t / 0.12) * 0.5
+
+
 def saw(freq, t):
     return 2 * ((freq * t) % 1) - 1
 
@@ -94,6 +101,12 @@ def pluck(freq):
     t = t_(0.5)
     y = (np.sin(2 * np.pi * freq * t) + 0.35 * np.sin(4 * np.pi * freq * t)) * np.exp(-t / 0.14)
     return y * 0.16
+
+
+def crash():
+    t = t_(1.2)
+    n = rng.standard_normal(len(t))
+    return (n - onepole_lp(n, 5000)) * np.exp(-t / 0.35) * 0.3
 
 
 def riser(dur):
@@ -115,31 +128,33 @@ BAR = 4 * BEAT
 # Bars are anchored so a downbeat lands exactly on the drop.
 first_bar = DROP - BAR * int(np.ceil(DROP / BAR))
 bar_i = 0
+kicks = []
 at = first_bar
 while at < DUR:
     padv, root, arp = CHORDS[bar_i % 4]
     add("pad", at, pad(padv, BAR + 0.1))
     if at >= DROP - 1e-6:
-        # Half-time groove: kick on 1 and the "and" of 2, clap on 3.
-        for step in (0, 6, 10):
-            add("drums", at + step * STEP, kick())
-        add("drums", at + 8 * STEP, clap())
-        for s in range(16):
-            roll = bar_i % 2 == 1 and s >= 14
-            if roll:
-                for r in range(3):
-                    add("drums", at + s * STEP + r * STEP / 3, hat() * 0.8)
-            else:
-                add("drums", at + s * STEP, hat(open_=s in (6, 14)) * (1.0 if s % 2 == 0 else 0.6))
-        add("bass", at, bass808(root, 6 * STEP))
-        add("bass", at + 6 * STEP, bass808(root, 4 * STEP))
-        add("bass", at + 10 * STEP, bass808(root * (1.5 if bar_i % 2 else 1), 6 * STEP))
-        for s, f in enumerate(arp * 2):
-            add("pluck", at + s * 2 * STEP, pluck(f))
+        # Four-on-the-floor: kick every beat, clap on 2 and 4, driving 16th hats.
+        for beat in range(4):
+            add("drums", at + beat * BEAT, kick())
+            kicks.append(at + beat * BEAT)
+        for beat in (1, 3):
+            add("drums", at + beat * BEAT, clap())
+        for st in range(16):
+            add("drums", at + st * STEP, hat(open_=st % 4 == 2) * (1.0 if st % 2 == 0 else 0.7))
+        # Rolling off-beat bass, audible on phone speakers (an octave above the 808 range).
+        for st in range(16):
+            if st % 4 != 0:
+                add("bass", at + st * STEP, rolling_bass(root * 2, STEP * 0.9))
+        for st, f in enumerate(arp * 4):
+            add("pluck", at + st * STEP, pluck(f) * (1.0 if st % 2 == 0 else 0.7))
     bar_i += 1
     at += BAR
 
 add("fx", DROP - 2.0, riser(2.0))
+for lift in LIFTS:  # build-ups into later hits
+    add("fx", lift - 1.6, riser(1.6) * 0.8)
+    add("fx", lift, crash())
 add("drums", DROP, kick() * 1.2)
 
 drums, bass, padt, pl, fx = (mix[k][:N] for k in ("drums", "bass", "pad", "pluck", "fx"))
@@ -147,7 +162,15 @@ t = np.arange(N) / SR
 # Intro pad is muffled, then opens on the drop.
 intro_cut = np.where(t < DROP, 500 + 1500 * np.clip(t / DROP, 0, 1) ** 2, 9000)
 padt = onepole_lp(padt, intro_cut)
-music = drums * 0.9 + bass * 0.4 + padt * 1.1 + pl * 1.6 + fx * 0.8
+# Sidechain pump: pads and bass dip on every kick.
+pump = np.ones(N)
+for k in kicks:
+    i = int(k * SR)
+    seg = t_(BEAT)
+    j = min(N, i + len(seg))
+    if i < N:
+        pump[i:j] = np.minimum(pump[i:j], 1 - 0.6 * np.exp(-seg[: j - i] / 0.09))
+music = drums * 1.0 + bass * pump * 0.9 + padt * pump * 0.9 + pl * 1.3 + fx * 0.9
 
 # Duck under the voice.
 w = wave.open(voice_path)
@@ -155,12 +178,12 @@ v = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
 v = np.pad(v, (0, max(0, N - len(v))))[:N]
 venv = np.sqrt(onepole_lp(v ** 2, 6))
 venv /= venv.max() + 1e-9
-duck = 1 - 0.45 * np.clip(venv * 3, 0, 1)
+duck = 1 - 0.3 * np.clip(venv * 3, 0, 1)
 music *= duck
 music *= np.minimum(1, (DUR - t) / 0.8)  # fade out at the end
 
 music = np.tanh(music * 1.2) / 1.2
-target_rms = 10 ** (-30 / 20)  # well under the voice (~-21 dB mean)
+target_rms = 10 ** (-27 / 20)  # ~6 dB under the voice (~-21 dB mean)
 music *= target_rms / (np.sqrt((music ** 2).mean()) + 1e-9)
 pcm = (np.clip(np.stack([music, music], 1), -1, 1) * 32767).astype(np.int16)
 with wave.open(out_path, "wb") as o:
