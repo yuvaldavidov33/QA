@@ -47,9 +47,31 @@ Read this before making a new reel. It records what the client approved on the f
 - Hebrew, phone-only (iPhone). Explain steps simply. Check the phone silent switch when "no sound".
 - Show a plan/list before building when the client asks; then deliver via the artifact page and the raw download link.
 
-## Reel 3 notes (`reel3/`, "מבצע חגים")
-- When npm/PyPI/storage.googleapis.com are blocked: face track with OpenCV DNN (`reel3/tools/face_track.py`),
-  word timing with Whisper small via sherpa-onnx GitHub release binaries on overlapping windows, render with
-  `reel3/tools/render.py` (headless Chrome at /opt/pw-browsers, same index.html). Lanczos+unsharp frames, no Real-ESRGAN.
-- Match loudness to reel 2 (about −18 LUFS integrated).
-- Client approved: CTA wording follows the speech (plural "שלחו לי הודעה"); offer card shows only the offer price, no old price.
+## Reel 3 notes (`reel3/`, "מבצע חגים") — read these first for the next reel
+Tools that work in this sandbox (npm/PyPI/storage.googleapis.com/raw.githubusercontent.com are blocked; GitHub
+release downloads and `git clone` of GitHub repos work):
+- Face track: `reel3/tools/face_track.py` (OpenCV DNN, model via `git clone -b dnn_samples_face_detector_20180220_uint8
+  https://github.com/opencv/opencv_3rdparty` + `opencv_face_detector.pbtxt` from opencv/opencv samples).
+- Word timing: sherpa-onnx v1.12.20 linux binaries + Whisper small (GitHub releases), transcribe overlapping 2.5 s
+  windows, then `reel3/tools/words.py` (segments + anchors). Slow on 2 CPUs: run in background, 2 processes.
+- Person cutouts for text-behind-subject: `reel3/tools/cutout.py` (U²-Net human seg from rembg's GitHub release).
+- Render: `reel3/tools/render.py` (headless Chrome at /opt/pw-browsers, frame by frame, same index.html), then mix.
+- Builder: `reel3/tools/build3.py`; copy and rewrite content per video.
+
+What the client approved / asked for on reel 3 (defaults for the next reel):
+- Ask before building: propose cards/animations per sentence, wait for approval.
+- Plural wording when the speech is plural ("שלחו לי הודעה").
+- Key words in **royal blue #3a64f0** (not red). ₪ in white.
+- Opening hook: plain centered text, each phrase enters whole (no word-by-word), not behind the head.
+- Big text behind the trainer (cutout) is liked for one mid-reel phrase, beside the head, no duplicate caption below.
+- Cards must move smoothly: glide + fade (`sine.out`), no 3D tilt flips; no snap-zoom while a card is on screen.
+- Wide top card (not a full-screen page) when the trainer should stay visible; full-screen pages (star page,
+  motion-graphics page) are fine for the offer and for list-like content.
+- The client sends reference reels to copy exactly ("בול אחד לאחד"): analyze frame by frame (timings, layout, easing)
+  before building. Copy the motion, never their logo or their song.
+- CTA: low-opacity Instagram DM notification with the client's round profile picture (`reel3/avatar.png`,
+  account idoamarr, "IDO AMAR | סטודיו לאימוני כוח"), "שלחו לי הודעה", then "ונשמור לכם מקום" under it.
+- SFX at 0.35. Music: the client is picky. Clean (no distortion), low, slow hip-hop bed was the last request
+  (`reel3/tools/music6.py`). Always also deliver a no-music version (voice + SFX) so a song can be added in Instagram.
+- Deliver: commit `reelN/reel_final.mp4` to `claude/workout-video-animations-sx06ew`, give the raw GitHub link and
+  update the claude.ai artifact page.
