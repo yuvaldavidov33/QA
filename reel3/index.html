@@ -17,16 +17,15 @@
       #behind .top { font-weight: 800; font-size: 76px; line-height: 1; margin-inline-end: 6px; }
       #behind .big { font-weight: 900; font-size: 174px; line-height: .9; letter-spacing: -2px; }
       #behind span { display: inline-block; }
-      /* Opening (client): "החגים נגמרו" left, "חוזרים לשגרה" right, both behind the trainer, each phrase enters whole. */
+      /* Opening (client): "החגים נגמרו" right, "חוזרים לשגרה" left, low behind the trainer so he covers them as he moves, each phrase enters whole. */
       .hb { position: absolute; direction: rtl; font-family: "Heebo", sans-serif; color: rgba(255,255,255,.93);
              text-shadow: 0 6px 28px rgba(0,0,0,.35); white-space: nowrap; }
       .hb .top { font-weight: 800; font-size: 70px; line-height: 1; }
       .hb .big { font-weight: 900; font-size: 150px; line-height: .9; letter-spacing: -2px; }
       .hb .big.royal { color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.4), 0 6px 28px rgba(0,0,0,.4); }
-      #hookR .top { font-size: 60px; }
-      #hookR .big { font-size: 112px; }
-      #hookL { right: 470px; top: 585px; text-align: right; transform-origin: 100% 50%; }
-      #hookR { left: 670px; top: 455px; text-align: left; transform-origin: 0% 50%; }
+      #hookR .big { font-size: 138px; }
+      #hookL { right: 36px; top: 610px; text-align: right; transform-origin: 100% 50%; }
+      #hookR { left: 80px; top: 640px; text-align: left; transform-origin: 0% 50%; }
       #cutout { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
       .ov { position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }
 
@@ -272,11 +271,11 @@
           { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "power3.out", immediateRender: false }, at);
         tl.fromTo(`${sel} .big`, { letterSpacing: "22px" }, { letterSpacing: "-2px", duration: 0.5, ease: "power3.out", immediateRender: false }, at);
       };
-      phraseIn("#hookL", Math.max(0, HOOK_T[0] - 0.1), -60);
-      phraseIn("#hookR", HOOK_T[2] - 0.06, 60);
+      phraseIn("#hookL", Math.max(0, HOOK_T[0] - 0.1), 60);
+      phraseIn("#hookR", HOOK_T[2] - 0.06, -60);
       tl.fromTo("#hookR .big", { scale: 1 }, { scale: 1.08, duration: 0.4, ease: spring, transformOrigin: "0% 50%", immediateRender: false }, HOOK_T[3]);
-      tl.to("#hookL", { x: -320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }, 2.02);
-      tl.to("#hookR", { x: 320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }, 2.02);
+      tl.to("#hookL", { x: 320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }, 2.02);
+      tl.to("#hookR", { x: -320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }, 2.02);
 
       // Captions pop in.
       CAPS.forEach((at, i) => {

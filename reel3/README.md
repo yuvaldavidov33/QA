@@ -29,7 +29,8 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   low-opacity Instagram DM notification with the client's round profile picture (`avatar.png`, cropped from their
   profile screenshot), "שלחו לי הודעה", and "ונשמור לכם מקום" under it (replaces the pill, "פה למטה" and arrow).
   Caption key words "לאימונים" and "עכשיו" are royal blue too (fix 11).
-- Fix 12 (client): opening is text behind the trainer too: "החגים / נגמרו" left, "חוזרים / לשגרה" right (royal
+- Fix 12 (client): opening is text behind the trainer too (fix 13: swapped and lowered so his head/arms cover it as he moves):
+  "החגים / נגמרו" right, "חוזרים / לשגרה" left (royal
   blue), each phrase enters whole (no word-by-word), both whip out before "וזה הזמן"; cutouts now cover frames
   1-72 as well (`data-cut-ranges`). Opening push softened to 1.07. ₪ on the star page is white.
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
