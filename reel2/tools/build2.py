@@ -77,9 +77,12 @@ cap_html = "\n".join(
     f' data-track-index="2"><div class="cap-in">{esc_words(c["words"])}</div></div>'
     for i, c in enumerate(captions)
 )
-hook_line1 = " ".join(f'<span class="hw" id="hw{i}">{w["w"]}</span>' for i, w in enumerate(HOOK[:6]))
-hook_line2 = " ".join(
-    f'<span class="hw{" key" if w["w"] in KEYWORDS else ""}" id="hw{i + 6}">{w["w"]}</span>' for i, w in enumerate(HOOK[6:]))
+# Hook in three balanced lines: "אם אתם לא אוהבים" / "חדרי כושר" / "אבל רוצים להתחזק".
+HOOK_LINES = [(0, 4), (4, 6), (6, 9)]
+hook_html = "\n".join(
+    "        <div>" + " ".join(
+        f'<span class="hw{" key" if HOOK[i]["w"] in KEYWORDS else ""}" id="hw{i}">{HOOK[i]["w"]}</span>' for i in range(a, b)
+    ) + "</div>" for a, b in HOOK_LINES)
 
 PERSON = ('<svg viewBox="0 0 24 24" class="person"><circle cx="12" cy="7" r="4"/>'
           '<path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg>')
@@ -100,8 +103,8 @@ html = f"""<!doctype html>
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
 
       /* Hook: big condensed lines at chest height, words resolve from blur. */
-      #hook {{ top: 1010px; bottom: auto; text-align: center; font-family: "Karantina", "Heebo", sans-serif; font-weight: 700;
-               font-size: 168px; line-height: 0.9; text-shadow: 0 6px 30px rgba(0,0,0,.55); }}
+      #hook {{ top: 1000px; bottom: auto; text-align: center; font-family: "Karantina", "Heebo", sans-serif; font-weight: 700;
+               font-size: 132px; line-height: 0.95; white-space: nowrap; text-shadow: 0 6px 30px rgba(0,0,0,.55); }}
       .hw {{ display: inline-block; opacity: 0; }}
       .key {{ color: var(--red); }}
 
@@ -137,7 +140,7 @@ html = f"""<!doctype html>
       #g3 .q {{ background: rgba(255,255,255,.18); }}
       #g3 .ok {{ background: var(--green); color: #0b1a10; opacity: 0; }}
 
-      #g4 {{ top: auto; bottom: 230px; display: flex; flex-direction: column; align-items: center; gap: 10px; }}
+      #g4 {{ top: auto; bottom: 440px; display: flex; flex-direction: column; align-items: center; gap: 10px; }}
       #g4 .pill {{ background: var(--red); border-radius: 999px; padding: 22px 54px; font-weight: 900; font-size: 64px; box-shadow: 0 16px 50px rgba(255,51,64,.45); }}
       #g4 .arrow {{ font-size: 90px; font-weight: 900; line-height: 1; text-shadow: 0 4px 18px rgba(0,0,0,.6); }}
     </style>
@@ -152,8 +155,7 @@ html = f"""<!doctype html>
       </div>
 
       <div class="ov clip" id="hook" data-start="0" data-duration="{round(t("תקשיבו") + 0.1, 2)}" data-track-index="1">
-        <div>{hook_line1}</div>
-        <div>{hook_line2}</div>
+{hook_html}
       </div>
 
       <div class="ov clip" id="g1" data-start="{TIMES["g1_in"]}" data-duration="{round(TIMES["g1_out"] - TIMES["g1_in"], 2)}" data-track-index="3">
