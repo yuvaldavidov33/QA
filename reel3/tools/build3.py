@@ -445,7 +445,10 @@ html = f"""<!doctype html>
       tl.fromTo("#marq", {{ x: -1100, filter: "blur(6px)" }}, {{ x: -60, filter: "blur(0px)", duration: T.sp_in - T.mq_in, ease: "power2.out", immediateRender: false }}, T.mq_in);
       tl.to("#marq", {{ x: 1500, filter: "blur(16px)", duration: 0.85, ease: "power2.in" }}, T.sp_in);
       tl.fromTo("#cam", {{ x: 0, filter: "blur(0px)" }}, {{ x: 1300, filter: "blur(18px)", duration: 0.4, ease: "power2.in", immediateRender: false }}, T.sp_in);
-      tl.set("#cam", {{ x: 0, filter: "blur(0px)" }}, T.sp_out);
+      // Back from the star page (client's transition reference): hard cut, the shot opens over-exposed and a touch
+      // soft (+35% brightness), holds two frames, then settles in ~0.2 s.
+      tl.set("#cam", {{ x: 0, filter: "brightness(1.35) blur(1.2px)" }}, T.sp_out);
+      tl.to("#cam", {{ filter: "brightness(1) blur(0px)", duration: 0.22, ease: "power2.out" }}, T.sp_out + 0.035);
       tl.fromTo("#stars", {{ x: -30 }}, {{ x: 40, duration: T.sp_out - T.sp_in, ease: "none", immediateRender: false }}, T.sp_in);
       document.querySelectorAll("#space .streak").forEach((el, i) => {{
         tl.fromTo(el, {{ x: 0, opacity: 0.9 }}, {{ x: 2600, opacity: 0, duration: 0.5 + (i % 3) * 0.12, ease: "power1.in", immediateRender: false }}, T.sp_in + i * 0.04);

@@ -14,7 +14,8 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   `tools/cutout.py` makes per-frame person cutouts (U²-Net human seg, rembg GitHub release) laid over the text.
 - Fix 3 (client): the offer copies the client's second reference (`17664b08-….mov` on `main`): "יצאתי במבצע" streams
   in from the left, the whole shot slides off to the right with motion blur onto a black star page, "199₪" lands
-  letter by letter with "לחודש הראשון" under it, slow drift, hard cut back on "רוצים".
+  letter by letter with "לחודש הראשון" under it, slow drift, hard cut back on "רוצים" opening over-exposed
+  (+35%, slightly soft) and settling in 0.2 s, matched to the client's 1 s transition clip (same file name, a7c1c6a).
 - Fix 5 (client): "מלווה אתכם לאורך כל הדרך" copies the client's third reference (`32372936-….mp4` on `main`):
   hard cut to a dark grid page with one long glowing line, a red dot running along it, words resolving from grey
   blur above it, "כל הדרך" glitching in red; the line is alive (waves, tilts, crackling edge, breathing glow,
