@@ -1,4 +1,4 @@
-"""Synthesize an original 128 BPM driving workout bed (A minor) for the reel.
+"""Synthesize an original 140 BPM half-time trap bed (A minor), warm and mid-forward, for the reel.
 
 Intro is filtered pads + a riser into the first snap zoom, then the full beat,
 ducked under the voice. Everything is generated; no samples.
@@ -10,7 +10,7 @@ import wave
 import numpy as np
 
 SR = 48000
-BPM = 128
+BPM = 140
 BEAT = 60 / BPM
 STEP = BEAT / 4
 rng = np.random.default_rng(3)
@@ -76,7 +76,8 @@ def bass808(freq, dur):
     f = freq * (1 + 0.6 * np.exp(-t / 0.02))
     y = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.9)
     y *= np.minimum(1, (dur - t) / 0.03)
-    return np.tanh(2.2 * y) * 0.55
+    y = y + 0.35 * np.sin(2 * np.pi * np.cumsum(2 * f) / SR) * np.exp(-t / 0.9)
+    return np.tanh(2.8 * y) * 0.55
 
 
 def rolling_bass(freq, dur):
@@ -131,23 +132,29 @@ bar_i = 0
 kicks = []
 at = first_bar
 while at < DUR:
-    padv, root, arp = CHORDS[bar_i % 4]
-    add("pad", at, pad(padv, BAR + 0.1))
+    padv, root, arp = CHORDS[(bar_i // 2) % 4]
+    if bar_i % 2 == 0:
+        add("pad", at, pad(padv, 2 * BAR + 0.1))
     if at >= DROP - 1e-6:
-        # Four-on-the-floor: kick every beat, clap on 2 and 4, driving 16th hats.
-        for beat in range(4):
-            add("drums", at + beat * BEAT, kick())
-            kicks.append(at + beat * BEAT)
-        for beat in (1, 3):
-            add("drums", at + beat * BEAT, clap())
-        for st in range(16):
-            add("drums", at + st * STEP, hat(open_=st % 4 == 2) * (1.0 if st % 2 == 0 else 0.7))
-        # Rolling off-beat bass, audible on phone speakers (an octave above the 808 range).
-        for st in range(16):
-            if st % 4 != 0:
-                add("bass", at + st * STEP, rolling_bass(root * 2, STEP * 0.9))
-        for st, f in enumerate(arp * 4):
-            add("pluck", at + st * STEP, pluck(f) * (1.0 if st % 2 == 0 else 0.7))
+        # Half-time trap: kick 1 / "a" of 2 / "and" of 3, snare on 3, 8th hats with rolls.
+        for st in (0, 7, 10):
+            add("drums", at + st * STEP, kick())
+            kicks.append(at + st * STEP)
+        add("drums", at + 8 * STEP, clap())
+        roll = bar_i % 2 == 1
+        for st in range(0, 16, 2):
+            if roll and st >= 12:
+                for r in range(6 if st == 14 else 3):
+                    add("drums", at + st * STEP + r * (2 * STEP) / (6 if st == 14 else 3), hat() * 0.7)
+            else:
+                add("drums", at + st * STEP, hat(open_=st == 6) * (1.0 if st % 4 == 0 else 0.75))
+        # 808 follows the kick; second bar of each chord slides up an octave on the last hit.
+        add("bass", at, bass808(root, 7 * STEP))
+        add("bass", at + 7 * STEP, bass808(root, 3 * STEP))
+        add("bass", at + 10 * STEP, bass808(root * (2 if roll else 1), 6 * STEP))
+        # Soft keys: 8th-note arpeggio, warm and low in the mix.
+        for st, f in enumerate(arp * 2):
+            add("pluck", at + st * 2 * STEP, pluck(f) * (1.0 if st % 2 == 0 else 0.6))
     bar_i += 1
     at += BAR
 
@@ -169,8 +176,9 @@ for k in kicks:
     seg = t_(BEAT)
     j = min(N, i + len(seg))
     if i < N:
-        pump[i:j] = np.minimum(pump[i:j], 1 - 0.6 * np.exp(-seg[: j - i] / 0.09))
-music = drums * 1.0 + bass * pump * 0.9 + padt * pump * 0.9 + pl * 1.3 + fx * 0.9
+        pump[i:j] = np.minimum(pump[i:j], 1 - 0.3 * np.exp(-seg[: j - i] / 0.12))
+music = drums * 0.85 + bass * pump * 0.8 + padt * pump * 1.2 + pl * 1.2 + fx * 0.7
+music = onepole_lp(music, 7500)  # warm top end, like the reference
 
 # Duck under the voice.
 w = wave.open(voice_path)
@@ -183,7 +191,7 @@ music *= duck
 music *= np.minimum(1, (DUR - t) / 0.8)  # fade out at the end
 
 music = np.tanh(music * 1.2) / 1.2
-target_rms = 10 ** (-27 / 20)  # ~6 dB under the voice (~-21 dB mean)
+target_rms = 10 ** (-28.5 / 20)  # ~8 dB under the voice, as in the reference
 music *= target_rms / (np.sqrt((music ** 2).mean()) + 1e-9)
 pcm = (np.clip(np.stack([music, music], 1), -1, 1) * 32767).astype(np.int16)
 with wave.open(out_path, "wb") as o:
