@@ -47,16 +47,19 @@ HOOK = [w for w in words[:9]]
 ZOOM = [
     ("set", 0.0, 1.00, 0),
     ("push", 0.27, 1.18, t("תקשיבו") - 0.27),
-    ("set", t("תקשיבו"), 1.06, 0),
-    ("set", t("אצלנו"), 1.04, 0),
+    # "תקשיבו לי": sharp snap in, then glide back out.
+    ("snap", t("תקשיבו"), 1.32, 0.2),
+    ("back", t("לי"), 1.00, t("אצלנו") - t("לי") + 0.05),
     ("punch", t("מאות"), 1.24, 0.45),
     ("ease", t("איתם"), 1.00, 0.4),
     ("push", t("עד"), 1.08, 3.9),
     ("set", t("אתם", 2), 1.18, 0),
     ("ease_slow", t("אתם", 2), 1.00, 2.8),
-    ("push", t("אתם", 3), 1.05, t("דואגים") - t("אתם", 3)),
-    ("punch", t("דואגים"), 1.24, 0.45),
-    ("set", t("רוצה"), 1.06, 0),
+    ("push", t("אתם", 3), 1.05, t("ואנחנו") - t("אתם", 3)),
+    # "ואנחנו דואגים לכל השאר": sharp snap in, small kick on "דואגים", then glide back out.
+    ("snap", t("ואנחנו"), 1.26, 0.2),
+    ("snap", t("דואגים"), 1.32, 0.18),
+    ("back", t("לכל"), 1.00, t("רוצה") - t("לכל")),
     ("push", t("רוצה"), 1.18, DURATION - t("רוצה")),
 ]
 
@@ -224,7 +227,9 @@ html = f"""<!doctype html>
       for (const [kind, at, scale, dur] of ZOOM) {{
         if (kind === "set") tl.set("#frame", {{ scale }}, at);
         else {{
-          const ease = kind === "punch" ? spring : kind === "push" ? "sine.inOut" : kind === "ease" ? "power2.inOut" : "sine.inOut";
+          const ease = kind === "punch" || kind === "snap" ? spring : kind === "back" ? "power3.inOut" : kind === "ease" ? "power2.inOut" : "sine.inOut";
+          // A snap gets a short motion-blur kick so the jump reads as a camera move.
+          if (kind === "snap") tl.fromTo("#frame", {{ filter: "blur(5px)" }}, {{ filter: "blur(0px)", duration: 0.16, ease: "power2.out", immediateRender: false }}, at);
           tl.fromTo("#frame", {{ scale: cur }}, {{ scale, duration: dur, ease, immediateRender: false }}, at);
         }}
         cur = scale;
