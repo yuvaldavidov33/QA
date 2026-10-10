@@ -29,10 +29,13 @@ Same approved style as `reel2/` (see `../REEL_STYLE.md`). Final render: `reel_fi
   low-opacity Instagram DM notification with the client's round profile picture (`avatar.png`, cropped from their
   profile screenshot), "שלחו לי הודעה", and "ונשמור לכם מקום" under it (replaces the pill, "פה למטה" and arrow).
   Caption key words "לאימונים" and "עכשיו" are royal blue too (fix 11).
+- Fix 12 (client): opening is text behind the trainer too: "החגים / נגמרו" left, "חוזרים / לשגרה" right (royal
+  blue), each phrase enters whole (no word-by-word), both whip out before "וזה הזמן"; cutouts now cover frames
+  1-72 as well (`data-cut-ranges`). Opening push softened to 1.07. ₪ on the star page is white.
 - `tools/render.py` — renders the composition in headless Chrome frame by frame (npm registry was unreachable,
   so no `npx hyperframes`), then mixes voice + `music.wav` + `sfx.wav`×0.55 (+2.6 dB, limiter; −17.7 LUFS).
 
 Rebuild: extract frames `ffmpeg -i in.mov -vf "scale=1440:2560:flags=lanczos,unsharp=5:5:0.7:5:5:0" -q:v 2 -start_number 1 work/frames/%05d.jpg`,
-then `python3 tools/cutout.py work/frames u2net_human_seg.onnx work/cutout 425 497`,
+then `python3 tools/cutout.py work/frames u2net_human_seg.onnx work/cutout 1 72` and `... 425 497`,
 `python3 tools/build3.py tools/face.json tools/words.json index.html quick.mp4 425 497`, `python3 tools/sfx.py sfx.json sfx.wav`,
 `python3 tools/music.py voice48.wav music.wav 3.53 22.3 16.62`, `python3 tools/render.py . work/frames in.mov reel_final.mp4 30`.

@@ -55,7 +55,7 @@ HOOK = words[:N_HOOK]
 # Zoom keyframes: (kind, time, scale, duration)
 ZOOM = [
     ("set", 0.0, 1.00, 0),
-    ("push", 0.0, 1.14, t("וזה")),
+    ("push", 0.0, 1.07, t("וזה")),
     # "לאימונים": sharp snap in, then glide back out before the next sentence.
     ("snap", t("לאימונים"), 1.30, 0.2),
     ("back", after("לאימונים"), 1.00, t("אם") - after("לאימונים") + 0.25),
@@ -151,6 +151,7 @@ def letters(word_list, cls):
 TB_A, TB_B = letters(["לכבוד", "החזרה"], "la"), letters(["לשגרה"], "lb")
 # Person cutouts (RGBA PNGs from tools/cutout.py) cover the text while it is on screen.
 CUT_A, CUT_B = int(sys.argv[5]), int(sys.argv[6])
+CUT_RANGES = f"1-72,{CUT_A}-{CUT_B}"  # opening hook + "לכבוד החזרה לשגרה"
 
 html = f"""<!doctype html>
 <html lang="he" data-resolution="portrait">
@@ -171,6 +172,16 @@ html = f"""<!doctype html>
       #behind .top {{ font-weight: 800; font-size: 76px; line-height: 1; margin-inline-end: 6px; }}
       #behind .big {{ font-weight: 900; font-size: 174px; line-height: .9; letter-spacing: -2px; }}
       #behind span {{ display: inline-block; }}
+      /* Opening (client): "החגים נגמרו" left, "חוזרים לשגרה" right, both behind the trainer, each phrase enters whole. */
+      .hb {{ position: absolute; direction: rtl; font-family: "Heebo", sans-serif; color: rgba(255,255,255,.93);
+             text-shadow: 0 6px 28px rgba(0,0,0,.35); white-space: nowrap; }}
+      .hb .top {{ font-weight: 800; font-size: 70px; line-height: 1; }}
+      .hb .big {{ font-weight: 900; font-size: 150px; line-height: .9; letter-spacing: -2px; }}
+      .hb .big.royal {{ color: #3a64f0; text-shadow: 0 0 2px rgba(255,255,255,.4), 0 6px 28px rgba(0,0,0,.4); }}
+      #hookR .top {{ font-size: 60px; }}
+      #hookR .big {{ font-size: 112px; }}
+      #hookL {{ right: 470px; top: 585px; text-align: right; transform-origin: 100% 50%; }}
+      #hookR {{ left: 670px; top: 455px; text-align: left; transform-origin: 0% 50%; }}
       #cutout {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
       .ov {{ position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }}
 
@@ -261,7 +272,7 @@ html = f"""<!doctype html>
       #deal {{ position: absolute; right: 110px; top: 690px; direction: rtl; text-align: right; font-family: "Heebo", sans-serif; color: #fff;
                text-shadow: 0 8px 40px rgba(0,0,0,.6); white-space: nowrap; }}
       #deal .big {{ direction: ltr; font-weight: 900; font-size: 330px; line-height: .85; letter-spacing: -8px; }}
-      #deal .big .cur {{ font-size: 210px; color: var(--red); margin-left: 14px; letter-spacing: 0; }}
+      #deal .big .cur {{ font-size: 210px; color: #fff; margin-left: 14px; letter-spacing: 0; }}
       #deal .big span {{ display: inline-block; }}
       #deal .s1 {{ font-weight: 900; font-size: 92px; line-height: 1.05; margin-top: 18px; margin-inline-end: 40px; }}
       #deal .s2 {{ font-weight: 700; font-size: 62px; line-height: 1.1; margin-inline-end: 40px; color: rgba(255,255,255,.82); }}
@@ -304,18 +315,20 @@ html = f"""<!doctype html>
             <div class="top">{TB_A}</div>
             <div class="big">{TB_B}</div>
           </div>
+          <div id="hookL" class="hb clip" data-start="0" data-duration="{round(t("וזה") + 0.2, 2)}" data-track-index="1">
+            <div class="top">החגים</div><div class="big">נגמרו</div>
+          </div>
+          <div id="hookR" class="hb clip" data-start="0" data-duration="{round(t("וזה") + 0.2, 2)}" data-track-index="1">
+            <div class="top">חוזרים</div><div class="big royal">לשגרה</div>
+          </div>
           <div id="pop" class="clip" data-start="{TIMES["mg_word"]}" data-duration="{round(TIMES["mg_in"] + 0.35 - TIMES["mg_word"], 2)}" data-track-index="1">{POP}</div>
-          <img id="cutout" class="clip" alt="" data-cut-first="{CUT_A}" data-cut-last="{CUT_B}"
-               data-start="{round((CUT_A - 1) / face["fps"], 3)}" data-duration="{round((CUT_B - CUT_A + 1) / face["fps"], 3)}" data-track-index="1" />
+          <img id="cutout" class="clip" alt="" data-cut-ranges="{CUT_RANGES}" data-start="0" data-duration="{DURATION}" data-track-index="1" />
         </div>
       </div>
 
       <audio id="music" src="music.wav" data-start="0" data-duration="{DURATION}" data-track-index="6" data-volume="1"></audio>
       <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="0.55"></audio>
 
-      <div class="ov clip" id="hook" data-start="0" data-duration="{round(t("וזה") + 0.05, 2)}" data-track-index="1">
-{hook_html}
-      </div>
 
       <div class="ov clip" id="g1" data-start="{TIMES["g1_in"]}" data-duration="{round(TIMES["g1_out"] - TIMES["g1_in"], 2)}" data-track-index="3">
         <div class="card" id="g1a"><span class="badge x">✕</span><span>״אתחיל מחר…״</span><i class="strike"></i></div>
@@ -398,14 +411,18 @@ html = f"""<!doctype html>
         cur = scale;
       }}
 
-      // Hook words resolve from blur as they are spoken; beat B replaces beat A.
-      HOOK_T.forEach((at, i) => {{
-        tl.fromTo(`#hw${{i}}`, {{ opacity: 0, y: 40, filter: "blur(18px)" }},
-          {{ opacity: 1, y: 0, filter: "blur(0px)", duration: 0.28, ease: "power3.out", immediateRender: false }}, Math.max(0, at - 0.06));
-      }});
-      tl.fromTo("#hw3", {{ scale: 1 }}, {{ scale: 1.12, duration: 0.4, ease: spring, immediateRender: false }}, HOOK_T[3]);
-      tl.to("#hookA .hw", {{ opacity: 0, filter: "blur(16px)", y: -30, duration: 0.16, ease: "power2.in" }}, HOOK_T[2] - 0.18);
-      tl.to("#hookB .hw", {{ opacity: 0, filter: "blur(16px)", y: -30, duration: 0.18, ease: "power2.in" }}, {round(t("וזה") - 0.14, 2)});
+      // Opening: each phrase comes in whole (no word-by-word), from blur with tracking closing in; both stay,
+      // then whip out to their own side together before "וזה הזמן".
+      const phraseIn = (sel, at, dx) => {{
+        tl.fromTo(sel, {{ opacity: 0, x: dx, scale: 1.18, filter: "blur(16px)" }},
+          {{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "power3.out", immediateRender: false }}, at);
+        tl.fromTo(`${{sel}} .big`, {{ letterSpacing: "22px" }}, {{ letterSpacing: "-2px", duration: 0.5, ease: "power3.out", immediateRender: false }}, at);
+      }};
+      phraseIn("#hookL", Math.max(0, HOOK_T[0] - 0.1), -60);
+      phraseIn("#hookR", HOOK_T[2] - 0.06, 60);
+      tl.fromTo("#hookR .big", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.4, ease: spring, transformOrigin: "0% 50%", immediateRender: false }}, HOOK_T[3]);
+      tl.to("#hookL", {{ x: -320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }}, {round(t("וזה") - 0.2, 2)});
+      tl.to("#hookR", {{ x: 320, opacity: 0, filter: "blur(20px)", scaleX: 1.3, duration: 0.26, ease: "power2.in" }}, {round(t("וזה") - 0.2, 2)});
 
       // Captions pop in.
       CAPS.forEach((at, i) => {{
@@ -415,7 +432,7 @@ html = f"""<!doctype html>
 
       // Hidden from t=0: a clip's later children would otherwise show at full opacity
       // from the clip's start until their own pop-in, then pop a second time.
-      tl.set(["#g1a", "#g1b", "#lines", "#pop span", "#mgCard", "#mgTtl", "#mgLbl", "#mgBand", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
+      tl.set(["#hookL", "#hookR", "#g1a", "#g1b", "#lines", "#pop span", "#mgCard", "#mgTtl", "#mgLbl", "#mgBand", "#lw1", "#lw2", "#lw3", "#lw4", "#deal .big span", "#deal .s1",
               "#dm", "#here"], {{ opacity: 0 }}, 0);
       const CARD_FROM = {{ opacity: 0, y: 320, rotationX: 48, rotation: -8, scale: 1.25, filter: "blur(10px)", transformPerspective: 900 }};
       const CARD_TO = {{ opacity: 1, y: 0, rotationX: 0, rotation: 0, scale: 1, filter: "blur(0px)", transformPerspective: 900 }};

@@ -44,8 +44,8 @@ SEEK = """async ([t, idx]) => {
   }
   const cut = document.querySelector('#cutout');
   if (cut) {
-    const a = +cut.dataset.cutFirst, b = +cut.dataset.cutLast;
-    if (idx >= a && idx <= b) {
+    const inRange = cut.dataset.cutRanges.split(',').some(r => { const [a, b] = r.split('-').map(Number); return idx >= a && idx <= b; });
+    if (inRange) {
       const cs = window.__cutDir + String(idx).padStart(5, '0') + '.png';
       if (!cut.src.endsWith(cs)) { cut.src = cs; await cut.decode(); }
       cut.style.visibility = 'visible';
