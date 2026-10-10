@@ -174,7 +174,7 @@ html = f"""<!doctype html>
       </div>
 
       <audio id="music" src="music.wav" data-start="0" data-duration="{DURATION}" data-track-index="6" data-volume="1"></audio>
-      <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="1"></audio>
+      <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="0.55"></audio>
 
       <div class="ov clip" id="hook" data-start="0" data-duration="{round(t("תקשיבו") + 0.1, 2)}" data-track-index="1">
 {hook_html}
