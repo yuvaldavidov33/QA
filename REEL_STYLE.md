@@ -75,3 +75,9 @@ What the client approved / asked for on reel 3 (defaults for the next reel):
   (`reel3/tools/music6.py`). Always also deliver a no-music version (voice + SFX) so a song can be added in Instagram.
 - Deliver: commit `reelN/reel_final.mp4` to `claude/workout-video-animations-sx06ew`, give the raw GitHub link and
   update the claude.ai artifact page.
+
+## Reel 4 notes (`reel4/`, "למה אנשים לא מתמידים")
+- Client approved the plan in one go; chose a full-screen page for the list of reasons. Problem page (red ✕ rows with
+  live mini-animations) mirrored by a solution page (royal-blue ✓ rows) is a good pattern for problem → solution scripts.
+- CTA wording follows the speech ("שלחו לנו הודעה"); hold the last frame ~1 s when the CTA comes at the very end.
+- `reel4/tools/render.py` now writes both `reel_final.mp4` and `reel_no_music.mp4` in one run.
