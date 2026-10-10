@@ -135,7 +135,7 @@ while at < DUR:
     padv, root, arp = CHORDS[(bar_i // 2) % 4]
     if bar_i % 2 == 0:
         add("pad", at, pad(padv, 2 * BAR + 0.1))
-    if at >= DROP - 1e-6:
+    if True:  # groove runs from the first frame; no slow intro
         # Half-time trap: kick 1 / "a" of 2 / "and" of 3, snare on 3, 8th hats with rolls.
         for st in (0, 7, 10):
             add("drums", at + st * STEP, kick())
@@ -158,7 +158,7 @@ while at < DUR:
     bar_i += 1
     at += BAR
 
-add("fx", DROP - 2.0, riser(2.0))
+add("fx", DROP, crash())
 for lift in LIFTS:  # build-ups into later hits
     add("fx", lift - 1.6, riser(1.6) * 0.8)
     add("fx", lift, crash())
@@ -173,11 +173,14 @@ padt = onepole_lp(padt, intro_cut)
 pump = np.ones(N)
 for k in kicks:
     i = int(k * SR)
+    if i < 0:
+        continue
     seg = t_(BEAT)
     j = min(N, i + len(seg))
     if i < N:
         pump[i:j] = np.minimum(pump[i:j], 1 - 0.3 * np.exp(-seg[: j - i] / 0.12))
-music = drums * 0.85 + bass * pump * 0.8 + padt * pump * 1.2 + pl * 1.2 + fx * 0.7
+# Drums and 808 only: the melodic pad/keys were dropped at the user's request.
+music = drums * 0.9 + bass * pump * 0.9 + fx * 0.6
 music = onepole_lp(music, 7500)  # warm top end, like the reference
 
 # Duck under the voice.
@@ -186,12 +189,12 @@ v = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
 v = np.pad(v, (0, max(0, N - len(v))))[:N]
 venv = np.sqrt(onepole_lp(v ** 2, 6))
 venv /= venv.max() + 1e-9
-duck = 1 - 0.3 * np.clip(venv * 3, 0, 1)
+duck = 1 - 0.5 * np.clip(venv * 3, 0, 1)
 music *= duck
 music *= np.minimum(1, (DUR - t) / 0.8)  # fade out at the end
 
 music = np.tanh(music * 1.2) / 1.2
-target_rms = 10 ** (-28.5 / 20)  # ~8 dB under the voice, as in the reference
+target_rms = 10 ** (-35 / 20)  # ~14 dB under the voice: a background bed
 music *= target_rms / (np.sqrt((music ** 2).mean()) + 1e-9)
 pcm = (np.clip(np.stack([music, music], 1), -1, 1) * 32767).astype(np.int16)
 with wave.open(out_path, "wb") as o:
