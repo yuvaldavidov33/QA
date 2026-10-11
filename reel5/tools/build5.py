@@ -336,8 +336,8 @@ html = f"""<!doctype html>
       const POSES = [
         // 1 kick back on a bosu, hands on the machine; facing left, the free leg swings back and up
         (p) => {{ const hip = [118, 86], sh = [72, 64], ang = (lerp(100, -12, p)) * Math.PI / 180, foot = [hip[0] + 76 * Math.cos(ang), hip[1] + 76 * Math.sin(ang)];
-                 return {{ head: [54, 50], sh, hand: [30, 78], hip, legs: [[hip, [114, 146], 1], [hip, foot, -1]], glute: [128, 84], squeeze: p,
-                          props: '<path d="M78 166 Q114 132 150 166 Z"/>' }}; }},
+                 return {{ head: [54, 50], sh, hand: [30, 78], hip, legs: [[hip, [116, 160], 0], [hip, foot, -1]], glute: [128, 84], squeeze: p,
+                          props: '<path d="M80 178 Q116 146 152 178 Z"/>' }}; }},
         // 2 bulgarian split squat, rear foot on a bench; hips go down and up
         (p) => {{ const hip = [lerp(100, 106, p), lerp(92, 122, p)], sh = [hip[0] - 6, hip[1] - 46];
                  return {{ head: [sh[0] - 3, sh[1] - 18], sh, hand: [sh[0] - 16, sh[1] + 22], hip, legs: [[hip, [56, 166], 1], [hip, [164, 124], 1]],
