@@ -38,6 +38,8 @@ SEEK = """async ([t, idx]) => {
   const img = document.querySelector('#a-roll-img');
   const src = window.__frames + String(idx).padStart(5, '0') + '.jpg';
   if (!img.src.endsWith(src)) { img.src = src; await img.decode(); }
+  const fg = document.querySelector('#fgimg');  // second, sliding copy of the shot (carousel section)
+  if (fg && !fg.src.endsWith(src)) { fg.src = src; await fg.decode(); }
   for (const c of window.__clips) {
     const s = parseFloat(c.dataset.start), d = parseFloat(c.dataset.duration);
     c.style.visibility = (t >= s && t < s + d) ? 'visible' : 'hidden';

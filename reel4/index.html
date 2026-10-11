@@ -15,23 +15,27 @@
       #frame2, .sideS { position: absolute; inset: 0; }
       /* App carousel (client reference): the shot slides so the trainer stands on the right, background goes grey
          and soft, a ring of thick navy tiles turns on the left behind him; the block text sits above the ring. */
-      #carousel { position: absolute; inset: 0; perspective: 1150px; perspective-origin: 250px 1180px; font-family: "Heebo", sans-serif; color: #fff; direction: rtl; }
-      #ring { position: absolute; left: 250px; top: 1180px; width: 0; height: 0; transform-style: preserve-3d; }
-      .tile { position: absolute; left: -200px; top: -230px; width: 400px; height: 460px; transform-style: preserve-3d; }
-      .tile .face { position: absolute; inset: 0; border-radius: 58px; overflow: hidden; display: grid; place-items: center;
+      #carousel { position: absolute; inset: 0; perspective: 1200px; perspective-origin: 235px 1180px; font-family: "Heebo", sans-serif; color: #fff; direction: rtl; }
+      #ring { position: absolute; left: 235px; top: 1180px; width: 0; height: 0; transform-style: preserve-3d; }
+      .tile { position: absolute; left: -185px; top: -210px; width: 370px; height: 420px; transform-style: preserve-3d; }
+      .tile .face { position: absolute; inset: 0; border-radius: 50px; overflow: hidden; display: grid; place-items: center;
         background: linear-gradient(160deg, #2b3f9e 0%, #1a2a73 45%, #101a4d 100%);
         box-shadow: inset 0 2px 0 rgba(255,255,255,.25), inset 0 -10px 30px rgba(0,0,0,.35); backface-visibility: hidden; }
-      .tile .face .vis { transform: scale(1.22); }
+      .tile .face .vis { transform: scale(1.05); }
       .tile .side { position: absolute; top: 18px; bottom: 18px; width: 34px; border-radius: 16px;
         background: linear-gradient(180deg, #e9eefc, #b9c4e6 50%, #e9eefc); box-shadow: 0 0 22px rgba(255,255,255,.55); }
       .tile .side.l { left: -17px; transform: rotateY(-90deg); }
       .tile .side.r { right: -17px; transform: rotateY(90deg); }
       #ctext { position: absolute; inset: 0; }
-      .ct { position: absolute; right: 390px; top: 600px; text-align: right; direction: rtl; white-space: nowrap;
+      /* The shot slides right as a whole (no zoom); the left side opens onto a grey, softly blurred copy of it. */
+      #fgwrap { position: absolute; inset: 0; overflow: hidden; }
+      #fgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+                -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 110px); mask-image: linear-gradient(90deg, transparent 0, #000 110px); }
+      .ct { position: absolute; left: 0; width: 470px; top: 640px; text-align: center; direction: rtl; white-space: nowrap;
              text-shadow: 0 4px 22px rgba(0,0,0,.55); }
-      .ct .m { font-weight: 900; font-size: 76px; line-height: 1.05; display: flex; align-items: center; gap: 18px; justify-content: flex-start; }
-      .ct .m .badge { width: 64px; height: 64px; font-size: 38px; }
-      .ct .s { font-weight: 700; font-size: 50px; line-height: 1.2; color: rgba(255,255,255,.8); margin-top: 6px; }
+      .ct .m { font-weight: 900; font-size: 58px; line-height: 1.05; display: flex; align-items: center; gap: 14px; justify-content: center; }
+      .ct .m .badge { width: 50px; height: 50px; font-size: 30px; }
+      .ct .s { font-weight: 700; font-size: 40px; line-height: 1.2; color: rgba(255,255,255,.8); margin-top: 6px; }
       .ct .cw { display: inline-block; }
       #cutout { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
       .ov { position: absolute; inset: 0; direction: rtl; font-family: "Heebo", sans-serif; color: #fff; pointer-events: none; }
@@ -180,10 +184,13 @@
 <div class="tile" id="s4"><i class="side l"></i><i class="side r"></i><div class="face"><div class="vis graph"><svg viewBox="0 0 330 170"><g stroke="rgba(255,255,255,.1)" stroke-width="2"><line x1="0" y1="40" x2="330" y2="40"/><line x1="0" y1="85" x2="330" y2="85"/><line x1="0" y1="130" x2="330" y2="130"/></g><path id="gArea" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22 L 320 170 L 10 170 Z" fill="url(#gFill)" opacity="0"/><path id="gLine" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22" fill="none" stroke="#5b86ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(80,130,255,.9))"/><circle id="gDot" r="11" fill="#fff"/><defs><linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a64f0" stop-opacity=".55"/><stop offset="1" stop-color="#3a64f0" stop-opacity="0"/></linearGradient></defs></svg></div></div></div>
         </div>
       </div>
+      <div class="clip" id="fgwrap" data-start="9.77" data-duration="6.35" data-track-index="1">
+        <img id="fgimg" alt="" />
+      </div>
       <div id="cam2" class="camS">
         <div id="side2" class="sideS">
         <div id="frame2" class="frameS">
-          <img id="cutout" class="clip" alt="" data-cut-ranges="188-238,291-488" data-start="0" data-duration="21.0" data-track-index="1" />
+          <img id="cutout" class="clip" alt="" data-cut-ranges="188-238" data-start="0" data-duration="21.0" data-track-index="1" />
         </div>
         </div>
       </div>
@@ -240,7 +247,7 @@
       const FACE_FPS = 29.949664429530202;
       const FACE_X = [46.79, 47.09, 47.4, 47.72, 48.05, 48.39, 48.74, 49.09, 49.45, 49.81, 50.17, 50.53, 50.89, 51.24, 51.59, 51.92, 52.26, 52.58, 52.89, 53.18, 53.46, 53.73, 53.98, 54.21, 54.43, 54.62, 54.8, 54.95, 55.09, 55.2, 55.3, 55.37, 55.42, 55.45, 55.46, 55.45, 55.42, 55.37, 55.29, 55.2, 55.09, 54.95, 54.8, 54.63, 54.45, 54.24, 54.02, 53.79, 53.54, 53.27, 52.99, 52.71, 52.41, 52.1, 51.78, 51.45, 51.13, 50.79, 50.46, 50.12, 49.78, 49.45, 49.12, 48.8, 48.49, 48.19, 47.89, 47.62, 47.35, 47.11, 46.88, 46.68, 46.49, 46.33, 46.19, 46.07, 45.98, 45.91, 45.86, 45.84, 45.84, 45.87, 45.92, 45.98, 46.07, 46.17, 46.29, 46.42, 46.57, 46.72, 46.89, 47.06, 47.23, 47.41, 47.59, 47.77, 47.95, 48.12, 48.3, 48.47, 48.64, 48.8, 48.96, 49.11, 49.27, 49.41, 49.56, 49.7, 49.84, 49.98, 50.12, 50.26, 50.4, 50.54, 50.68, 50.82, 50.96, 51.1, 51.25, 51.39, 51.53, 51.68, 51.82, 51.96, 52.1, 52.23, 52.36, 52.49, 52.61, 52.73, 52.84, 52.95, 53.05, 53.14, 53.23, 53.31, 53.38, 53.46, 53.52, 53.59, 53.65, 53.71, 53.77, 53.83, 53.89, 53.95, 54.01, 54.08, 54.15, 54.22, 54.3, 54.38, 54.47, 54.56, 54.66, 54.76, 54.87, 54.98, 55.09, 55.21, 55.33, 55.44, 55.56, 55.68, 55.79, 55.9, 56.01, 56.11, 56.2, 56.29, 56.37, 56.44, 56.5, 56.55, 56.59, 56.62, 56.64, 56.65, 56.64, 56.62, 56.59, 56.55, 56.5, 56.43, 56.35, 56.27, 56.17, 56.06, 55.94, 55.81, 55.67, 55.52, 55.37, 55.2, 55.03, 54.84, 54.66, 54.46, 54.26, 54.05, 53.83, 53.61, 53.38, 53.15, 52.92, 52.69, 52.45, 52.22, 51.99, 51.76, 51.53, 51.31, 51.1, 50.9, 50.7, 50.52, 50.36, 50.21, 50.07, 49.95, 49.85, 49.77, 49.71, 49.66, 49.64, 49.63, 49.65, 49.68, 49.72, 49.79, 49.86, 49.95, 50.05, 50.15, 50.27, 50.38, 50.5, 50.61, 50.72, 50.83, 50.93, 51.02, 51.09, 51.16, 51.21, 51.24, 51.26, 51.26, 51.25, 51.21, 51.16, 51.09, 51.01, 50.9, 50.79, 50.66, 50.51, 50.36, 50.19, 50.01, 49.83, 49.64, 49.45, 49.25, 49.05, 48.86, 48.66, 48.47, 48.28, 48.09, 47.91, 47.74, 47.58, 47.43, 47.29, 47.16, 47.04, 46.93, 46.84, 46.76, 46.69, 46.64, 46.6, 46.57, 46.56, 46.56, 46.58, 46.61, 46.65, 46.71, 46.78, 46.86, 46.94, 47.04, 47.15, 47.27, 47.39, 47.52, 47.66, 47.81, 47.95, 48.11, 48.26, 48.42, 48.59, 48.75, 48.92, 49.09, 49.26, 49.43, 49.6, 49.78, 49.95, 50.12, 50.3, 50.47, 50.64, 50.81, 50.98, 51.15, 51.32, 51.49, 51.66, 51.82, 51.98, 52.14, 52.29, 52.44, 52.58, 52.72, 52.85, 52.98, 53.09, 53.2, 53.3, 53.38, 53.46, 53.52, 53.58, 53.61, 53.64, 53.65, 53.65, 53.63, 53.6, 53.55, 53.48, 53.4, 53.31, 53.2, 53.08, 52.94, 52.79, 52.62, 52.44, 52.25, 52.05, 51.84, 51.63, 51.4, 51.17, 50.93, 50.69, 50.44, 50.2, 49.95, 49.7, 49.46, 49.22, 48.98, 48.75, 48.53, 48.31, 48.1, 47.91, 47.72, 47.55, 47.39, 47.24, 47.11, 46.99, 46.89, 46.81, 46.74, 46.69, 46.66, 46.64, 46.64, 46.66, 46.69, 46.73, 46.79, 46.87, 46.95, 47.05, 47.16, 47.27, 47.39, 47.51, 47.64, 47.77, 47.9, 48.02, 48.14, 48.26, 48.37, 48.47, 48.57, 48.66, 48.73, 48.8, 48.85, 48.9, 48.93, 48.96, 48.98, 48.99, 48.99, 48.98, 48.98, 48.96, 48.95, 48.93, 48.92, 48.91, 48.9, 48.89, 48.89, 48.89, 48.9, 48.92, 48.94, 48.97, 49.01, 49.06, 49.11, 49.17, 49.23, 49.3, 49.38, 49.46, 49.54, 49.62, 49.71, 49.79, 49.88, 49.96, 50.04, 50.12, 50.19, 50.26, 50.33, 50.4, 50.47, 50.53, 50.6, 50.66, 50.73, 50.79, 50.86, 50.94, 51.01, 51.1, 51.19, 51.29, 51.4, 51.53, 51.66, 51.8, 51.95, 52.11, 52.28, 52.46, 52.65, 52.85, 53.06, 53.26, 53.48, 53.69, 53.9, 54.11, 54.32, 54.52, 54.71, 54.89, 55.05, 55.21, 55.34, 55.46, 55.56, 55.64, 55.69, 55.73, 55.74, 55.73, 55.7, 55.65, 55.57, 55.47, 55.34, 55.2, 55.04, 54.86, 54.66, 54.44, 54.21, 53.96, 53.7, 53.43, 53.15, 52.86, 52.57, 52.27, 51.96, 51.65, 51.34, 51.03, 50.72, 50.42, 50.11, 49.81, 49.52, 49.23, 48.95, 48.68, 48.42, 48.16, 47.92, 47.69, 47.47, 47.26, 47.07, 46.89, 46.73, 46.57, 46.44, 46.32, 46.21, 46.12, 46.04, 45.98, 45.94, 45.91, 45.9, 45.9, 45.92, 45.96, 46.01, 46.07, 46.15, 46.24, 46.35, 46.48, 46.61, 46.76, 46.92, 47.09, 47.27, 47.46, 47.66, 47.87, 48.09, 48.31, 48.54, 48.77, 49.01, 49.26, 49.5, 49.75, 49.99, 50.24, 50.49, 50.73, 50.98, 51.22, 51.45, 51.68, 51.91, 52.14, 52.35, 52.56, 52.77, 52.96, 53.16, 53.34, 53.51, 53.68, 53.84, 53.99, 54.14, 54.27, 54.4, 54.52, 54.64, 54.74];
       const FACE_Y = [29.01, 29.04, 29.07, 29.1, 29.13, 29.16, 29.19, 29.22, 29.25, 29.28, 29.31, 29.34, 29.37, 29.39, 29.42, 29.45, 29.47, 29.49, 29.51, 29.53, 29.55, 29.57, 29.59, 29.6, 29.61, 29.62, 29.63, 29.64, 29.64, 29.65, 29.65, 29.65, 29.65, 29.64, 29.64, 29.63, 29.62, 29.61, 29.6, 29.59, 29.58, 29.56, 29.55, 29.53, 29.51, 29.49, 29.47, 29.45, 29.43, 29.41, 29.38, 29.36, 29.34, 29.31, 29.29, 29.26, 29.24, 29.22, 29.19, 29.17, 29.15, 29.13, 29.11, 29.09, 29.07, 29.06, 29.05, 29.04, 29.03, 29.03, 29.03, 29.03, 29.04, 29.04, 29.06, 29.07, 29.1, 29.12, 29.15, 29.18, 29.22, 29.26, 29.31, 29.35, 29.4, 29.46, 29.52, 29.57, 29.64, 29.7, 29.76, 29.83, 29.89, 29.96, 30.02, 30.09, 30.15, 30.21, 30.27, 30.33, 30.39, 30.44, 30.49, 30.54, 30.59, 30.63, 30.67, 30.71, 30.75, 30.78, 30.81, 30.84, 30.87, 30.9, 30.92, 30.95, 30.97, 30.99, 31.01, 31.04, 31.06, 31.08, 31.1, 31.12, 31.14, 31.16, 31.18, 31.2, 31.22, 31.24, 31.26, 31.27, 31.29, 31.31, 31.32, 31.34, 31.35, 31.36, 31.37, 31.38, 31.39, 31.39, 31.4, 31.4, 31.4, 31.41, 31.41, 31.41, 31.41, 31.4, 31.4, 31.4, 31.39, 31.39, 31.38, 31.38, 31.37, 31.36, 31.36, 31.35, 31.34, 31.33, 31.31, 31.3, 31.28, 31.27, 31.25, 31.23, 31.2, 31.18, 31.15, 31.12, 31.09, 31.05, 31.02, 30.98, 30.94, 30.89, 30.85, 30.8, 30.75, 30.7, 30.65, 30.6, 30.55, 30.49, 30.44, 30.39, 30.33, 30.28, 30.22, 30.17, 30.12, 30.07, 30.02, 29.97, 29.92, 29.88, 29.84, 29.79, 29.75, 29.72, 29.68, 29.65, 29.61, 29.58, 29.56, 29.53, 29.51, 29.48, 29.47, 29.45, 29.43, 29.42, 29.41, 29.4, 29.4, 29.39, 29.39, 29.39, 29.4, 29.4, 29.41, 29.42, 29.43, 29.44, 29.45, 29.47, 29.48, 29.5, 29.51, 29.53, 29.54, 29.56, 29.57, 29.59, 29.6, 29.61, 29.62, 29.63, 29.63, 29.63, 29.63, 29.63, 29.63, 29.62, 29.61, 29.6, 29.58, 29.57, 29.55, 29.52, 29.5, 29.48, 29.45, 29.42, 29.4, 29.37, 29.34, 29.31, 29.28, 29.25, 29.22, 29.19, 29.16, 29.14, 29.11, 29.08, 29.06, 29.04, 29.02, 29.0, 28.98, 28.96, 28.95, 28.94, 28.92, 28.91, 28.91, 28.9, 28.89, 28.89, 28.89, 28.89, 28.89, 28.9, 28.9, 28.91, 28.92, 28.93, 28.94, 28.95, 28.97, 28.98, 29.0, 29.01, 29.03, 29.05, 29.07, 29.09, 29.12, 29.14, 29.16, 29.18, 29.21, 29.23, 29.25, 29.28, 29.3, 29.32, 29.35, 29.37, 29.39, 29.41, 29.43, 29.45, 29.47, 29.49, 29.51, 29.52, 29.54, 29.56, 29.57, 29.58, 29.6, 29.61, 29.62, 29.64, 29.65, 29.66, 29.67, 29.68, 29.69, 29.7, 29.71, 29.71, 29.72, 29.73, 29.73, 29.74, 29.75, 29.75, 29.76, 29.76, 29.77, 29.77, 29.77, 29.78, 29.78, 29.78, 29.78, 29.78, 29.78, 29.78, 29.78, 29.78, 29.77, 29.77, 29.77, 29.76, 29.76, 29.75, 29.75, 29.74, 29.73, 29.73, 29.72, 29.71, 29.7, 29.7, 29.69, 29.68, 29.67, 29.66, 29.66, 29.65, 29.64, 29.63, 29.63, 29.62, 29.62, 29.61, 29.61, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.6, 29.61, 29.61, 29.61, 29.62, 29.62, 29.63, 29.63, 29.64, 29.64, 29.65, 29.66, 29.66, 29.67, 29.67, 29.68, 29.68, 29.68, 29.68, 29.69, 29.69, 29.69, 29.69, 29.69, 29.68, 29.68, 29.68, 29.67, 29.67, 29.66, 29.65, 29.65, 29.64, 29.63, 29.62, 29.61, 29.6, 29.59, 29.58, 29.57, 29.55, 29.54, 29.53, 29.52, 29.5, 29.49, 29.48, 29.46, 29.45, 29.43, 29.42, 29.4, 29.38, 29.37, 29.35, 29.33, 29.31, 29.3, 29.28, 29.26, 29.24, 29.23, 29.21, 29.2, 29.18, 29.17, 29.15, 29.14, 29.13, 29.12, 29.11, 29.1, 29.1, 29.09, 29.09, 29.09, 29.09, 29.1, 29.1, 29.11, 29.12, 29.14, 29.15, 29.16, 29.18, 29.2, 29.22, 29.24, 29.26, 29.28, 29.31, 29.33, 29.35, 29.38, 29.4, 29.42, 29.44, 29.46, 29.48, 29.49, 29.51, 29.52, 29.54, 29.55, 29.55, 29.56, 29.57, 29.57, 29.57, 29.57, 29.57, 29.56, 29.56, 29.55, 29.54, 29.53, 29.52, 29.51, 29.5, 29.48, 29.47, 29.45, 29.44, 29.42, 29.41, 29.39, 29.38, 29.36, 29.35, 29.33, 29.32, 29.31, 29.29, 29.28, 29.27, 29.26, 29.25, 29.24, 29.24, 29.23, 29.22, 29.22, 29.21, 29.21, 29.21, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.2, 29.19, 29.19, 29.19, 29.19, 29.19, 29.19, 29.19, 29.19, 29.18, 29.18, 29.18, 29.18, 29.17, 29.17, 29.17, 29.17, 29.16, 29.16, 29.16, 29.15, 29.15, 29.15, 29.14, 29.14, 29.14, 29.13, 29.13, 29.13, 29.13, 29.13, 29.12, 29.12, 29.12, 29.12, 29.12, 29.13, 29.13, 29.13, 29.13, 29.13, 29.14, 29.14, 29.14, 29.15, 29.15, 29.16, 29.16, 29.17, 29.17, 29.18, 29.18];
-      const ZOOM = [["set", 0.0, 1.0, 0], ["push", 0.0, 1.08, 3.11], ["set", 6.260000000000001, 1.03, 0], ["push", 6.260000000000001, 1.14, 3.5100000000000007], ["set", 9.770000000000001, 1.0, 0], ["set", 16.119999999999997, 1.0, 0], ["push", 16.119999999999997, 1.1, 1.5100000000000016], ["punch", 16.88, 1.16, 0.5], ["push", 17.38, 1.2, 3.620000000000001]];
+      const ZOOM = [["set", 0.0, 1.0, 0], ["push", 0.0, 1.08, 3.11], ["set", 6.260000000000001, 1.03, 0], ["push", 6.260000000000001, 1.0, 3.5100000000000007], ["set", 16.119999999999997, 1.0, 0], ["push", 16.119999999999997, 1.1, 1.5100000000000016], ["punch", 16.88, 1.16, 0.5], ["push", 17.38, 1.2, 3.620000000000001]];
       const CAPS = [7.77, 8.51, 9.36, 16.11, 16.84, 17.64, 17.98];
       const T = {"sol_in": 9.77, "hk_a": 0.06, "hk_a2": 1.14, "hk_out": 2.72, "hk_b": 1.97, "rs_in": 3.11, "rs_1": 3.23, "rs_2": 4.04, "rs_3": 5.08, "rs_out": 6.26, "tb_in": 6.35, "tb_big": 7.03, "tb_out": 7.51, "so_1": 10.18, "so_2": 11.65, "so_3": 13.33, "so_4": 14.21, "sol_out": 16.12, "dm_in": 17.63};
       const tl = gsap.timeline({ paused: true });
@@ -341,38 +348,46 @@
       //    The first tile slides in from the left right after the cut.
       // 4) The block text sits above the ring: words resolve from blur; the old text blurs out as the next arrives.
       const SIN = T.sol_in, SOUT = T.sol_out, BT = [T.so_1, T.so_2, T.so_3, T.so_4];
-      tl.fromTo(".camS", { filter: "blur(0px)" }, { filter: "blur(22px)", duration: 0.07, ease: "power2.in", immediateRender: false }, SIN - 0.07);
-      tl.set(".sideS", { transformOrigin: "540px 557px", scale: 1.75, x: 400 }, SIN);
-      tl.to(".camS", { filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, SIN);
-      tl.set("#frame", { filter: "grayscale(1) blur(5px) brightness(.82) contrast(1.06)" }, SIN);
-      tl.fromTo(".sideS", { x: 400, scale: 1.75 }, { x: 385, scale: 1.78, duration: SOUT - SIN, ease: "none", immediateRender: false }, SIN);
-      tl.set(".sideS", { scale: 1, x: 0 }, SOUT);
+      // The shot slides right as a whole (same size, no zoom) and the left side opens onto a grey, blurred copy;
+      // it slides back just before "אם".
+      const SHIFT = 440;
+      tl.set("#side", { transformOrigin: "50% 50%", scale: 1.9, x: SHIFT }, SIN);
+      tl.set("#frame", { filter: "grayscale(1) blur(14px) brightness(.78) contrast(1.05)" }, SIN);
+      tl.set("#side", { scale: 1, x: 0 }, SOUT);
       tl.set("#frame", { filter: "none" }, SOUT);
-      tl.set(".sideS", { scale: 1, x: 0 }, 0);
+      tl.set("#side", { scale: 1, x: 0 }, 0);
+      tl.set("#ring", { opacity: 0 }, 0);
+      tl.set("#fgwrap", { x: 0 }, 0);
+      tl.fromTo("#fgwrap", { x: 0 }, { x: SHIFT, duration: 0.42, ease: "power3.inOut", immediateRender: false }, SIN);
+      tl.fromTo("#fgimg", { filter: "blur(0px)" }, { filter: "blur(6px)", duration: 0.2, ease: "power2.in", yoyo: true, repeat: 1, immediateRender: false }, SIN + 0.01);
+      tl.fromTo("#fgwrap", { x: SHIFT }, { x: SHIFT - 18, duration: SOUT - SIN - 0.8, ease: "none", immediateRender: false }, SIN + 0.42);
+      tl.to("#fgwrap", { x: 0, duration: 0.36, ease: "power3.inOut" }, SOUT - 0.36);
+      tl.to("#carousel, #ctext", { opacity: 0, duration: 0.2, ease: "power1.in" }, SOUT - 0.3);
+      tl.set("#carousel, #ctext", { opacity: 1 }, 0);
 
       const tiles = [...document.querySelectorAll(".tile")];
       // place each tile on the ring: rotate around the ring centre, pushed out by the radius
-      tiles.forEach((el, k) => { el.style.transform = `rotateY(${60 * k}deg) translateZ(380px)`; });
+      tiles.forEach((el, k) => { el.style.transform = `rotateY(${55 * k}deg) translateZ(470px)`; });
       const ring = { a: -48 };
       const ringEl = document.querySelector("#ring");
       const drawRing = () => {
-        ringEl.style.transform = `translateZ(-380px) rotateY(${ring.a.toFixed(3)}deg)`;
+        ringEl.style.transform = `translateZ(-470px) rotateY(${ring.a.toFixed(3)}deg)`;
         tiles.forEach((el, k) => {
-          let d = ((60 * k + ring.a) % 360 + 540) % 360 - 180;   // tile angle from the front, -180..180
+          let d = ((55 * k + ring.a) % 360 + 540) % 360 - 180;   // tile angle from the front, -180..180
           const ad = Math.abs(d);
           el.style.opacity = ad > 100 ? 0 : String(Math.min(1, (100 - ad) / 25));
           el.querySelector(".face").style.filter = `brightness(${(1 - Math.min(ad, 90) / 90 * 0.55).toFixed(3)})`;
         });
       };
       tl.set(ring, { a: -48, onComplete: drawRing }, 0.001);
-      tl.fromTo(ring, { a: -48 }, { a: 0, duration: 0.45, ease: "power3.out", immediateRender: false, onUpdate: drawRing }, SIN);
-      tl.fromTo("#ring", { opacity: 0 }, { opacity: 1, duration: 0.12, immediateRender: false }, SIN);
+      tl.fromTo(ring, { a: -48 }, { a: 0, duration: 0.5, ease: "power3.out", immediateRender: false, onUpdate: drawRing }, SIN + 0.2);
+      tl.fromTo("#ring", { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, SIN + 0.2);
       // between steps the ring keeps creeping a few degrees; steps land the next tile at the front on its words
-      tl.to(ring, { a: -6, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.45), ease: "none", onUpdate: drawRing }, SIN + 0.45);
+      tl.to(ring, { a: -5, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.7), ease: "none", onUpdate: drawRing }, SIN + 0.7);
       for (let k = 1; k < 4; k++) {
         const at = BT[k] - 0.3, next = k < 3 ? BT[k + 1] - 0.3 : SOUT;
-        tl.to(ring, { a: -60 * k, duration: 0.42, ease: "power2.inOut", onUpdate: drawRing }, at);
-        tl.to(ring, { a: -60 * k - 6, duration: Math.max(0.2, next - at - 0.42), ease: "none", onUpdate: drawRing }, at + 0.42);
+        tl.to(ring, { a: -55 * k, duration: 0.42, ease: "power2.inOut", onUpdate: drawRing }, at);
+        tl.to(ring, { a: -55 * k - 5, duration: Math.max(0.2, next - at - 0.42), ease: "none", onUpdate: drawRing }, at + 0.42);
       }
 
       // text above the ring

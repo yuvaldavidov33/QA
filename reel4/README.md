@@ -40,6 +40,10 @@ voice + SFX only, for adding a song from Instagram's library.
   tile reaches the front on its words, drifting between steps; the block text (same wording) resolves above the ring.
   Builder `tools/build4c.py` (`... 188 238 291 488`). The previous blocks version is kept as
   `reel_final_blocks.mp4` / `reel_no_music_blocks.mp4`.
+- Fix 10 (client): carousel without zoom-in ("too close"): the whole shot slides right 440 px at its normal size
+  (feathered left edge), the left side opens onto a grey, blurred, mirrored-scale copy of the gym (person hidden behind
+  the shot), the ring sits on that grey area with space between tiles (55°, radius 470, tiles 370x420); the shot slides
+  back before "אם". `tools/render.py` also feeds the sliding copy (`#fgimg`).
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
