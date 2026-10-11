@@ -147,7 +147,7 @@ def row(rid, badge, main, sub, vis):
 
 
 REASONS = "\n".join([
-    row("r1", "x", "מתחילים חזק מדי", "ונשרפים מהר", VIS_ENERGY),
+    row("r1", "x", "מתחילים חזק מדי", "", VIS_ENERGY),
     row("r2", "x", "מתאמנים לבד", "בלי אף אחד שידחוף", VIS_ALONE),
     row("r3", "x", "לא יודעים", "מה בדיוק לעשות", VIS_Q),
 ])
