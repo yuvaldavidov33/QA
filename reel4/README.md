@@ -27,6 +27,11 @@ voice + SFX only, for adding a song from Instagram's library.
   ~70 px into its slot, while the whole board (title, earlier blocks, grid, dust) moves up: the new block's centre goes
   1190 → 1040 in 0.25 s (ease in-out) → 930 by 0.6 s (ease out) → speeds up to 805 as the next block arrives.
   Fixed pitch 385 px between blocks; blocks far above the focus go soft. Each block starts on its spoken words.
+- Fix 6 (client): "בדיוק בגלל זה" shook: the zoom keys used the first "בדיוק" (inside "לא יודעים בדיוק") so a push had a
+  negative duration, then a punch and a snap followed. Now one smooth push 1.03 → 1.14 from the reasons page to the
+  solution page, and the zoom origin uses a heavier (~0.5 s) smoothing of the face track. Measured: no frame-to-frame
+  jump above 1.2 px (at 270 px width) between 6.3 and 9.7 s.
+- Fix 7 (client): page titles "למה מפסיקים?" and "אצלנו זה אחרת" removed; reasons rows re-centred.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.

@@ -18,6 +18,22 @@ DURATION = 21.0  # last frame holds ~1.1 s so the DM notification stays readable
 KEYWORDS = {"אחרת", "הפעם"}
 
 
+def smooth(vals, sigma=14):
+    """Heavier temporal smoothing of the face track for the zoom origin (about half a second)."""
+    import math
+    r = int(sigma * 3)
+    k = [math.exp(-0.5 * (i / sigma) ** 2) for i in range(-r, r + 1)]
+    n = len(vals)
+    out = []
+    for i in range(n):
+        acc = wsum = 0.0
+        for j, w in zip(range(i - r, i + r + 1), k):
+            acc += vals[min(n - 1, max(0, j))] * w
+            wsum += w
+        out.append(round(acc / wsum, 2))
+    return out
+
+
 def t(word, nth=1):
     hits = [w["t"] for w in words if w["w"] == word]
     return hits[nth - 1]
@@ -81,12 +97,10 @@ ZOOM = [
     ("set", 0.0, 1.00, 0),
     ("push", 0.0, 1.08, T_["rs_in"]),
     # back on the video after the reasons page
-    ("set", T_["rs_out"], 1.04, 0),
-    ("push", T_["rs_out"], 1.10, t("בדיוק") - T_["rs_out"]),
-    ("back", t("בדיוק") - 0.05, 1.00, 0.35),
-    ("punch", t("בנינו"), 1.10, 0.45),
-    # "אחרת": sharp snap in, then the page takes over (no card is on screen here)
-    ("snap", t("אחרת"), 1.30, 0.2),
+    # (fix: one smooth push from the reasons page to the solution page; the old keys used the wrong "בדיוק"
+    # and stacked a punch and a snap, which read as shaking)
+    ("set", T_["rs_out"], 1.03, 0),
+    ("push", T_["rs_out"], 1.14, T_["sol_in"] - T_["rs_out"]),
     ("set", T_["sol_out"], 1.00, 0),
     ("push", T_["sol_out"], 1.10, T_["dm_in"] - T_["sol_out"]),
     ("punch", t("שהפעם"), 1.16, 0.5),
@@ -207,7 +221,7 @@ html = f"""<!doctype html>
       .page .title .acc {{ display: inline-block; }}
       #reasons .title .acc {{ color: #ff4b55; text-shadow: 0 0 26px rgba(255,40,50,.5); }}
       #solution .title .acc {{ color: var(--blue); text-shadow: 0 0 26px rgba(58,100,240,.6); }}
-      .rows {{ position: absolute; left: 60px; right: 60px; top: 570px; display: flex; flex-direction: column; gap: 30px; }}
+      .rows {{ position: absolute; left: 60px; right: 60px; top: 555px; display: flex; flex-direction: column; gap: 30px; }}
       #solution .rows {{ top: 500px; }}
       #solution .title {{ top: 340px; }}
       /* Block cascade page (client reference d3e71928-….mov, measured frame by frame): flat, no tilt or roll.
@@ -314,7 +328,6 @@ html = f"""<!doctype html>
       <div class="clip page" id="reasons" data-start="{round(T_["rs_in"], 2)}" data-duration="{round(T_["rs_out"] - T_["rs_in"], 2)}" data-track-index="3">
         <div class="inner" id="rsIn">
           <div class="grid"></div><div class="glow"></div>
-          <div class="title" id="rsTtl">למה <span class="acc">מפסיקים?</span></div>
           <div class="rows">
 {REASONS}
           </div>
@@ -324,7 +337,6 @@ html = f"""<!doctype html>
       <div class="clip page" id="solution" data-start="{round(T_["sol_in"], 2)}" data-duration="{round(T_["sol_out"] - T_["sol_in"], 2)}" data-track-index="3">
         <div class="inner" id="soIn">
           <div id="soScroll"><div class="plane"></div><div class="glow"></div>{DUST}
-          <div id="soTtlW"><div class="title" id="soTtl">אצלנו זה <span class="acc">אחרת</span></div></div>
           <div class="rows">
 {SOLUTION}
           </div></div>
@@ -349,8 +361,8 @@ html = f"""<!doctype html>
     <script>
       const spring = (p) => (1 - (1 + 7 * p) * Math.exp(-7 * p)) / (1 - 8 * Math.exp(-7));
       const FACE_FPS = {face["fps"]};
-      const FACE_X = {json.dumps([round(p["x"], 1) for p in face["track"]])};
-      const FACE_Y = {json.dumps([round(p["y"], 1) for p in face["track"]])};
+      const FACE_X = {json.dumps(smooth([p["x"] for p in face["track"]]))};
+      const FACE_Y = {json.dumps(smooth([p["y"] for p in face["track"]]))};
       const ZOOM = {json.dumps(ZOOM)};
       const CAPS = {json.dumps([c["start"] for c in captions])};
       const T = {json.dumps({k: round(v, 2) for k, v in TIMES.items()})};
@@ -370,7 +382,7 @@ html = f"""<!doctype html>
       }}
 
       // Hidden until their own entrance.
-      tl.set(["#hookL", "#hookL2", "#hookR", "#hookR2", "#rsTtl", "#soTtl", ".row", "#dm", "#behind .la", "#behind .lb", "#cal"], {{ opacity: 0 }}, 0);
+      tl.set(["#hookL", "#hookL2", "#hookR", "#hookR2", ".row", "#dm", "#behind .la", "#behind .lb", "#cal"], {{ opacity: 0 }}, 0);
 
       // Opening: each phrase enters whole from a soft blur.
       const phraseIn = (sel, at) => tl.fromTo(sel, {{ opacity: 0, y: 34, scale: 0.94, filter: "blur(12px)" }},
@@ -404,7 +416,6 @@ html = f"""<!doctype html>
       // ===== Reasons page =====
       pageIn("#reasons", "#rsIn", T.rs_in, T.rs_out - T.rs_in);
       tl.set("#cam", {{ scale: 1, filter: "blur(0px)" }}, T.rs_out);
-      titleIn("#rsTtl", T.rs_in + 0.04);
       smoothIn("#r1", T.rs_1); badgeIn("#r1 .badge", T.rs_1 + 0.25);
       smoothIn("#r2", T.rs_2); badgeIn("#r2 .badge", T.rs_2 + 0.25);
       smoothIn("#r3", T.rs_3); badgeIn("#r3 .badge", T.rs_3 + 0.25);
@@ -455,9 +466,8 @@ html = f"""<!doctype html>
       //  - fixed pitch 385 px between block centres (row 228 + gap 157), title one step above the first block.
       const PITCH = 385, C1 = 614, CT = 390;
       const BT = [T.so_1, T.so_2, T.so_3, T.so_4];
-      tl.set("#soScroll", {{ y: 650 }}, 0);
-      tl.fromTo("#soScroll", {{ y: 650 }}, {{ y: 1000 - CT, duration: 0.45, ease: "power3.out", immediateRender: false }}, T.sol_in);
-      tl.to("#soScroll", {{ y: 1190 - C1, duration: Math.max(0.2, BT[0] - T.sol_in - 0.45), ease: "power1.in" }}, T.sol_in + 0.45);
+      tl.set("#soScroll", {{ y: 1240 - C1 }}, 0);
+      tl.fromTo("#soScroll", {{ y: 1240 - C1 }}, {{ y: 1190 - C1, duration: Math.max(0.2, BT[0] - T.sol_in), ease: "power1.in", immediateRender: false }}, T.sol_in);
       BT.forEach((at, k) => {{
         const c = C1 + PITCH * k, next = k < 3 ? BT[k + 1] : T.sol_out;
         tl.to("#soScroll", {{ y: 1040 - c, duration: 0.25, ease: "power2.inOut" }}, at);
@@ -472,7 +482,7 @@ html = f"""<!doctype html>
       }});
       tl.fromTo("#solution .dust", {{ x: 0, y: 0 }}, {{ x: (i) => (i % 2 ? 22 : -18), y: (i) => -20 - (i % 5) * 10, duration: T.sol_out - T.sol_in, ease: "none", immediateRender: false }}, T.sol_in);
       // Blocks that have moved well above the focus go soft, as in the reference.
-      const dofEls = [document.querySelector("#soTtlW"), ...document.querySelectorAll("#solution .rw")];
+      const dofEls = [...document.querySelectorAll("#solution .rw")];
       const dof = {{ k: 0 }};
       tl.fromTo(dof, {{ k: 0 }}, {{ k: 1, duration: T.sol_out - T.sol_in, ease: "none", immediateRender: false, onUpdate: () => {{
         for (const el of dofEls) {{
@@ -481,7 +491,6 @@ html = f"""<!doctype html>
           el.style.filter = b > 0.05 ? `blur(${{b.toFixed(2)}}px)` : "none";
         }}
       }} }}, T.sol_in);
-      titleIn("#soTtl", T.sol_in + 0.04);
       badgeIn("#s1 .badge", T.so_1 + 0.25);
       badgeIn("#s2 .badge", T.so_2 + 0.25);
       badgeIn("#s3 .badge", T.so_3 + 0.25);
