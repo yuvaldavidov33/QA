@@ -54,7 +54,7 @@ FY = [v if v is not None else 52 for v in smooth_segments([p["y"] for p in face[
 # Captions only on the closing part (the opening is the hook; the CTA card carries "תעקבי אחרי העמוד").
 T_ = {
     "hk_a": 0.16, "hk_a2": t("ארבעה") - 0.06, "hk_b": t("ממוקדי") - 0.06, "hk_b2": t("במיוחד") - 0.06,
-    "hk_out": CUTS[0] - 0.24,
+    "hk_out": CUTS[0] - 0.24, "ana_in": t("ממוקדי") - 0.11,
     "tb_in": CUTS[0] + 0.12, "tb_out": 5.35,
     "cta": t("תעקבי") - 0.05, "tap": t("העמוד") + 0.3,
 }
@@ -115,6 +115,25 @@ html = f"""<!doctype html>
       #hook .hl {{ opacity: 0; font-weight: 900; font-size: 84px; line-height: 1.08; color: #fff; white-space: nowrap;
                    text-shadow: 0 6px 26px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.9); }}
       #hook .royal {{ color: var(--royal); display: inline-block; text-shadow: 0 0 2px rgba(255,255,255,.45), 0 6px 26px rgba(0,0,0,.6); }}
+
+      /* "ממוקדי ישבן": full-screen anatomy page (client's image), a blue target locks on the glutes,
+         they light up in colour while the camera pushes in. Beat B of the opening sits at the top of the page. */
+      #hook #hookB {{ top: -850px; }}
+      .page {{ position: absolute; inset: 0; overflow: hidden; background: #000; }}
+      #anaIn {{ position: absolute; left: 52px; top: 0; width: 975px; height: 1920px; transform-origin: 461px 1255px; will-change: transform; }}
+      #anaIn img {{ position: absolute; inset: 0; width: 100%; height: 100%; display: block; }}
+      #anaGray {{ filter: grayscale(1) brightness(.92); }}
+      #anaCol {{ clip-path: circle(0% at 47.3% 65.4%); }}
+      #anaGlow {{ position: absolute; left: 161px; top: 1005px; width: 600px; height: 500px; border-radius: 50%; mix-blend-mode: screen;
+                  background: radial-gradient(closest-side, rgba(255,70,60,.55), rgba(255,70,60,0)); opacity: 0; }}
+      #reticle {{ position: absolute; left: 141px; top: 935px; width: 640px; height: 640px; overflow: visible; }}
+      #reticle .ring {{ fill: none; stroke: var(--blue); stroke-width: 5; stroke-dasharray: 18 14; filter: drop-shadow(0 0 10px rgba(91,134,255,.9)); }}
+      #reticle .ring2 {{ fill: none; stroke: rgba(255,255,255,.7); stroke-width: 2.5; }}
+      #reticle .br path {{ fill: none; stroke: var(--blue); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round;
+                           filter: drop-shadow(0 0 12px rgba(91,134,255,.95)); }}
+      #reticle .tick {{ stroke: #fff; stroke-width: 5; stroke-linecap: round; }}
+      #anaShade {{ position: absolute; left: 0; right: 0; top: 0; height: 700px;
+                   background: linear-gradient(rgba(0,0,0,.82), rgba(0,0,0,.45) 55%, rgba(0,0,0,0)); }}
 
       /* Captions */
       .cap {{ position: absolute; left: 0; right: 0; top: 1150px; display: flex; justify-content: center; direction: rtl; }}
@@ -187,6 +206,20 @@ html = f"""<!doctype html>
       <audio id="music" src="music.wav" data-start="0" data-duration="{DURATION}" data-track-index="6" data-volume="1"></audio>
       <audio id="sfx" src="sfx.wav" data-start="0" data-duration="{DURATION}" data-track-index="5" data-volume="0.35"></audio>
 
+      <div class="clip page" id="ana" data-start="{round(T_["ana_in"], 2)}" data-duration="{round(CUTS[0] - T_["ana_in"], 2)}" data-track-index="3">
+        <div id="anaIn">
+          <img id="anaGray" src="anatomy.jpg" alt="" /><img id="anaCol" src="anatomy.jpg" alt="" /><div id="anaGlow"></div>
+          <svg id="reticle" viewBox="-320 -320 640 640">
+            <circle class="ring" r="250"/><circle class="ring2" r="214"/>
+            <line class="tick" x1="0" y1="-290" x2="0" y2="-236"/><line class="tick" x1="0" y1="236" x2="0" y2="290"/>
+            <line class="tick" x1="-290" y1="0" x2="-236" y2="0"/><line class="tick" x1="236" y1="0" x2="290" y2="0"/>
+            <g class="br"><path id="brTL" d="M-300 -200 V-300 H-200"/><path id="brTR" d="M300 -200 V-300 H200"/>
+            <path id="brBL" d="M-300 200 V300 H-200"/><path id="brBR" d="M300 200 V300 H200"/></g>
+          </svg>
+        </div>
+        <div id="anaShade"></div>
+      </div>
+
       <div class="ov clip" id="hook" data-start="0" data-duration="{round(T_["hk_out"] + 0.25, 2)}" data-track-index="2">
         <div class="beat" id="hookA"><div class="hl" id="hookL">הכנתי לך</div><div class="hl" id="hookL2"><span class="royal">ארבעה</span> תרגילים</div></div>
         <div class="beat" id="hookB"><div class="hl" id="hookR">ממוקדי <span class="royal">ישבן</span></div><div class="hl" id="hookR2">במיוחד בשבילך</div></div>
@@ -248,6 +281,27 @@ html = f"""<!doctype html>
       phraseIn("#hookR2", T.hk_b2);
       tl.fromTo("#hookR .royal", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.45, ease: spring, immediateRender: false }}, T.hk_b + 0.3);
       tl.to("#hookB", {{ opacity: 0, y: -24, filter: "blur(12px)", duration: 0.22, ease: "power2.in" }}, T.hk_out);
+
+      // ===== "ממוקדי ישבן": anatomy page — zoom-blur in, target locks on the glutes, they light up, push in =====
+      const A = T.ana_in, lock = A + 0.62;
+      tl.fromTo("#cam", {{ scale: 1, filter: "blur(0px)" }}, {{ scale: 2.4, filter: "blur(24px)", duration: 0.28, ease: "power2.in", immediateRender: false }}, A - 0.2);
+      tl.set("#cam", {{ scale: 1, filter: "blur(0px)" }}, A + 0.2);
+      tl.fromTo("#ana", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.14, ease: "power1.in", immediateRender: false }}, A);
+      tl.fromTo("#anaIn", {{ scale: 1.12, filter: "blur(10px)" }}, {{ scale: 1.0, filter: "blur(0px)", duration: 0.35, ease: "power3.out", immediateRender: false }}, A);
+      tl.to("#anaIn", {{ scale: 1.42, duration: CUTS[0] - 0.15 - lock, ease: "sine.inOut" }}, lock);
+      tl.set("#reticle", {{ opacity: 0 }}, 0);
+      tl.fromTo("#reticle", {{ opacity: 0, scale: 1.9, rotation: -90, transformOrigin: "50% 50%" }},
+        {{ opacity: 1, scale: 1, rotation: 0, duration: 0.45, ease: "power3.out", immediateRender: false }}, A + 0.12);
+      tl.fromTo("#reticle .ring", {{ rotation: 0, transformOrigin: "50% 50%" }}, {{ rotation: 120, duration: CUTS[0] - A, ease: "none", immediateRender: false }}, A);
+      [["#brTL", -1, -1], ["#brTR", 1, -1], ["#brBL", -1, 1], ["#brBR", 1, 1]].forEach(([sel, sx, sy]) =>
+        tl.fromTo(sel, {{ x: sx * 90, y: sy * 90 }}, {{ x: sx * 20, y: sy * 20, duration: 0.3, ease: "back.out(2.5)", immediateRender: false }}, lock - 0.3));
+      tl.fromTo("#reticle .br path", {{ stroke: "#5b86ff" }}, {{ stroke: "#ffffff", duration: 0.08, yoyo: true, repeat: 3, ease: "none", immediateRender: false }}, lock);
+      tl.fromTo("#reticle", {{ scale: 1 }}, {{ scale: 1.08, duration: 0.4, ease: spring, immediateRender: false }}, lock);
+      tl.fromTo("#anaCol", {{ clipPath: "circle(0% at 47.3% 65.4%)" }}, {{ clipPath: "circle(48% at 47.3% 65.4%)", duration: 0.6, ease: "power2.out", immediateRender: false }}, lock);
+      tl.fromTo("#anaGlow", {{ opacity: 0, scale: 0.6 }}, {{ opacity: 1, scale: 1.1, duration: 0.45, ease: "power2.out", immediateRender: false }}, lock + 0.05);
+      tl.to("#anaGlow", {{ opacity: 0.55, scale: 1, duration: 0.45, yoyo: true, repeat: 3, ease: "sine.inOut" }}, lock + 0.5);
+      // leave forward into the first clip
+      tl.to("#anaIn", {{ scale: 2.1, filter: "blur(16px)", duration: 0.15, ease: "power2.in" }}, CUTS[0] - 0.15);
 
       // ===== "4 תרגילי ישבן" behind the athlete =====
       tl.fromTo(["#ttlB", "#ttlA"], {{ opacity: 0, y: -30, filter: "blur(12px)", letterSpacing: "18px" }},
@@ -356,7 +410,9 @@ html = f"""<!doctype html>
 open(OUT, "w").write(html)
 
 # Sound cues, rendered to sfx.wav by tools/sfx.py.
-ev = [("whoosh_soft", T_["hk_a"]), ("whoosh_soft", T_["hk_b"]), ("pop", T_["hk_a2"] + 0.3), ("pop", T_["hk_b"] + 0.3)]
+ev = [("whoosh_soft", T_["hk_a"]), ("pop", T_["hk_a2"] + 0.3), ("pop", T_["hk_b"] + 0.3)]
+ev += [("whoosh", T_["ana_in"] - 0.2), ("thump", T_["ana_in"]), ("whoosh_soft", T_["ana_in"] + 0.12)]
+ev += [("tick", T_["ana_in"] + 0.32 + i * 0.1) for i in range(3)] + [("ding", T_["ana_in"] + 0.62), ("pop", T_["ana_in"] + 0.64)]
 ev += [("whoosh", c - 0.15) for c in CUTS[:4]] + [("thump", c) for c in CUTS[:4]]
 ev += [("whoosh_soft", T_["tb_in"])] + [("tick", T_["tb_in"] + 0.2 + i * 0.17) for i in range(4)]
 ev += [("pop", T_["tb_in"] + 0.75), ("whoosh_out", T_["tb_out"])]

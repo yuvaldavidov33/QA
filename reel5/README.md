@@ -8,6 +8,8 @@ voice + SFX only (for adding a song from Instagram's library).
   (cuts at 3.27 / 8.9 / 16.7 / 20.77 / 26.6 s, ffmpeg scene detection).
 - Plan approved by the client before building:
   - Opening "הכנתי לך ארבעה תרגילים / ממוקדי ישבן במיוחד בשבילך" as whole phrases, "ארבעה" and "ישבן" in royal blue.
+  - Fix 1 (client): on "ממוקדי ישבן" a full-screen page with the client's anatomy image (`anatomy.jpg`): zoom-blur in, a blue
+    target locks on the glutes, they light up red from grey, slow push in, the phrase at the top; zooms forward into clip 1.
   - "4 תרגילי ישבן" behind the athlete on the first clip (person cutout): the big blue 4 counts 1→4 and her kicking
     leg sweeps in front of it.
   - One wide top card per exercise (number, name, live stick-figure doing the move with the glute dot lighting at the
