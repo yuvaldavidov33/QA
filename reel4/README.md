@@ -33,6 +33,13 @@ voice + SFX only, for adding a song from Instagram's library.
   jump above 1.2 px (at 270 px width) between 6.3 and 9.7 s.
 - Fix 8 (client): subtitle "ונשרפים מהר" removed from the first reason.
 - Fix 7 (client): page titles "למה מפסיקים?" and "אצלנו זה אחרת" removed; reasons rows re-centred.
+- Fix 9 (client, trial): the blue blocks page replaced by the 3D app carousel of the client's reference
+  (`422f8911-….mov` on `main`, measured at 60 fps): a whip blur cut, the shot slides so the trainer stands on the right
+  (1.75x, fixed origin on the face), background grey and soft, person cutout in colour (frames 291-488) over a ring of
+  thick navy tiles on the left (60° apart, radius 380) that turns right-to-left in 0.42 s eased steps so each block's
+  tile reaches the front on its words, drifting between steps; the block text (same wording) resolves above the ring.
+  Builder `tools/build4c.py` (`... 188 238 291 488`). The previous blocks version is kept as
+  `reel_final_blocks.mp4` / `reel_no_music_blocks.mp4`.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
