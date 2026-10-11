@@ -344,15 +344,16 @@ html = f"""<!doctype html>
                           glute: [hip[0] + 9, hip[1] + 2], squeeze: 1 - p, props: '<rect x="146" y="128" width="62" height="38" rx="6"/>' }}; }},
         // 3 sumo squat on two steps (front view), dumbbell between the legs
         (p) => {{ const hy = lerp(80, 114, p), sh = [110, hy - 48];
-                 return {{ head: [110, sh[1] - 18], sh, hand: [110, sh[1] + 64], hip: [110, hy], legs: [[[98, hy], [64, 142], -1], [[122, hy], [156, 142], 1]],
+                 return {{ head: [110, sh[1] - 18], sh, hand: [110, sh[1] + 64], hip: [110, hy], legs: [[[98, hy], [60, 142], 1], [[122, hy], [160, 142], -1]],
                           shoulders: [[92, sh[1] + 2], [128, sh[1] + 2]], glute: [110, hy + 4], squeeze: 1 - p, db: true,
                           props: '<rect x="34" y="142" width="58" height="22" rx="5"/><rect x="128" y="142" width="58" height="22" rx="5"/>' }}; }},
-        // 4 single-leg romanian deadlift: torso tips forward, rear leg rises like a seesaw
-        (p) => {{ const a = lerp(4, 80, p) * Math.PI / 180, hip = [lerp(112, 120, p), lerp(84, 90, p)];
-                 const sh = [hip[0] - 46 * Math.sin(a), hip[1] - 46 * Math.cos(a)], b = a * 0.96;
-                 return {{ head: [sh[0] - 17 * Math.sin(a + 0.15), sh[1] - 17 * Math.cos(a + 0.15)], sh, hand: [sh[0] - 2, sh[1] + 36], hip,
-                          legs: [[hip, [112, 162], 1], [hip, [hip[0] + 78 * Math.sin(b), hip[1] + 78 * Math.cos(b)], -1]],
-                          glute: [hip[0] + 9 * Math.cos(a), hip[1] + 6], squeeze: 1 - p, db: true, props: "" }}; }},
+        // 4 single-leg romanian deadlift, rear foot resting on a bench, hinge on the standing leg
+        (p) => {{ const a = lerp(6, 72, p) * Math.PI / 180, hip = [lerp(118, 128, p), lerp(88, 96, p)];
+                 const sh = [hip[0] - 46 * Math.sin(a), hip[1] - 46 * Math.cos(a)];
+                 return {{ head: [sh[0] - 17 * Math.sin(a + 0.15), sh[1] - 17 * Math.cos(a + 0.15)], sh, hand: [sh[0], sh[1] + 40], hip,
+                          legs: [[hip, [104, 166], 1], [hip, [196, 104], 1]],
+                          glute: [hip[0] + 9, hip[1] + 2], squeeze: 1 - p, db: true,
+                          props: '<rect x="158" y="106" width="64" height="16" rx="6"/><rect x="184" y="122" width="14" height="44" rx="3"/>' }}; }},
       ];
       const NS = "http://www.w3.org/2000/svg";
       const ln = (g, a, b) => {{ const e = document.createElementNS(NS, "line"); e.setAttribute("x1", a[0]); e.setAttribute("y1", a[1]); e.setAttribute("x2", b[0]); e.setAttribute("y2", b[1]); g.appendChild(e); }};
