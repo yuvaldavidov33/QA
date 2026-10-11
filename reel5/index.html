@@ -25,13 +25,13 @@
          they light up in colour while the camera pushes in. Beat B of the opening sits at the top of the page. */
       #hook #hookB { top: -850px; }
       .page { position: absolute; inset: 0; overflow: hidden; background: #000; }
-      #anaIn { position: absolute; left: 52px; top: 0; width: 975px; height: 1920px; transform-origin: 461px 1255px; will-change: transform; }
+      #anaIn { position: absolute; left: -100px; top: 0; width: 1280px; height: 1920px; transform-origin: 642px 1250px; will-change: transform; }
       #anaIn img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
       #anaGray { filter: grayscale(1) brightness(.92); }
-      #anaCol { clip-path: circle(0% at 47.3% 65.4%); }
-      #anaGlow { position: absolute; left: 161px; top: 1005px; width: 600px; height: 500px; border-radius: 50%; mix-blend-mode: screen;
+      #anaCol { clip-path: circle(0% at 50.2% 65.1%); }
+      #anaGlow { position: absolute; left: 342px; top: 1000px; width: 600px; height: 500px; border-radius: 50%; mix-blend-mode: screen;
                   background: radial-gradient(closest-side, rgba(255,70,60,.55), rgba(255,70,60,0)); opacity: 0; }
-      #reticle { position: absolute; left: 141px; top: 935px; width: 640px; height: 640px; overflow: visible; }
+      #reticle { position: absolute; left: 322px; top: 930px; width: 640px; height: 640px; overflow: visible; }
       #reticle .ring { fill: none; stroke: var(--blue); stroke-width: 5; stroke-dasharray: 18 14; filter: drop-shadow(0 0 10px rgba(91,134,255,.9)); }
       #reticle .ring2 { fill: none; stroke: rgba(255,255,255,.7); stroke-width: 2.5; }
       #reticle .br path { fill: none; stroke: var(--blue); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round;
@@ -206,7 +206,7 @@
         tl.fromTo(sel, { x: sx * 90, y: sy * 90 }, { x: sx * 20, y: sy * 20, duration: 0.3, ease: "back.out(2.5)", immediateRender: false }, lock - 0.3));
       tl.fromTo("#reticle .br path", { stroke: "#5b86ff" }, { stroke: "#ffffff", duration: 0.08, yoyo: true, repeat: 3, ease: "none", immediateRender: false }, lock);
       tl.fromTo("#reticle", { scale: 1 }, { scale: 1.08, duration: 0.4, ease: spring, immediateRender: false }, lock);
-      tl.fromTo("#anaCol", { clipPath: "circle(0% at 47.3% 65.4%)" }, { clipPath: "circle(48% at 47.3% 65.4%)", duration: 0.6, ease: "power2.out", immediateRender: false }, lock);
+      tl.fromTo("#anaCol", { clipPath: "circle(0% at 50.2% 65.1%)" }, { clipPath: "circle(48% at 50.2% 65.1%)", duration: 0.6, ease: "power2.out", immediateRender: false }, lock);
       tl.fromTo("#anaGlow", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.1, duration: 0.45, ease: "power2.out", immediateRender: false }, lock + 0.05);
       tl.to("#anaGlow", { opacity: 0.55, scale: 1, duration: 0.45, yoyo: true, repeat: 3, ease: "sine.inOut" }, lock + 0.5);
       // leave forward into the first clip
