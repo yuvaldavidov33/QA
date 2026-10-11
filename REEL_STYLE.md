@@ -76,8 +76,20 @@ What the client approved / asked for on reel 3 (defaults for the next reel):
 - Deliver: commit `reelN/reel_final.mp4` to `claude/workout-video-animations-sx06ew`, give the raw GitHub link and
   update the claude.ai artifact page.
 
-## Reel 4 notes (`reel4/`, "למה אנשים לא מתמידים")
-- Client approved the plan in one go; chose a full-screen page for the list of reasons. Problem page (red ✕ rows with
-  live mini-animations) mirrored by a solution page (royal-blue ✓ rows) is a good pattern for problem → solution scripts.
-- CTA wording follows the speech ("שלחו לנו הודעה"); hold the last frame ~1 s when the CTA comes at the very end.
-- `reel4/tools/render.py` now writes both `reel_final.mp4` and `reel_no_music.mp4` in one run.
+## Reel 4 notes (`reel4/`, "למה אנשים לא מתמידים") — the latest approved reel; start the next one from here
+Builder `reel4/tools/build4.py`, renderer `reel4/tools/render.py` (writes `reel_final.mp4` and `reel_no_music.mp4`).
+What the client approved / asked for:
+- Opening text = the full first sentence exactly as spoken, in two whole phrases (no shortened wording).
+- Problem → solution as two full-screen dark pages of blocks (glass rows, red ✕ / royal-blue ✓, a live mini-animation
+  per block: draining battery, friends fading, wobbling ?, six people lighting up, plan sheet, kg counter, graph).
+  No page titles on these pages, no subtitles the client did not say.
+- Solution page = block cascade copied from the client's reference (`d3e71928-….mov` on `main`), measured frame by
+  frame: each block opens below centre from a narrow strip, rises into its slot while the whole board moves up one
+  fixed step; flat, NO tilt / roll / 3D. Each block starts on its spoken words.
+- Zooms must be smooth: one slow push per section, origin from a heavily smoothed face track (~0.5 s); no stacked
+  punch + snap (read as shaking). Always look up word times by the right occurrence (`t(word, nth)`).
+- Big text behind the trainer for one mid-reel phrase is still liked ("אחרי חודש / מפסיקים").
+- CTA: low-opacity Instagram DM notification with the round profile picture; wording as spoken ("שלחו לנו הודעה").
+- A real side angle needs a second camera; faking it from the front shot was rejected. Ask for a side clip instead.
+- When the client sends a reference, measure it (positions/timing per frame) and copy the motion exactly; do not
+  add extra effects of your own.
