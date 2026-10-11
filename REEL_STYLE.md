@@ -93,3 +93,8 @@ What the client approved / asked for:
 - A real side angle needs a second camera; faking it from the front shot was rejected. Ask for a side clip instead.
 - When the client sends a reference, measure it (positions/timing per frame) and copy the motion exactly; do not
   add extra effects of your own.
+
+## Reel 5 notes (`reel5/`, "4 תרגילי ישבן")
+- Talking head + silent B-roll clips: one wide top card per clip (number, name, live stick-figure rig of the move),
+  soft whip-in on each cut, music lifted +8 dB where nobody talks (`reel5/tools/music_lift.py`).
+- Text behind the subject works on B-roll too (big "4" behind the athlete's kicking leg).
