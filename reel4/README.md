@@ -21,10 +21,12 @@ voice + SFX only, for adding a song from Instagram's library.
   "לא מצליחים / **להתמיד** באימונים".
 - Fix 2 (client): a fake side angle on "לא מצליחים להתמיד באימונים" was tried and removed; a real profile shot needs a
   second camera (the client may film one). The wording fix stays.
-- Fix 3-4 (client): the "אצלנו זה אחרת" page copies the camera move of the client's reference (`d3e71928-….mov` on
-  `main`): the whole scene (perspective grid, dust, glow, title, blocks) lies on a tilted 3D plane, the camera tracks
-  down it block by block (each new block glides to the focus line y≈1000 in 0.34 s), rolling a few degrees the other
-  way on each move and drifting between moves; blocks far from the focus line go soft (depth of field). Blocks unchanged.
+- Fix 3-5 (client): the "אצלנו זה אחרת" page copies the block cascade of the client's reference (`d3e71928-….mov` on
+  `main`), measured frame by frame from the yellow block outlines (1248 px frame scaled to 1920): flat, no tilt or roll.
+  Each new block opens below centre (centre y≈1190) from a narrow strip to full width with a slight overshoot and rises
+  ~70 px into its slot, while the whole board (title, earlier blocks, grid, dust) moves up: the new block's centre goes
+  1190 → 1040 in 0.25 s (ease in-out) → 930 by 0.6 s (ease out) → speeds up to 805 as the next block arrives.
+  Fixed pitch 385 px between blocks; blocks far above the focus go soft. Each block starts on its spoken words.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
