@@ -17,7 +17,7 @@ CUT_A, CUT_B = int(sys.argv[5]), int(sys.argv[6])
 SRC_END = 29.73
 DURATION = 30.0  # last frame holds a moment so the follow card stays readable
 CUTS = [3.267, 8.9, 16.7, 20.767, 26.6]  # scene changes in the source (ffmpeg scene > 0.25)
-EXERCISES = ["קיק בק", "לאנג בולגרי", "סומו סקוואט", "דדליפט רומני רגל רגל"]
+EXERCISES = ["קיק בק", "לאנג בולגרי", "סומו סקוואט", "דדליפט רומני<br>רגל רגל"]
 KEYWORDS = {"שורפים", "ומחטבים"}
 
 
@@ -87,7 +87,7 @@ DOTS = '<div class="dots">' + "".join('<i></i>' for _ in range(4)) + '</div>'
 def label(k, name):
     return (f'<div class="lab clip" id="lab{k}" data-start="{round(LAB_IN[k] - 0.05, 2)}" '
             f'data-duration="{round(LAB_OUT[k] + 0.5 - LAB_IN[k], 2)}" data-track-index="3">'
-            f'<div class="card"><div class="txt"><span class="num">{k + 1}</span><div class="m">{name}</div></div>'
+            f'<div class="card"><div class="txt"><span class="num">{k + 1}</span><div><div class="m">{name}</div><div class="sr"><b>3</b> סטים · <b>8-12</b> חזרות</div></div></div>'
             f'{STICK.format(k=k)}</div>{DOTS}</div>')
 
 
@@ -159,7 +159,9 @@ html = f"""<!doctype html>
       .lab .num {{ width: 96px; height: 96px; border-radius: 50%; background: var(--royal); display: grid; place-items: center; flex: none;
                    font-size: 60px; font-weight: 900; box-shadow: 0 0 34px rgba(58,100,240,.65); }}
       .lab .m {{ font-weight: 900; font-size: 74px; line-height: 1.02; white-space: nowrap; }}
-      #lab3 .m {{ font-size: 60px; white-space: normal; width: 430px; }}
+      #lab3 .m {{ font-size: 52px; white-space: normal; width: 430px; }}
+      .lab .sr {{ margin-top: 8px; font-weight: 700; font-size: 36px; line-height: 1.1; color: rgba(255,255,255,.75); white-space: nowrap; }}
+      .lab .sr b {{ font-weight: 900; color: var(--blue); }}
       .lab .fig {{ width: 280px; height: 228px; flex: none; overflow: visible; }}
       .fig .body line, .fig .body path {{ stroke: #fff; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; fill: none; }}
       .fig .body circle {{ fill: #fff; }}
@@ -316,6 +318,7 @@ html = f"""<!doctype html>
       document.querySelectorAll(".lab").forEach((el, k) => {{
         tl.fromTo(el, {{ opacity: 0, y: -70, scale: 0.97, filter: "blur(6px)" }},
           {{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "sine.out", immediateRender: false }}, LAB_IN[k]);
+        tl.fromTo(el.querySelector(".sr"), {{ opacity: 0, x: 30 }}, {{ opacity: 1, x: 0, duration: 0.35, ease: "sine.out", immediateRender: false }}, LAB_IN[k] + 0.35);
         tl.fromTo(el.querySelector(".num"), {{ scale: 0.4, rotation: -30 }}, {{ scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2)", immediateRender: false }}, LAB_IN[k] + 0.25);
         el.querySelectorAll(".dots i").forEach((d, j) => {{
           tl.set(d, {{ background: j < k ? "rgba(91,134,255,.55)" : "rgba(255,255,255,.35)" }}, 0);

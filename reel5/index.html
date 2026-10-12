@@ -64,7 +64,9 @@
       .lab .num { width: 96px; height: 96px; border-radius: 50%; background: var(--royal); display: grid; place-items: center; flex: none;
                    font-size: 60px; font-weight: 900; box-shadow: 0 0 34px rgba(58,100,240,.65); }
       .lab .m { font-weight: 900; font-size: 74px; line-height: 1.02; white-space: nowrap; }
-      #lab3 .m { font-size: 60px; white-space: normal; width: 430px; }
+      #lab3 .m { font-size: 52px; white-space: normal; width: 430px; }
+      .lab .sr { margin-top: 8px; font-weight: 700; font-size: 36px; line-height: 1.1; color: rgba(255,255,255,.75); white-space: nowrap; }
+      .lab .sr b { font-weight: 900; color: var(--blue); }
       .lab .fig { width: 280px; height: 228px; flex: none; overflow: visible; }
       .fig .body line, .fig .body path { stroke: #fff; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; fill: none; }
       .fig .body circle { fill: #fff; }
@@ -130,10 +132,10 @@
         <div class="beat" id="hookB"><div class="hl" id="hookR">ממוקדי <span class="royal">ישבן</span></div><div class="hl" id="hookR2">במיוחד בשבילך</div></div>
       </div>
 
-<div class="lab clip" id="lab0" data-start="5.5" data-duration="3.5" data-track-index="3"><div class="card"><div class="txt"><span class="num">1</span><div class="m">קיק בק</div></div><svg viewBox="0 0 220 180" class="fig" id="fig0"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
-<div class="lab clip" id="lab1" data-start="9.15" data-duration="7.65" data-track-index="3"><div class="card"><div class="txt"><span class="num">2</span><div class="m">לאנג בולגרי</div></div><svg viewBox="0 0 220 180" class="fig" id="fig1"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
-<div class="lab clip" id="lab2" data-start="16.95" data-duration="3.92" data-track-index="3"><div class="card"><div class="txt"><span class="num">3</span><div class="m">סומו סקוואט</div></div><svg viewBox="0 0 220 180" class="fig" id="fig2"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
-<div class="lab clip" id="lab3" data-start="21.02" data-duration="5.68" data-track-index="3"><div class="card"><div class="txt"><span class="num">4</span><div class="m">דדליפט רומני רגל רגל</div></div><svg viewBox="0 0 220 180" class="fig" id="fig3"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+<div class="lab clip" id="lab0" data-start="5.5" data-duration="3.5" data-track-index="3"><div class="card"><div class="txt"><span class="num">1</span><div><div class="m">קיק בק</div><div class="sr"><b>3</b> סטים · <b>8-12</b> חזרות</div></div></div><svg viewBox="0 0 220 180" class="fig" id="fig0"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+<div class="lab clip" id="lab1" data-start="9.15" data-duration="7.65" data-track-index="3"><div class="card"><div class="txt"><span class="num">2</span><div><div class="m">לאנג בולגרי</div><div class="sr"><b>3</b> סטים · <b>8-12</b> חזרות</div></div></div><svg viewBox="0 0 220 180" class="fig" id="fig1"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+<div class="lab clip" id="lab2" data-start="16.95" data-duration="3.92" data-track-index="3"><div class="card"><div class="txt"><span class="num">3</span><div><div class="m">סומו סקוואט</div><div class="sr"><b>3</b> סטים · <b>8-12</b> חזרות</div></div></div><svg viewBox="0 0 220 180" class="fig" id="fig2"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+<div class="lab clip" id="lab3" data-start="21.02" data-duration="5.68" data-track-index="3"><div class="card"><div class="txt"><span class="num">4</span><div><div class="m">דדליפט רומני<br>רגל רגל</div><div class="sr"><b>3</b> סטים · <b>8-12</b> חזרות</div></div></div><svg viewBox="0 0 220 180" class="fig" id="fig3"><g class="props"></g><circle class="glute" r="13"/><g class="body"></g></svg></div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
       <div class="clip" id="leakClip" data-start="26.4" data-duration="0.5" data-track-index="4"><div id="leak"></div></div>
 
       <div class="ov clip" id="cta" data-start="27.89" data-duration="2.11" data-track-index="3">
@@ -225,6 +227,7 @@
       document.querySelectorAll(".lab").forEach((el, k) => {
         tl.fromTo(el, { opacity: 0, y: -70, scale: 0.97, filter: "blur(6px)" },
           { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "sine.out", immediateRender: false }, LAB_IN[k]);
+        tl.fromTo(el.querySelector(".sr"), { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.35, ease: "sine.out", immediateRender: false }, LAB_IN[k] + 0.35);
         tl.fromTo(el.querySelector(".num"), { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2)", immediateRender: false }, LAB_IN[k] + 0.25);
         el.querySelectorAll(".dots i").forEach((d, j) => {
           tl.set(d, { background: j < k ? "rgba(91,134,255,.55)" : "rgba(255,255,255,.35)" }, 0);
