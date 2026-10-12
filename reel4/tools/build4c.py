@@ -544,8 +544,10 @@ html = f"""<!doctype html>
 
       // When each tile turns to the front (client: give "מעקב משקלים" more time, turn to "והתקדמות" right on the word).
       const PROG = T.prog;
-      const TURN = [SIN, BT[1] - 0.3, BT[2] - 0.55, PROG];
-      const TXT_IN = [BT[0] - 0.05, BT[1] - 0.05, BT[2] - 0.2, PROG + 0.05];
+      // Each turn (0.5 s) lands just after its words start, so the ring follows the voice instead of running ahead.
+      const W = [BT[0] + 0.08, BT[1] + 0.1, BT[2] + 0.1, PROG];   // word onsets
+      const TURN = [SIN, W[1] - 0.35, W[2] - 0.35, PROG - 0.1];
+      const TXT_IN = [W[0] - 0.05, W[1] - 0.05, W[2] - 0.05, PROG - 0.02];
       const tiles = [...document.querySelectorAll(".tile")];
       // place each tile on the ring: rotate around the ring centre, pushed out by the radius
       const R = 290, ARC = 76, NF = 7, STEP = ARC / NF;

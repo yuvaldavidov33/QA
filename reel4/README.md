@@ -54,6 +54,9 @@ voice + SFX only, for adding a song from Instagram's library.
   between. `tools/make_carousel.py` regenerates `tools/build4c.py` from `tools/build4.py`.
 - Fix 13 (client): "מעקב משקלים" stays at the front longer (turns in 0.55 s before its words, ~1 s held while 40→60
   counts), and the ring turns to "והתקדמות" exactly on that word.
+- Fix 14 (client): ring ran ahead of the voice. Re-measured the onsets in 10-15.6 s with 0.08 s growing Whisper
+  windows: "בניית" 12.05 (was 11.75), "משקלים" 14.2 (was 13.88), "והתקדמות" 15.05 (was 14.31). Each 0.5 s turn now
+  starts 0.35 s before its word and lands just after it starts; "והתקדמות" turns on the word.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
