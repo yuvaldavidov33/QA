@@ -17,15 +17,17 @@
          and soft, a ring of thick navy tiles turns on the left behind him; the block text sits above the ring. */
       #carousel { position: absolute; inset: 0; perspective: 1300px; perspective-origin: 324px 1000px; font-family: "Heebo", sans-serif; color: #fff; direction: rtl; }
       #ring { position: absolute; left: 324px; top: 1180px; width: 0; height: 0; transform-style: preserve-3d; }
-      .tile { position: absolute; left: -150px; top: -175px; width: 300px; height: 350px; transform-style: preserve-3d; }
-      .tile .face { position: absolute; inset: 0; border-radius: 44px; overflow: hidden; display: grid; place-items: center;
-        background: linear-gradient(160deg, #2b3f9e 0%, #1a2a73 45%, #101a4d 100%);
-        box-shadow: inset 0 2px 0 rgba(255,255,255,.25), inset 0 -10px 30px rgba(0,0,0,.35); backface-visibility: hidden; }
-      .tile .face .vis { transform: scale(.85); }
-      .tile .side { position: absolute; top: 18px; bottom: 18px; width: 34px; border-radius: 16px;
-        background: linear-gradient(180deg, #e9eefc, #b9c4e6 50%, #e9eefc); box-shadow: 0 0 22px rgba(255,255,255,.55); }
-      .tile .side.l { left: -17px; transform: rotateY(-90deg); }
-      .tile .side.r { right: -17px; transform: rotateY(90deg); }
+      /* Closed round ring: each tile is a curved panel built from 7 narrow facets on the cylinder (radius 290);
+         the block content sits on a plane at the panel's centre. */
+      .tile { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+      .tile .fc { position: absolute; left: -28.5px; top: -200px; width: 57px; height: 400px; backface-visibility: visible;
+        background: linear-gradient(180deg, #2e43a6 0%, #1c2c7a 45%, #111c52 100%);
+        box-shadow: inset 0 3px 0 rgba(255,255,255,.28), inset 0 -3px 0 rgba(255,255,255,.12); }
+      .tile .fc0 { border-radius: 38px 0 0 38px; box-shadow: inset 4px 0 0 rgba(220,230,255,.55), inset 0 3px 0 rgba(255,255,255,.28); }
+      .tile .fc6 { border-radius: 0 38px 38px 0; box-shadow: inset -4px 0 0 rgba(220,230,255,.55), inset 0 3px 0 rgba(255,255,255,.28); }
+      .tile .face { position: absolute; left: -165px; top: -200px; width: 330px; height: 400px; display: grid; place-items: center;
+        backface-visibility: hidden; pointer-events: none; }
+      .tile .face .vis { transform: scale(.88); }
       #ctext { position: absolute; inset: 0; }
       /* The shot slides right as a whole (no zoom); the left side opens onto a grey, softly blurred copy of it. */
       /* Split screen (client): 60% grey, softly blurred gym on the left (no zoom; the strip beyond the frame edge is a
@@ -186,10 +188,10 @@
       </div>
       <div class="clip" id="carousel" data-start="9.77" data-duration="6.35" data-track-index="1">
         <div id="ring">
-<div class="tile" id="s1"><i class="side l"></i><i class="side r"></i><div class="face"><div class="vis six"><svg viewBox="0 0 24 24" class="p6 p6-0"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-1"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-2"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-3"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-4"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-5"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><b id="sixN">0</b></div></div></div>
-<div class="tile" id="s2"><i class="side l"></i><i class="side r"></i><div class="face"><div class="vis plan"><div class="sheet"><div class="hd"><i></i><b>התכנית שלך</b></div><div class="ln"><span class="ck">✓</span><i style="width:150px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:118px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:170px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:132px"></i></div></div></div></div></div>
-<div class="tile" id="s3"><i class="side l"></i><i class="side r"></i><div class="face"><div class="vis kg"><svg viewBox="-110 -50 220 100" class="db"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><line x1="-46" y1="0" x2="46" y2="0"/><rect x="-78" y="-34" width="22" height="68" rx="6"/><rect x="56" y="-34" width="22" height="68" rx="6"/><line x1="-94" y1="-16" x2="-94" y2="16"/><line x1="94" y1="-16" x2="94" y2="16"/></g></svg><div class="num"><b id="kgN">40</b><span>ק״ג</span></div><div class="up" id="kgUp">▲</div></div></div></div>
-<div class="tile" id="s4"><i class="side l"></i><i class="side r"></i><div class="face"><div class="vis graph"><svg viewBox="0 0 330 170"><g stroke="rgba(255,255,255,.1)" stroke-width="2"><line x1="0" y1="40" x2="330" y2="40"/><line x1="0" y1="85" x2="330" y2="85"/><line x1="0" y1="130" x2="330" y2="130"/></g><path id="gArea" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22 L 320 170 L 10 170 Z" fill="url(#gFill)" opacity="0"/><path id="gLine" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22" fill="none" stroke="#5b86ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(80,130,255,.9))"/><circle id="gDot" r="11" fill="#fff"/><defs><linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a64f0" stop-opacity=".55"/><stop offset="1" stop-color="#3a64f0" stop-opacity="0"/></linearGradient></defs></svg></div></div></div>
+<div class="tile" id="s1"><i class="fc fc0"></i><i class="fc fc1"></i><i class="fc fc2"></i><i class="fc fc3"></i><i class="fc fc4"></i><i class="fc fc5"></i><i class="fc fc6"></i><div class="face"><div class="vis six"><svg viewBox="0 0 24 24" class="p6 p6-0"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-1"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-2"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-3"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-4"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><svg viewBox="0 0 24 24" class="p6 p6-5"><circle cx="12" cy="7" r="4.2"/><path d="M3.5 23c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5z"/></svg><b id="sixN">0</b></div></div></div>
+<div class="tile" id="s2"><i class="fc fc0"></i><i class="fc fc1"></i><i class="fc fc2"></i><i class="fc fc3"></i><i class="fc fc4"></i><i class="fc fc5"></i><i class="fc fc6"></i><div class="face"><div class="vis plan"><div class="sheet"><div class="hd"><i></i><b>התכנית שלך</b></div><div class="ln"><span class="ck">✓</span><i style="width:150px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:118px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:170px"></i></div><div class="ln"><span class="ck">✓</span><i style="width:132px"></i></div></div></div></div></div>
+<div class="tile" id="s3"><i class="fc fc0"></i><i class="fc fc1"></i><i class="fc fc2"></i><i class="fc fc3"></i><i class="fc fc4"></i><i class="fc fc5"></i><i class="fc fc6"></i><div class="face"><div class="vis kg"><svg viewBox="-110 -50 220 100" class="db"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><line x1="-46" y1="0" x2="46" y2="0"/><rect x="-78" y="-34" width="22" height="68" rx="6"/><rect x="56" y="-34" width="22" height="68" rx="6"/><line x1="-94" y1="-16" x2="-94" y2="16"/><line x1="94" y1="-16" x2="94" y2="16"/></g></svg><div class="num"><b id="kgN">40</b><span>ק״ג</span></div><div class="up" id="kgUp">▲</div></div></div></div>
+<div class="tile" id="s4"><i class="fc fc0"></i><i class="fc fc1"></i><i class="fc fc2"></i><i class="fc fc3"></i><i class="fc fc4"></i><i class="fc fc5"></i><i class="fc fc6"></i><div class="face"><div class="vis graph"><svg viewBox="0 0 330 170"><g stroke="rgba(255,255,255,.1)" stroke-width="2"><line x1="0" y1="40" x2="330" y2="40"/><line x1="0" y1="85" x2="330" y2="85"/><line x1="0" y1="130" x2="330" y2="130"/></g><path id="gArea" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22 L 320 170 L 10 170 Z" fill="url(#gFill)" opacity="0"/><path id="gLine" d="M 10 150 L 60 132 L 105 138 L 150 104 L 195 110 L 240 72 L 285 52 L 320 22" fill="none" stroke="#5b86ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(80,130,255,.9))"/><circle id="gDot" r="11" fill="#fff"/><defs><linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a64f0" stop-opacity=".55"/><stop offset="1" stop-color="#3a64f0" stop-opacity="0"/></linearGradient></defs></svg></div></div></div>
         </div>
       </div>
       <div class="clip" id="fgwrap" data-start="9.77" data-duration="6.35" data-track-index="1">
@@ -376,27 +378,37 @@
 
       const tiles = [...document.querySelectorAll(".tile")];
       // place each tile on the ring: rotate around the ring centre, pushed out by the radius
-      tiles.forEach((el, k) => { el.style.transform = `rotateY(${55 * k}deg) translateZ(420px)`; });
-      const ring = { a: -48 };
+      const R = 290, ARC = 76, NF = 7, STEP = ARC / NF;
+      tiles.forEach((el, k) => {
+        el.style.transform = `rotateY(${90 * k}deg)`;
+        el.querySelectorAll(".fc").forEach((f, j) => {
+          f.style.transform = `rotateY(${(-ARC / 2 + STEP * (j + 0.5)).toFixed(3)}deg) translateZ(${R}px)`;
+        });
+        el.querySelector(".face").style.transform = `translateZ(${R + 6}px)`;
+      });
+      const ring = { a: 60 };
       const ringEl = document.querySelector("#ring");
       const drawRing = () => {
-        ringEl.style.transform = `rotateX(-7deg) translateZ(-420px) rotateY(${ring.a.toFixed(3)}deg)`;
+        ringEl.style.transform = `rotateX(-6deg) rotateY(${ring.a.toFixed(3)}deg)`;
         tiles.forEach((el, k) => {
-          let d = ((55 * k + ring.a) % 360 + 540) % 360 - 180;   // tile angle from the front, -180..180
-          const ad = Math.abs(d);
-          el.style.opacity = ad > 100 ? 0 : String(Math.min(1, (100 - ad) / 25));
-          el.querySelector(".face").style.filter = `brightness(${(1 - Math.min(ad, 90) / 90 * 0.55).toFixed(3)})`;
+          el.querySelectorAll(".fc").forEach((f, j) => {
+            const ang = (90 * k + ring.a - ARC / 2 + STEP * (j + 0.5)) * Math.PI / 180;   // facet normal vs camera
+            const c = Math.cos(ang), lit = c > 0 ? 0.42 + 0.58 * Math.pow(c, 1.4) : 0.3 + 0.12 * -c;
+            f.style.filter = `brightness(${lit.toFixed(3)})`;
+          });
+          const d = Math.abs(((90 * k + ring.a) % 360 + 540) % 360 - 180);
+          el.querySelector(".face").style.filter = `brightness(${(1 - Math.min(d, 90) / 90 * 0.5).toFixed(3)})`;
         });
       };
-      tl.set(ring, { a: -48, onComplete: drawRing }, 0.001);
-      tl.fromTo(ring, { a: -48 }, { a: 0, duration: 0.5, ease: "power3.out", immediateRender: false, onUpdate: drawRing }, SIN + 0.2);
+      tl.set(ring, { a: 60, onComplete: drawRing }, 0.001);
+      tl.fromTo(ring, { a: 60 }, { a: 0, duration: 0.6, ease: "power3.out", immediateRender: false, onUpdate: drawRing }, SIN + 0.2);
       tl.fromTo("#ring", { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, SIN + 0.2);
       // between steps the ring keeps creeping a few degrees; steps land the next tile at the front on its words
-      tl.to(ring, { a: -5, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.7), ease: "none", onUpdate: drawRing }, SIN + 0.7);
+      tl.to(ring, { a: -8, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.7), ease: "none", onUpdate: drawRing }, SIN + 0.7);
       for (let k = 1; k < 4; k++) {
         const at = BT[k] - 0.3, next = k < 3 ? BT[k + 1] - 0.3 : SOUT;
-        tl.to(ring, { a: -55 * k, duration: 0.42, ease: "power2.inOut", onUpdate: drawRing }, at);
-        tl.to(ring, { a: -55 * k - 5, duration: Math.max(0.2, next - at - 0.42), ease: "none", onUpdate: drawRing }, at + 0.42);
+        tl.to(ring, { a: -90 * k, duration: 0.5, ease: "power2.inOut", onUpdate: drawRing }, at);
+        tl.to(ring, { a: -90 * k - 8, duration: Math.max(0.2, next - at - 0.5), ease: "none", onUpdate: drawRing }, at + 0.5);
       }
 
       // text above the ring

@@ -48,6 +48,10 @@ voice + SFX only, for adding a song from Instagram's library.
   324 px at its normal size, so the right 40% shows the trainer as filmed; the left 60% is the gym behind him, grey and
   softly blurred, unzoomed (shifted copy + a mirrored strip past the frame edge). The ring stands on the grey side with
   clear gaps between tiles (300x350 tiles, 55°, radius 420, slight top-down view) so it reads as a carousel.
+- Fix 12 (client, from a still of the reference): a closed, round ring: the 4 tiles sit 90° apart all around the
+  cylinder (radius 290), each a curved panel spanning 76° built from 7 facets, gaps of 14° through which the back of the
+  ring shows; facets lit by their angle to the camera, inside faces darker. Steps of 90° (0.5 s) per block, slow drift
+  between. `tools/make_carousel.py` regenerates `tools/build4c.py` from `tools/build4.py`.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.

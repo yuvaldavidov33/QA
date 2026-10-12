@@ -155,7 +155,7 @@ REASONS = "\n".join([
 ITEMS = [("עד 6 מתאמנים", "בקבוצה קטנה", VIS_SIX), ("תכנית אישית", "לכל מתאמן", VIS_PLAN),
          ("מעקב משקלים", "בכל אימון", VIS_KG), ("והתקדמות", "שרואים בעיניים", VIS_GRAPH)]
 TILES = "\n".join(
-    f'<div class="tile" id="s{k + 1}"><i class="side l"></i><i class="side r"></i><div class="face">{vis}</div></div>'
+    f'<div class="tile" id="s{k + 1}">' + "".join(f'<i class="fc fc{j}"></i>' for j in range(7)) + f'<div class="face">{vis}</div></div>'
     for k, (_, _, vis) in enumerate(ITEMS))
 
 
@@ -197,15 +197,17 @@ html = f"""<!doctype html>
          and soft, a ring of thick navy tiles turns on the left behind him; the block text sits above the ring. */
       #carousel {{ position: absolute; inset: 0; perspective: 1300px; perspective-origin: 324px 1000px; font-family: "Heebo", sans-serif; color: #fff; direction: rtl; }}
       #ring {{ position: absolute; left: 324px; top: 1180px; width: 0; height: 0; transform-style: preserve-3d; }}
-      .tile {{ position: absolute; left: -150px; top: -175px; width: 300px; height: 350px; transform-style: preserve-3d; }}
-      .tile .face {{ position: absolute; inset: 0; border-radius: 44px; overflow: hidden; display: grid; place-items: center;
-        background: linear-gradient(160deg, #2b3f9e 0%, #1a2a73 45%, #101a4d 100%);
-        box-shadow: inset 0 2px 0 rgba(255,255,255,.25), inset 0 -10px 30px rgba(0,0,0,.35); backface-visibility: hidden; }}
-      .tile .face .vis {{ transform: scale(.85); }}
-      .tile .side {{ position: absolute; top: 18px; bottom: 18px; width: 34px; border-radius: 16px;
-        background: linear-gradient(180deg, #e9eefc, #b9c4e6 50%, #e9eefc); box-shadow: 0 0 22px rgba(255,255,255,.55); }}
-      .tile .side.l {{ left: -17px; transform: rotateY(-90deg); }}
-      .tile .side.r {{ right: -17px; transform: rotateY(90deg); }}
+      /* Closed round ring: each tile is a curved panel built from 7 narrow facets on the cylinder (radius 290);
+         the block content sits on a plane at the panel's centre. */
+      .tile {{ position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }}
+      .tile .fc {{ position: absolute; left: -28.5px; top: -200px; width: 57px; height: 400px; backface-visibility: visible;
+        background: linear-gradient(180deg, #2e43a6 0%, #1c2c7a 45%, #111c52 100%);
+        box-shadow: inset 0 3px 0 rgba(255,255,255,.28), inset 0 -3px 0 rgba(255,255,255,.12); }}
+      .tile .fc0 {{ border-radius: 38px 0 0 38px; box-shadow: inset 4px 0 0 rgba(220,230,255,.55), inset 0 3px 0 rgba(255,255,255,.28); }}
+      .tile .fc6 {{ border-radius: 0 38px 38px 0; box-shadow: inset -4px 0 0 rgba(220,230,255,.55), inset 0 3px 0 rgba(255,255,255,.28); }}
+      .tile .face {{ position: absolute; left: -165px; top: -200px; width: 330px; height: 400px; display: grid; place-items: center;
+        backface-visibility: hidden; pointer-events: none; }}
+      .tile .face .vis {{ transform: scale(.88); }}
       #ctext {{ position: absolute; inset: 0; }}
       /* The shot slides right as a whole (no zoom); the left side opens onto a grey, softly blurred copy of it. */
       /* Split screen (client): 60% grey, softly blurred gym on the left (no zoom; the strip beyond the frame edge is a
@@ -542,27 +544,37 @@ html = f"""<!doctype html>
 
       const tiles = [...document.querySelectorAll(".tile")];
       // place each tile on the ring: rotate around the ring centre, pushed out by the radius
-      tiles.forEach((el, k) => {{ el.style.transform = `rotateY(${{55 * k}}deg) translateZ(420px)`; }});
-      const ring = {{ a: -48 }};
+      const R = 290, ARC = 76, NF = 7, STEP = ARC / NF;
+      tiles.forEach((el, k) => {{
+        el.style.transform = `rotateY(${{90 * k}}deg)`;
+        el.querySelectorAll(".fc").forEach((f, j) => {{
+          f.style.transform = `rotateY(${{(-ARC / 2 + STEP * (j + 0.5)).toFixed(3)}}deg) translateZ(${{R}}px)`;
+        }});
+        el.querySelector(".face").style.transform = `translateZ(${{R + 6}}px)`;
+      }});
+      const ring = {{ a: 60 }};
       const ringEl = document.querySelector("#ring");
       const drawRing = () => {{
-        ringEl.style.transform = `rotateX(-7deg) translateZ(-420px) rotateY(${{ring.a.toFixed(3)}}deg)`;
+        ringEl.style.transform = `rotateX(-6deg) rotateY(${{ring.a.toFixed(3)}}deg)`;
         tiles.forEach((el, k) => {{
-          let d = ((55 * k + ring.a) % 360 + 540) % 360 - 180;   // tile angle from the front, -180..180
-          const ad = Math.abs(d);
-          el.style.opacity = ad > 100 ? 0 : String(Math.min(1, (100 - ad) / 25));
-          el.querySelector(".face").style.filter = `brightness(${{(1 - Math.min(ad, 90) / 90 * 0.55).toFixed(3)}})`;
+          el.querySelectorAll(".fc").forEach((f, j) => {{
+            const ang = (90 * k + ring.a - ARC / 2 + STEP * (j + 0.5)) * Math.PI / 180;   // facet normal vs camera
+            const c = Math.cos(ang), lit = c > 0 ? 0.42 + 0.58 * Math.pow(c, 1.4) : 0.3 + 0.12 * -c;
+            f.style.filter = `brightness(${{lit.toFixed(3)}})`;
+          }});
+          const d = Math.abs(((90 * k + ring.a) % 360 + 540) % 360 - 180);
+          el.querySelector(".face").style.filter = `brightness(${{(1 - Math.min(d, 90) / 90 * 0.5).toFixed(3)}})`;
         }});
       }};
-      tl.set(ring, {{ a: -48, onComplete: drawRing }}, 0.001);
-      tl.fromTo(ring, {{ a: -48 }}, {{ a: 0, duration: 0.5, ease: "power3.out", immediateRender: false, onUpdate: drawRing }}, SIN + 0.2);
+      tl.set(ring, {{ a: 60, onComplete: drawRing }}, 0.001);
+      tl.fromTo(ring, {{ a: 60 }}, {{ a: 0, duration: 0.6, ease: "power3.out", immediateRender: false, onUpdate: drawRing }}, SIN + 0.2);
       tl.fromTo("#ring", {{ opacity: 0 }}, {{ opacity: 1, duration: 0.2, immediateRender: false }}, SIN + 0.2);
       // between steps the ring keeps creeping a few degrees; steps land the next tile at the front on its words
-      tl.to(ring, {{ a: -5, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.7), ease: "none", onUpdate: drawRing }}, SIN + 0.7);
+      tl.to(ring, {{ a: -8, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.7), ease: "none", onUpdate: drawRing }}, SIN + 0.7);
       for (let k = 1; k < 4; k++) {{
         const at = BT[k] - 0.3, next = k < 3 ? BT[k + 1] - 0.3 : SOUT;
-        tl.to(ring, {{ a: -55 * k, duration: 0.42, ease: "power2.inOut", onUpdate: drawRing }}, at);
-        tl.to(ring, {{ a: -55 * k - 5, duration: Math.max(0.2, next - at - 0.42), ease: "none", onUpdate: drawRing }}, at + 0.42);
+        tl.to(ring, {{ a: -90 * k, duration: 0.5, ease: "power2.inOut", onUpdate: drawRing }}, at);
+        tl.to(ring, {{ a: -90 * k - 8, duration: Math.max(0.2, next - at - 0.5), ease: "none", onUpdate: drawRing }}, at + 0.5);
       }}
 
       // text above the ring
