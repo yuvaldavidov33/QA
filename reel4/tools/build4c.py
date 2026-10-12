@@ -88,7 +88,7 @@ TIMES.update({
     "tb_in": t("אחרי") - 0.1, "tb_big": t("מפסיקים") - 0.1, "tb_out": t("בדיוק", 2) - 0.3,
     # Solution page: rows with blue checks and live visuals; hard cut back (over-exposed settle) on "אם".
     "so_1": t("קבוצה") - 0.08, "so_2": t("בניית") - 0.1, "so_3": t("מעקב") - 0.1, "so_4": t("והתקדמות") - 0.1,
-    "sol_out": t("אם") - 0.03,
+    "sol_out": t("אם") - 0.03, "prog": t("והתקדמות"),
     # CTA: Instagram DM notification.
     "dm_in": t("יהיה") - 0.05,
 })
@@ -542,6 +542,10 @@ html = f"""<!doctype html>
       tl.to("#carousel, #ctext", {{ opacity: 0, duration: 0.2, ease: "power1.in" }}, SOUT - 0.3);
       tl.set("#carousel, #ctext", {{ opacity: 1 }}, 0);
 
+      // When each tile turns to the front (client: give "מעקב משקלים" more time, turn to "והתקדמות" right on the word).
+      const PROG = T.prog;
+      const TURN = [SIN, BT[1] - 0.3, BT[2] - 0.55, PROG];
+      const TXT_IN = [BT[0] - 0.05, BT[1] - 0.05, BT[2] - 0.2, PROG + 0.05];
       const tiles = [...document.querySelectorAll(".tile")];
       // place each tile on the ring: rotate around the ring centre, pushed out by the radius
       const R = 290, ARC = 76, NF = 7, STEP = ARC / NF;
@@ -572,7 +576,7 @@ html = f"""<!doctype html>
       // between steps the ring keeps creeping a few degrees; steps land the next tile at the front on its words
       tl.to(ring, {{ a: -8, duration: Math.max(0.2, BT[1] - 0.3 - SIN - 0.7), ease: "none", onUpdate: drawRing }}, SIN + 0.7);
       for (let k = 1; k < 4; k++) {{
-        const at = BT[k] - 0.3, next = k < 3 ? BT[k + 1] - 0.3 : SOUT;
+        const at = TURN[k], next = k < 3 ? TURN[k + 1] : SOUT;
         tl.to(ring, {{ a: -90 * k, duration: 0.5, ease: "power2.inOut", onUpdate: drawRing }}, at);
         tl.to(ring, {{ a: -90 * k - 8, duration: Math.max(0.2, next - at - 0.5), ease: "none", onUpdate: drawRing }}, at + 0.5);
       }}
@@ -580,10 +584,10 @@ html = f"""<!doctype html>
       // text above the ring
       tl.set(".ct .cw, .ct .badge", {{ opacity: 0 }}, 0);
       for (let k = 0; k < 4; k++) {{
-        const at = BT[k] - 0.05, sel = `#ct${{k + 1}}`;
+        const at = TXT_IN[k], sel = `#ct${{k + 1}}`;
         tl.fromTo(`${{sel}} .cw`, {{ opacity: 0, y: 14, filter: "blur(10px)" }},
           {{ opacity: 1, y: 0, filter: "blur(0px)", duration: 0.26, stagger: 0.06, ease: "power3.out", immediateRender: false }}, at);
-        if (k < 3) tl.to(`${{sel}} .cw, ${{sel}} .badge`, {{ opacity: 0, y: -10, filter: "blur(10px)", duration: 0.2, stagger: 0.02, ease: "power2.in" }}, BT[k + 1] - 0.28);
+        if (k < 3) tl.to(`${{sel}} .cw, ${{sel}} .badge`, {{ opacity: 0, y: -10, filter: "blur(10px)", duration: 0.2, stagger: 0.02, ease: "power2.in" }}, TXT_IN[k + 1] - 0.22);
       }}
       badgeIn("#ct1 .badge", T.so_1 + 0.1); tl.set("#ct1 .badge", {{ opacity: 1 }}, T.so_1 + 0.1);
       badgeIn("#ct2 .badge", T.so_2 + 0.1); tl.set("#ct2 .badge", {{ opacity: 1 }}, T.so_2 + 0.1);

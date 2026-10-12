@@ -52,6 +52,8 @@ voice + SFX only, for adding a song from Instagram's library.
   cylinder (radius 290), each a curved panel spanning 76° built from 7 facets, gaps of 14° through which the back of the
   ring shows; facets lit by their angle to the camera, inside faces darker. Steps of 90° (0.5 s) per block, slow drift
   between. `tools/make_carousel.py` regenerates `tools/build4c.py` from `tools/build4.py`.
+- Fix 13 (client): "מעקב משקלים" stays at the front longer (turns in 0.55 s before its words, ~1 s held while 40→60
+  counts), and the ring turns to "והתקדמות" exactly on that word.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
