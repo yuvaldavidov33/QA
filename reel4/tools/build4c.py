@@ -195,23 +195,28 @@ html = f"""<!doctype html>
       #frame2, .sideS {{ position: absolute; inset: 0; }}
       /* App carousel (client reference): the shot slides so the trainer stands on the right, background goes grey
          and soft, a ring of thick navy tiles turns on the left behind him; the block text sits above the ring. */
-      #carousel {{ position: absolute; inset: 0; perspective: 1200px; perspective-origin: 235px 1180px; font-family: "Heebo", sans-serif; color: #fff; direction: rtl; }}
-      #ring {{ position: absolute; left: 235px; top: 1180px; width: 0; height: 0; transform-style: preserve-3d; }}
-      .tile {{ position: absolute; left: -185px; top: -210px; width: 370px; height: 420px; transform-style: preserve-3d; }}
-      .tile .face {{ position: absolute; inset: 0; border-radius: 50px; overflow: hidden; display: grid; place-items: center;
+      #carousel {{ position: absolute; inset: 0; perspective: 1300px; perspective-origin: 324px 1000px; font-family: "Heebo", sans-serif; color: #fff; direction: rtl; }}
+      #ring {{ position: absolute; left: 324px; top: 1180px; width: 0; height: 0; transform-style: preserve-3d; }}
+      .tile {{ position: absolute; left: -150px; top: -175px; width: 300px; height: 350px; transform-style: preserve-3d; }}
+      .tile .face {{ position: absolute; inset: 0; border-radius: 44px; overflow: hidden; display: grid; place-items: center;
         background: linear-gradient(160deg, #2b3f9e 0%, #1a2a73 45%, #101a4d 100%);
         box-shadow: inset 0 2px 0 rgba(255,255,255,.25), inset 0 -10px 30px rgba(0,0,0,.35); backface-visibility: hidden; }}
-      .tile .face .vis {{ transform: scale(1.05); }}
+      .tile .face .vis {{ transform: scale(.85); }}
       .tile .side {{ position: absolute; top: 18px; bottom: 18px; width: 34px; border-radius: 16px;
         background: linear-gradient(180deg, #e9eefc, #b9c4e6 50%, #e9eefc); box-shadow: 0 0 22px rgba(255,255,255,.55); }}
       .tile .side.l {{ left: -17px; transform: rotateY(-90deg); }}
       .tile .side.r {{ right: -17px; transform: rotateY(90deg); }}
       #ctext {{ position: absolute; inset: 0; }}
       /* The shot slides right as a whole (no zoom); the left side opens onto a grey, softly blurred copy of it. */
+      /* Split screen (client): 60% grey, softly blurred gym on the left (no zoom; the strip beyond the frame edge is a
+         mirror of it), 40% the trainer on the right at his normal size; the carousel stands on the grey side. */
+      #bgwrap {{ position: absolute; inset: 0; overflow: hidden; filter: grayscale(1) blur(9px) brightness(.8) contrast(1.05); }}
+      #bgwrap img {{ position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }}
+      #bgA {{ transform: translateX(324px); }}
+      #bgB {{ transform: translateX(-756px) scaleX(-1); }}
       #fgwrap {{ position: absolute; inset: 0; overflow: hidden; }}
-      #fgimg {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-                -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 110px); mask-image: linear-gradient(90deg, transparent 0, #000 110px); }}
-      .ct {{ position: absolute; left: 0; width: 470px; top: 640px; text-align: center; direction: rtl; white-space: nowrap;
+      #fgimg {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
+      .ct {{ position: absolute; left: 24px; width: 600px; top: 700px; text-align: center; direction: rtl; white-space: nowrap;
              text-shadow: 0 4px 22px rgba(0,0,0,.55); }}
       .ct .m {{ font-weight: 900; font-size: 58px; line-height: 1.05; display: flex; align-items: center; gap: 14px; justify-content: center; }}
       .ct .m .badge {{ width: 50px; height: 50px; font-size: 30px; }}
@@ -356,13 +361,16 @@ html = f"""<!doctype html>
         </div>
         </div>
       </div>
+      <div class="clip" id="bgwrap" data-start="{round(T_["sol_in"], 2)}" data-duration="{round(T_["sol_out"] - T_["sol_in"], 2)}" data-track-index="1">
+        <img id="bgA" class="feed" alt="" /><img id="bgB" class="feed" alt="" />
+      </div>
       <div class="clip" id="carousel" data-start="{round(T_["sol_in"], 2)}" data-duration="{round(T_["sol_out"] - T_["sol_in"], 2)}" data-track-index="1">
         <div id="ring">
 {TILES}
         </div>
       </div>
       <div class="clip" id="fgwrap" data-start="{round(T_["sol_in"], 2)}" data-duration="{round(T_["sol_out"] - T_["sol_in"], 2)}" data-track-index="1">
-        <img id="fgimg" alt="" />
+        <img id="fgimg" class="feed" alt="" />
       </div>
       <div id="cam2" class="camS">
         <div id="side2" class="sideS">
@@ -514,30 +522,31 @@ html = f"""<!doctype html>
       //    The first tile slides in from the left right after the cut.
       // 4) The block text sits above the ring: words resolve from blur; the old text blurs out as the next arrives.
       const SIN = T.sol_in, SOUT = T.sol_out, BT = [T.so_1, T.so_2, T.so_3, T.so_4];
-      // The shot slides right as a whole (same size, no zoom) and the left side opens onto a grey, blurred copy;
-      // it slides back just before "אם".
-      const SHIFT = 440;
-      tl.set("#side", {{ transformOrigin: "50% 50%", scale: 1.9, x: SHIFT }}, SIN);
-      tl.set("#frame", {{ filter: "grayscale(1) blur(14px) brightness(.78) contrast(1.05)" }}, SIN);
-      tl.set("#side", {{ scale: 1, x: 0 }}, SOUT);
-      tl.set("#frame", {{ filter: "none" }}, SOUT);
-      tl.set("#side", {{ scale: 1, x: 0 }}, 0);
+      // Split screen: the shot slides right by 324 px at its normal size while its left edge (the wipe line) moves
+      // from 0 to 648 px; the grey gym opens behind it on the left. Reversed just before "אם".
+      const fgW = document.querySelector("#fgwrap"), fgI = document.querySelector("#fgimg");
+      const split = {{ p: 0 }};
+      const drawSplit = () => {{
+        const L = 648 * split.p;
+        fgI.style.transform = `translateX(${{(324 * split.p).toFixed(2)}}px)`;
+        const m = `linear-gradient(90deg, transparent ${{L.toFixed(1)}}px, #000 ${{(L + 70).toFixed(1)}}px)`;
+        fgW.style.webkitMaskImage = m; fgW.style.maskImage = m;
+      }};
+      tl.set(split, {{ p: 0, onComplete: drawSplit }}, 0.002);
+      tl.fromTo(split, {{ p: 0 }}, {{ p: 1, duration: 0.45, ease: "power3.inOut", immediateRender: false, onUpdate: drawSplit }}, SIN);
+      tl.fromTo("#fgimg", {{ filter: "blur(0px)" }}, {{ filter: "blur(5px)", duration: 0.2, ease: "power2.in", yoyo: true, repeat: 1, immediateRender: false }}, SIN + 0.02);
+      tl.to(split, {{ p: 0, duration: 0.38, ease: "power3.inOut", onUpdate: drawSplit }}, SOUT - 0.38);
       tl.set("#ring", {{ opacity: 0 }}, 0);
-      tl.set("#fgwrap", {{ x: 0 }}, 0);
-      tl.fromTo("#fgwrap", {{ x: 0 }}, {{ x: SHIFT, duration: 0.42, ease: "power3.inOut", immediateRender: false }}, SIN);
-      tl.fromTo("#fgimg", {{ filter: "blur(0px)" }}, {{ filter: "blur(6px)", duration: 0.2, ease: "power2.in", yoyo: true, repeat: 1, immediateRender: false }}, SIN + 0.01);
-      tl.fromTo("#fgwrap", {{ x: SHIFT }}, {{ x: SHIFT - 18, duration: SOUT - SIN - 0.8, ease: "none", immediateRender: false }}, SIN + 0.42);
-      tl.to("#fgwrap", {{ x: 0, duration: 0.36, ease: "power3.inOut" }}, SOUT - 0.36);
       tl.to("#carousel, #ctext", {{ opacity: 0, duration: 0.2, ease: "power1.in" }}, SOUT - 0.3);
       tl.set("#carousel, #ctext", {{ opacity: 1 }}, 0);
 
       const tiles = [...document.querySelectorAll(".tile")];
       // place each tile on the ring: rotate around the ring centre, pushed out by the radius
-      tiles.forEach((el, k) => {{ el.style.transform = `rotateY(${{55 * k}}deg) translateZ(470px)`; }});
+      tiles.forEach((el, k) => {{ el.style.transform = `rotateY(${{55 * k}}deg) translateZ(420px)`; }});
       const ring = {{ a: -48 }};
       const ringEl = document.querySelector("#ring");
       const drawRing = () => {{
-        ringEl.style.transform = `translateZ(-470px) rotateY(${{ring.a.toFixed(3)}}deg)`;
+        ringEl.style.transform = `rotateX(-7deg) translateZ(-420px) rotateY(${{ring.a.toFixed(3)}}deg)`;
         tiles.forEach((el, k) => {{
           let d = ((55 * k + ring.a) % 360 + 540) % 360 - 180;   // tile angle from the front, -180..180
           const ad = Math.abs(d);
