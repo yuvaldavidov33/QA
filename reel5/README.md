@@ -21,7 +21,7 @@ voice + SFX only (for adding a song from Instagram's library).
 - Fix 2 (client): sumo squat figure knees open outward; deadlift figure has the rear foot on a bench, standing on one leg.
 - Fix 3 (client, "a completely different tune"): `tools/music7.py`, new clean upbeat 120 BPM groove (soft kick, claps,
   plucked bass, marimba hook in A minor), drop on the first clip, quiet and ducked under the voice. SFX at 0.35.
-- Fix 7 (client): every exercise card shows "3 סטים · 8-12 חזרות" under the name (numbers in blue).
+- Fix 7 (client): every exercise card shows "3 סטים · 8-12 חזרות" under the name, all white (client changed it from blue numbers).
 - Fix 4 (client): kick-back figure's standing leg straight. Fix 5 (client, "a trendy sports song"): `tools/music8.py`,
   130 BPM Brazilian-phonk style gym beat (pitched cowbell riff, funk kick pattern, gliding 808), kept clean.
 

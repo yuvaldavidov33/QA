@@ -160,8 +160,8 @@ html = f"""<!doctype html>
                    font-size: 60px; font-weight: 900; box-shadow: 0 0 34px rgba(58,100,240,.65); }}
       .lab .m {{ font-weight: 900; font-size: 74px; line-height: 1.02; white-space: nowrap; }}
       #lab3 .m {{ font-size: 52px; white-space: normal; width: 430px; }}
-      .lab .sr {{ margin-top: 8px; font-weight: 700; font-size: 36px; line-height: 1.1; color: rgba(255,255,255,.75); white-space: nowrap; }}
-      .lab .sr b {{ font-weight: 900; color: var(--blue); }}
+      .lab .sr {{ margin-top: 8px; font-weight: 700; font-size: 36px; line-height: 1.1; color: #fff; white-space: nowrap; }}
+      .lab .sr b {{ font-weight: 900; color: #fff; }}
       .lab .fig {{ width: 280px; height: 228px; flex: none; overflow: visible; }}
       .fig .body line, .fig .body path {{ stroke: #fff; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; fill: none; }}
       .fig .body circle {{ fill: #fff; }}
