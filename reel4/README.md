@@ -60,6 +60,9 @@ voice + SFX only, for adding a song from Instagram's library.
 - Fix 15 (client): the light-leak flash stays but builds over the reasons page and hard-cuts at its peak to the clean
   shot (the washed-out frame of the trainer after it is gone). Voice raised 4.5 dB in the mix, master loudness
   normalised to −14 LUFS (both versions).
+- Fix 16 (client): stutter before "ואז": the source already has a cut at 6.311 s (frames 188|189) and the return from
+  the reasons page landed two frames before it (two cuts in a row). Return now at 6.32 so the first video frame is the
+  first frame after the source cut (verified: one cut only). The "מפסיקים" whip-out now straddles the source cut at 7.78.
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.

@@ -83,9 +83,11 @@ TIMES.update({
     "hk_b": t("לא") - 0.06,
     # Reasons page (full screen): zoom-blur in, rows glide in as spoken, light-leak flash, hard cut at its peak back to the video on "ואז".
     "rs_in": t("מתחילים") - 0.04, "rs_1": t("מתחילים") + 0.08, "rs_2": t("מתאמנים") - 0.08, "rs_3": t("יודעים") - 0.12,
-    "rs_out": t("ואז") - 0.02,
+    # Land the return exactly on the cut that is already in the source video (frames 188|189, 6.311 s) so the two
+    # cuts are one (client: it stuttered before "ואז").
+    "rs_out": 6.32,
     # "אחרי חודש / מפסיקים" behind the trainer, calendar ticking to 30, drops on "מפסיקים".
-    "tb_in": t("אחרי") - 0.1, "tb_big": t("מפסיקים") - 0.1, "tb_out": t("בדיוק", 2) - 0.3,
+    "tb_in": t("אחרי") - 0.1, "tb_big": t("מפסיקים") - 0.1, "tb_out": 7.62,  # whip-out straddles the source cut at 7.78 s
     # Solution page: rows with blue checks and live visuals; hard cut back (over-exposed settle) on "אם".
     "so_1": t("קבוצה") - 0.08, "so_2": t("בניית") - 0.1, "so_3": t("מעקב") - 0.1, "so_4": t("והתקדמות") - 0.1,
     "sol_out": t("אם") - 0.03, "prog": t("והתקדמות"),
