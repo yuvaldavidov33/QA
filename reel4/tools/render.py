@@ -83,12 +83,12 @@ sfx_vol = 0.35  # client: SFX a bit quieter
 
 def mix(out, with_music):
     ins = ["-i", str(silent), "-i", str(VOICE), "-i", str(REEL / "sfx.wav")]
-    graph = f"[1:a]aresample=48000,aformat=channel_layouts=stereo,apad[v];[2:a]volume={sfx_vol}[s];"
+    graph = f"[1:a]aresample=48000,aformat=channel_layouts=stereo,volume=4.5dB,apad[v];[2:a]volume={sfx_vol}[s];"
     if with_music:
         ins += ["-i", str(REEL / "music.wav")]
-        graph += "[v][3:a][s]amix=inputs=3:duration=first:normalize=0,volume=2.6dB,alimiter=limit=0.89[a]"
+        graph += "[v][3:a][s]amix=inputs=3:duration=first:normalize=0,loudnorm=I=-14:TP=-1.2:LRA=11,alimiter=limit=0.89[a]"
     else:
-        graph += "[v][s]amix=inputs=2:duration=first:normalize=0,volume=2.6dB,alimiter=limit=0.89[a]"
+        graph += "[v][s]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-14:TP=-1.2:LRA=11,alimiter=limit=0.89[a]"
     subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", graph, "-map", "0:v", "-map", "[a]",
                     "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-t", str(dur), "-movflags", "+faststart", str(out)], check=True)
     print("wrote", out)

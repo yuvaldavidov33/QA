@@ -80,7 +80,7 @@ TIMES.update({
     # Hook: two phrases, each enters whole.
     "hk_a": 0.06, "hk_a2": t("למה") - 0.06, "hk_out": t("באימונים") + 0.06,
     "hk_b": t("לא") - 0.06,
-    # Reasons page (full screen): zoom-blur in, rows glide in as spoken, light-leak back to the video on "ואז".
+    # Reasons page (full screen): zoom-blur in, rows glide in as spoken, light-leak flash, hard cut at its peak back to the video on "ואז".
     "rs_in": t("מתחילים") - 0.04, "rs_1": t("מתחילים") + 0.08, "rs_2": t("מתאמנים") - 0.08, "rs_3": t("יודעים") - 0.12,
     "rs_out": t("ואז") - 0.02,
     # "אחרי חודש / מפסיקים" behind the trainer, calendar ticking to 30, drops on "מפסיקים".
@@ -342,7 +342,8 @@ html = f"""<!doctype html>
           </div></div>
         </div>
       </div>
-      <div class="clip" id="leakClip" data-start="{round(T_["rs_out"] - 0.2, 2)}" data-duration="0.5" data-track-index="4"><div id="leak"></div></div>
+
+      <div class="clip" id="leakClip" data-start="{round(T_["rs_out"] - 0.2, 2)}" data-duration="0.2" data-track-index="4"><div id="leak"></div></div>
 
       <div class="ov clip" id="g6" data-start="{round(T_["dm_in"] - 0.05, 2)}" data-duration="{round(DURATION - T_["dm_in"] + 0.05, 2)}" data-track-index="3">
         <div id="dm">
@@ -436,9 +437,9 @@ html = f"""<!doctype html>
       // Question marks: pop around, the big one wobbles.
       tl.fromTo("#r3 .q:not(.big)", {{ opacity: 0, scale: 0.3 }}, {{ opacity: 1, scale: 1, duration: 0.3, stagger: 0.12, ease: "back.out(3)", immediateRender: false }}, T.rs_3 + 0.35);
       tl.fromTo("#qBig", {{ rotation: -14 }}, {{ rotation: 14, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }}, T.rs_3 + 0.3);
-      // Light-leak flash back to the video.
-      tl.fromTo("#leak", {{ opacity: 0, scale: 0.8 }}, {{ opacity: 1, scale: 1.15, duration: 0.2, ease: "power2.in", immediateRender: false }}, T.rs_out - 0.2);
-      tl.to("#leak", {{ opacity: 0, scale: 1.4, duration: 0.3, ease: "power2.out" }}, T.rs_out);
+      // Light-leak flash over the reasons page, then a hard cut at its peak straight to the clean shot
+      // (client: liked the flash, not the washed-out frame of the trainer that followed it).
+      tl.fromTo("#leak", {{ opacity: 0, scale: 0.8 }}, {{ opacity: 1, scale: 1.2, duration: 0.17, ease: "power1.in", immediateRender: false }}, T.rs_out - 0.2);
 
       // ===== "אחרי חודש / מפסיקים" behind the trainer =====
       tl.fromTo("#behind .top", {{ letterSpacing: "24px" }}, {{ letterSpacing: "0px", duration: 0.55, ease: "power3.out", immediateRender: false }}, T.tb_in);

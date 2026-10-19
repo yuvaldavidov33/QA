@@ -57,6 +57,9 @@ voice + SFX only, for adding a song from Instagram's library.
 - Fix 14 (client): ring ran ahead of the voice. Re-measured the onsets in 10-15.6 s with 0.08 s growing Whisper
   windows: "בניית" 12.05 (was 11.75), "משקלים" 14.2 (was 13.88), "והתקדמות" 15.05 (was 14.31). Each 0.5 s turn now
   starts 0.35 s before its word and lands just after it starts; "והתקדמות" turns on the word.
+- Fix 15 (client): the light-leak flash stays but builds over the reasons page and hard-cuts at its peak to the clean
+  shot (the washed-out frame of the trainer after it is gone). Voice raised 4.5 dB in the mix, master loudness
+  normalised to −14 LUFS (both versions).
 - Word timing: `tools/words.json` hand-timed from pauses (silencedetect −27 dB) and Whisper small (sherpa-onnx int8)
   on sliding 1.5 s windows. Whisper does not hear "קצת אחרת" or "הודעה" clearly; their times sit inside the
   pause-bounded segments.
